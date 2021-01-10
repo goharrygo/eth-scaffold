@@ -168,3 +168,67 @@ open class NetworkReachabilityManager {
     /// Stops listening for changes in network reachability status.
     open func stopListening() {
         SCNetworkReachabilitySetCallback(reachability, nil, nil)
+        SCNetworkReachabilitySetDispatchQueue(reachability, nil)
+    }
+
+    // MARK: - Internal - Listener Notification
+
+    func notifyListener(_ flags: SCNetworkReachabilityFlags) {
+        guard previousFlags != flags else { return }
+        previousFlags = flags
+
+        listener?(networkReachabilityStatusForFlags(flags))
+    }
+
+    // MARK: - Internal - Network Reachability Status
+
+    func networkReachabilityStatusForFlags(_ flags: SCNetworkReachabilityFlags) -> NetworkReachabilityStatus {
+        guard isNetworkReachable(with: flags) else { return .notReachable }
+
+        var networkStatus: NetworkReachabilityStatus = .reachable(.ethernetOrWiFi)
+
+    #if os(iOS)
+        if flags.contains(.isWWAN) { networkStatus = .reachable(.wwan) }
+    #endif
+
+        return networkStatus
+    }
+
+    func isNetworkReachable(with flags: SCNetworkReachabilityFlags) -> Bool {
+        let isReachable = flags.contains(.reachable)
+        let needsConnection = flags.contains(.connectionRequired)
+        let canConnectAutomatically = flags.contains(.connectionOnDemand) || flags.contains(.connectionOnTraffic)
+        let canConnectWithoutUserInteraction = canConnectAutomatically && !flags.contains(.interventionRequired)
+
+        return isReachable && (!needsConnection || canConnectWithoutUserInteraction)
+    }
+}
+
+// MARK: -
+
+extension NetworkReachabilityManager.NetworkReachabilityStatus: Equatable {}
+
+/// Returns whether the two network reachability status values are equal.
+///
+/// - parameter lhs: The left-hand side value to compare.
+/// - parameter rhs: The right-hand side value to compare.
+///
+/// - returns: `true` if the two values are equal, `false` otherwise.
+public func ==(
+    lhs: NetworkReachabilityManager.NetworkReachabilityStatus,
+    rhs: NetworkReachabilityManager.NetworkReachabilityStatus)
+    -> Bool
+{
+    switch (lhs, rhs) {
+    case (.unknown, .unknown):
+        return true
+    case (.notReachable, .notReachable):
+        return true
+    case let (.reachable(lhsConnectionType), .reachable(rhsConnectionType)):
+        return lhsConnectionType == rhsConnectionType
+    default:
+        return false
+    }
+}
+
+#endif
