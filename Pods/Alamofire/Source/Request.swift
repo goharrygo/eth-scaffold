@@ -458,3 +458,198 @@ open class DownloadRequest: Request {
 
     enum Downloadable: TaskConvertible {
         case request(URLRequest)
+        case resumeData(Data)
+
+        func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) throws -> URLSessionTask {
+            do {
+                let task: URLSessionTask
+
+                switch self {
+                case let .request(urlRequest):
+                    let urlRequest = try urlRequest.adapt(using: adapter)
+                    task = queue.sync { session.downloadTask(with: urlRequest) }
+                case let .resumeData(resumeData):
+                    task = queue.sync { session.downloadTask(withResumeData: resumeData) }
+                }
+
+                return task
+            } catch {
+                throw AdaptError(error: error)
+            }
+        }
+    }
+
+    // MARK: Properties
+
+    /// The request sent or to be sent to the server.
+    open override var request: URLRequest? {
+        if let request = super.request { return request }
+
+        if let downloadable = originalTask as? Downloadable, case let .request(urlRequest) = downloadable {
+            return urlRequest
+        }
+
+        return nil
+    }
+
+    /// The resume data of the underlying download task if available after a failure.
+    open var resumeData: Data? { return downloadDelegate.resumeData }
+
+    /// The progress of downloading the response data from the server for the request.
+    open var progress: Progress { return downloadDelegate.progress }
+
+    var downloadDelegate: DownloadTaskDelegate { return delegate as! DownloadTaskDelegate }
+
+    // MARK: State
+
+    /// Cancels the request.
+    open override func cancel() {
+        downloadDelegate.downloadTask.cancel { self.downloadDelegate.resumeData = $0 }
+
+        NotificationCenter.default.post(
+            name: Notification.Name.Task.DidCancel,
+            object: self,
+            userInfo: [Notification.Key.Task: task as Any]
+        )
+    }
+
+    // MARK: Progress
+
+    /// Sets a closure to be called periodically during the lifecycle of the `Request` as data is read from the server.
+    ///
+    /// - parameter queue:   The dispatch queue to execute the closure on.
+    /// - parameter closure: The code to be executed periodically as data is read from the server.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    open func downloadProgress(queue: DispatchQueue = DispatchQueue.main, closure: @escaping ProgressHandler) -> Self {
+        downloadDelegate.progressHandler = (closure, queue)
+        return self
+    }
+
+    // MARK: Destination
+
+    /// Creates a download file destination closure which uses the default file manager to move the temporary file to a
+    /// file URL in the first available directory with the specified search path directory and search path domain mask.
+    ///
+    /// - parameter directory: The search path directory. `.DocumentDirectory` by default.
+    /// - parameter domain:    The search path domain mask. `.UserDomainMask` by default.
+    ///
+    /// - returns: A download file destination closure.
+    open class func suggestedDownloadDestination(
+        for directory: FileManager.SearchPathDirectory = .documentDirectory,
+        in domain: FileManager.SearchPathDomainMask = .userDomainMask)
+        -> DownloadFileDestination
+    {
+        return { temporaryURL, response in
+            let directoryURLs = FileManager.default.urls(for: directory, in: domain)
+
+            if !directoryURLs.isEmpty {
+                return (directoryURLs[0].appendingPathComponent(response.suggestedFilename!), [])
+            }
+
+            return (temporaryURL, [])
+        }
+    }
+}
+
+// MARK: -
+
+/// Specific type of `Request` that manages an underlying `URLSessionUploadTask`.
+open class UploadRequest: DataRequest {
+
+    // MARK: Helper Types
+
+    enum Uploadable: TaskConvertible {
+        case data(Data, URLRequest)
+        case file(URL, URLRequest)
+        case stream(InputStream, URLRequest)
+
+        func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) throws -> URLSessionTask {
+            do {
+                let task: URLSessionTask
+
+                switch self {
+                case let .data(data, urlRequest):
+                    let urlRequest = try urlRequest.adapt(using: adapter)
+                    task = queue.sync { session.uploadTask(with: urlRequest, from: data) }
+                case let .file(url, urlRequest):
+                    let urlRequest = try urlRequest.adapt(using: adapter)
+                    task = queue.sync { session.uploadTask(with: urlRequest, fromFile: url) }
+                case let .stream(_, urlRequest):
+                    let urlRequest = try urlRequest.adapt(using: adapter)
+                    task = queue.sync { session.uploadTask(withStreamedRequest: urlRequest) }
+                }
+
+                return task
+            } catch {
+                throw AdaptError(error: error)
+            }
+        }
+    }
+
+    // MARK: Properties
+
+    /// The request sent or to be sent to the server.
+    open override var request: URLRequest? {
+        if let request = super.request { return request }
+
+        guard let uploadable = originalTask as? Uploadable else { return nil }
+
+        switch uploadable {
+        case .data(_, let urlRequest), .file(_, let urlRequest), .stream(_, let urlRequest):
+            return urlRequest
+        }
+    }
+
+    /// The progress of uploading the payload to the server for the upload request.
+    open var uploadProgress: Progress { return uploadDelegate.uploadProgress }
+
+    var uploadDelegate: UploadTaskDelegate { return delegate as! UploadTaskDelegate }
+
+    // MARK: Upload Progress
+
+    /// Sets a closure to be called periodically during the lifecycle of the `UploadRequest` as data is sent to
+    /// the server.
+    ///
+    /// After the data is sent to the server, the `progress(queue:closure:)` APIs can be used to monitor the progress
+    /// of data being read from the server.
+    ///
+    /// - parameter queue:   The dispatch queue to execute the closure on.
+    /// - parameter closure: The code to be executed periodically as data is sent to the server.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    open func uploadProgress(queue: DispatchQueue = DispatchQueue.main, closure: @escaping ProgressHandler) -> Self {
+        uploadDelegate.uploadProgressHandler = (closure, queue)
+        return self
+    }
+}
+
+// MARK: -
+
+#if !os(watchOS)
+
+/// Specific type of `Request` that manages an underlying `URLSessionStreamTask`.
+@available(iOS 9.0, macOS 10.11, tvOS 9.0, *)
+open class StreamRequest: Request {
+    enum Streamable: TaskConvertible {
+        case stream(hostName: String, port: Int)
+        case netService(NetService)
+
+        func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) throws -> URLSessionTask {
+            let task: URLSessionTask
+
+            switch self {
+            case let .stream(hostName, port):
+                task = queue.sync { session.streamTask(withHostName: hostName, port: port) }
+            case let .netService(netService):
+                task = queue.sync { session.streamTask(with: netService) }
+            }
+
+            return task
+        }
+    }
+}
+
+#endif
