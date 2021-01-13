@@ -367,3 +367,202 @@ public struct DownloadResponse<Value> {
         self.temporaryURL = temporaryURL
         self.destinationURL = destinationURL
         self.resumeData = resumeData
+        self.result = result
+        self.timeline = timeline
+    }
+}
+
+// MARK: -
+
+extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertible {
+    /// The textual representation used when written to an output stream, which includes whether the result was a
+    /// success or failure.
+    public var description: String {
+        return result.debugDescription
+    }
+
+    /// The debug textual representation used when written to an output stream, which includes the URL request, the URL
+    /// response, the temporary and destination URLs, the resume data, the response serialization result and the
+    /// timeline.
+    public var debugDescription: String {
+        var output: [String] = []
+
+        output.append(request != nil ? "[Request]: \(request!.httpMethod ?? "GET") \(request!)" : "[Request]: nil")
+        output.append(response != nil ? "[Response]: \(response!)" : "[Response]: nil")
+        output.append("[TemporaryURL]: \(temporaryURL?.path ?? "nil")")
+        output.append("[DestinationURL]: \(destinationURL?.path ?? "nil")")
+        output.append("[ResumeData]: \(resumeData?.count ?? 0) bytes")
+        output.append("[Result]: \(result.debugDescription)")
+        output.append("[Timeline]: \(timeline.debugDescription)")
+
+        return output.joined(separator: "\n")
+    }
+}
+
+// MARK: -
+
+extension DownloadResponse {
+    /// Evaluates the given closure when the result of this `DownloadResponse` is a success, passing the unwrapped
+    /// result value as a parameter.
+    ///
+    /// Use the `map` method with a closure that does not throw. For example:
+    ///
+    ///     let possibleData: DownloadResponse<Data> = ...
+    ///     let possibleInt = possibleData.map { $0.count }
+    ///
+    /// - parameter transform: A closure that takes the success value of the instance's result.
+    ///
+    /// - returns: A `DownloadResponse` whose result wraps the value returned by the given closure. If this instance's
+    ///            result is a failure, returns a response wrapping the same failure.
+    public func map<T>(_ transform: (Value) -> T) -> DownloadResponse<T> {
+        var response = DownloadResponse<T>(
+            request: request,
+            response: self.response,
+            temporaryURL: temporaryURL,
+            destinationURL: destinationURL,
+            resumeData: resumeData,
+            result: result.map(transform),
+            timeline: timeline
+        )
+
+        response._metrics = _metrics
+
+        return response
+    }
+
+    /// Evaluates the given closure when the result of this `DownloadResponse` is a success, passing the unwrapped
+    /// result value as a parameter.
+    ///
+    /// Use the `flatMap` method with a closure that may throw an error. For example:
+    ///
+    ///     let possibleData: DownloadResponse<Data> = ...
+    ///     let possibleObject = possibleData.flatMap {
+    ///         try JSONSerialization.jsonObject(with: $0)
+    ///     }
+    ///
+    /// - parameter transform: A closure that takes the success value of the instance's result.
+    ///
+    /// - returns: A success or failure `DownloadResponse` depending on the result of the given closure. If this
+    /// instance's result is a failure, returns the same failure.
+    public func flatMap<T>(_ transform: (Value) throws -> T) -> DownloadResponse<T> {
+        var response = DownloadResponse<T>(
+            request: request,
+            response: self.response,
+            temporaryURL: temporaryURL,
+            destinationURL: destinationURL,
+            resumeData: resumeData,
+            result: result.flatMap(transform),
+            timeline: timeline
+        )
+
+        response._metrics = _metrics
+
+        return response
+    }
+
+    /// Evaluates the specified closure when the `DownloadResponse` is a failure, passing the unwrapped error as a parameter.
+    ///
+    /// Use the `mapError` function with a closure that does not throw. For example:
+    ///
+    ///     let possibleData: DownloadResponse<Data> = ...
+    ///     let withMyError = possibleData.mapError { MyError.error($0) }
+    ///
+    /// - Parameter transform: A closure that takes the error of the instance.
+    /// - Returns: A `DownloadResponse` instance containing the result of the transform.
+    public func mapError<E: Error>(_ transform: (Error) -> E) -> DownloadResponse {
+        var response = DownloadResponse(
+            request: request,
+            response: self.response,
+            temporaryURL: temporaryURL,
+            destinationURL: destinationURL,
+            resumeData: resumeData,
+            result: result.mapError(transform),
+            timeline: timeline
+        )
+
+        response._metrics = _metrics
+
+        return response
+    }
+
+    /// Evaluates the specified closure when the `DownloadResponse` is a failure, passing the unwrapped error as a parameter.
+    ///
+    /// Use the `flatMapError` function with a closure that may throw an error. For example:
+    ///
+    ///     let possibleData: DownloadResponse<Data> = ...
+    ///     let possibleObject = possibleData.flatMapError {
+    ///         try someFailableFunction(taking: $0)
+    ///     }
+    ///
+    /// - Parameter transform: A throwing closure that takes the error of the instance.
+    ///
+    /// - Returns: A `DownloadResponse` instance containing the result of the transform.
+    public func flatMapError<E: Error>(_ transform: (Error) throws -> E) -> DownloadResponse {
+        var response = DownloadResponse(
+            request: request,
+            response: self.response,
+            temporaryURL: temporaryURL,
+            destinationURL: destinationURL,
+            resumeData: resumeData,
+            result: result.flatMapError(transform),
+            timeline: timeline
+        )
+
+        response._metrics = _metrics
+
+        return response
+    }
+}
+
+// MARK: -
+
+protocol Response {
+    /// The task metrics containing the request / response statistics.
+    var _metrics: AnyObject? { get set }
+    mutating func add(_ metrics: AnyObject?)
+}
+
+extension Response {
+    mutating func add(_ metrics: AnyObject?) {
+        #if !os(watchOS)
+            guard #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) else { return }
+            guard let metrics = metrics as? URLSessionTaskMetrics else { return }
+
+            _metrics = metrics
+        #endif
+    }
+}
+
+// MARK: -
+
+@available(iOS 10.0, macOS 10.12, tvOS 10.0, *)
+extension DefaultDataResponse: Response {
+#if !os(watchOS)
+    /// The task metrics containing the request / response statistics.
+    public var metrics: URLSessionTaskMetrics? { return _metrics as? URLSessionTaskMetrics }
+#endif
+}
+
+@available(iOS 10.0, macOS 10.12, tvOS 10.0, *)
+extension DataResponse: Response {
+#if !os(watchOS)
+    /// The task metrics containing the request / response statistics.
+    public var metrics: URLSessionTaskMetrics? { return _metrics as? URLSessionTaskMetrics }
+#endif
+}
+
+@available(iOS 10.0, macOS 10.12, tvOS 10.0, *)
+extension DefaultDownloadResponse: Response {
+#if !os(watchOS)
+    /// The task metrics containing the request / response statistics.
+    public var metrics: URLSessionTaskMetrics? { return _metrics as? URLSessionTaskMetrics }
+#endif
+}
+
+@available(iOS 10.0, macOS 10.12, tvOS 10.0, *)
+extension DownloadResponse: Response {
+#if !os(watchOS)
+    /// The task metrics containing the request / response statistics.
+    public var metrics: URLSessionTaskMetrics? { return _metrics as? URLSessionTaskMetrics }
+#endif
+}
