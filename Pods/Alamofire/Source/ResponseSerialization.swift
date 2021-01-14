@@ -339,3 +339,378 @@ extension DownloadRequest {
         )
     }
 }
+
+// MARK: - String
+
+extension Request {
+    /// Returns a result string type initialized from the response data with the specified string encoding.
+    ///
+    /// - parameter encoding: The string encoding. If `nil`, the string encoding will be determined from the server
+    ///                       response, falling back to the default HTTP default character set, ISO-8859-1.
+    /// - parameter response: The response from the server.
+    /// - parameter data:     The data returned from the server.
+    /// - parameter error:    The error already encountered if it exists.
+    ///
+    /// - returns: The result data type.
+    public static func serializeResponseString(
+        encoding: String.Encoding?,
+        response: HTTPURLResponse?,
+        data: Data?,
+        error: Error?)
+        -> Result<String>
+    {
+        guard error == nil else { return .failure(error!) }
+
+        if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success("") }
+
+        guard let validData = data else {
+            return .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
+        }
+
+        var convertedEncoding = encoding
+
+        if let encodingName = response?.textEncodingName as CFString?, convertedEncoding == nil {
+            convertedEncoding = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(
+                CFStringConvertIANACharSetNameToEncoding(encodingName))
+            )
+        }
+
+        let actualEncoding = convertedEncoding ?? .isoLatin1
+
+        if let string = String(data: validData, encoding: actualEncoding) {
+            return .success(string)
+        } else {
+            return .failure(AFError.responseSerializationFailed(reason: .stringSerializationFailed(encoding: actualEncoding)))
+        }
+    }
+}
+
+extension DataRequest {
+    /// Creates a response serializer that returns a result string type initialized from the response data with
+    /// the specified string encoding.
+    ///
+    /// - parameter encoding: The string encoding. If `nil`, the string encoding will be determined from the server
+    ///                       response, falling back to the default HTTP default character set, ISO-8859-1.
+    ///
+    /// - returns: A string response serializer.
+    public static func stringResponseSerializer(encoding: String.Encoding? = nil) -> DataResponseSerializer<String> {
+        return DataResponseSerializer { _, response, data, error in
+            return Request.serializeResponseString(encoding: encoding, response: response, data: data, error: error)
+        }
+    }
+
+    /// Adds a handler to be called once the request has finished.
+    ///
+    /// - parameter encoding:          The string encoding. If `nil`, the string encoding will be determined from the
+    ///                                server response, falling back to the default HTTP default character set,
+    ///                                ISO-8859-1.
+    /// - parameter completionHandler: A closure to be executed once the request has finished.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    public func responseString(
+        queue: DispatchQueue? = nil,
+        encoding: String.Encoding? = nil,
+        completionHandler: @escaping (DataResponse<String>) -> Void)
+        -> Self
+    {
+        return response(
+            queue: queue,
+            responseSerializer: DataRequest.stringResponseSerializer(encoding: encoding),
+            completionHandler: completionHandler
+        )
+    }
+}
+
+extension DownloadRequest {
+    /// Creates a response serializer that returns a result string type initialized from the response data with
+    /// the specified string encoding.
+    ///
+    /// - parameter encoding: The string encoding. If `nil`, the string encoding will be determined from the server
+    ///                       response, falling back to the default HTTP default character set, ISO-8859-1.
+    ///
+    /// - returns: A string response serializer.
+    public static func stringResponseSerializer(encoding: String.Encoding? = nil) -> DownloadResponseSerializer<String> {
+        return DownloadResponseSerializer { _, response, fileURL, error in
+            guard error == nil else { return .failure(error!) }
+
+            guard let fileURL = fileURL else {
+                return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
+            }
+
+            do {
+                let data = try Data(contentsOf: fileURL)
+                return Request.serializeResponseString(encoding: encoding, response: response, data: data, error: error)
+            } catch {
+                return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
+            }
+        }
+    }
+
+    /// Adds a handler to be called once the request has finished.
+    ///
+    /// - parameter encoding:          The string encoding. If `nil`, the string encoding will be determined from the
+    ///                                server response, falling back to the default HTTP default character set,
+    ///                                ISO-8859-1.
+    /// - parameter completionHandler: A closure to be executed once the request has finished.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    public func responseString(
+        queue: DispatchQueue? = nil,
+        encoding: String.Encoding? = nil,
+        completionHandler: @escaping (DownloadResponse<String>) -> Void)
+        -> Self
+    {
+        return response(
+            queue: queue,
+            responseSerializer: DownloadRequest.stringResponseSerializer(encoding: encoding),
+            completionHandler: completionHandler
+        )
+    }
+}
+
+// MARK: - JSON
+
+extension Request {
+    /// Returns a JSON object contained in a result type constructed from the response data using `JSONSerialization`
+    /// with the specified reading options.
+    ///
+    /// - parameter options:  The JSON serialization reading options. Defaults to `.allowFragments`.
+    /// - parameter response: The response from the server.
+    /// - parameter data:     The data returned from the server.
+    /// - parameter error:    The error already encountered if it exists.
+    ///
+    /// - returns: The result data type.
+    public static func serializeResponseJSON(
+        options: JSONSerialization.ReadingOptions,
+        response: HTTPURLResponse?,
+        data: Data?,
+        error: Error?)
+        -> Result<Any>
+    {
+        guard error == nil else { return .failure(error!) }
+
+        if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success(NSNull()) }
+
+        guard let validData = data, validData.count > 0 else {
+            return .failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength))
+        }
+
+        do {
+            let json = try JSONSerialization.jsonObject(with: validData, options: options)
+            return .success(json)
+        } catch {
+            return .failure(AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: error)))
+        }
+    }
+}
+
+extension DataRequest {
+    /// Creates a response serializer that returns a JSON object result type constructed from the response data using
+    /// `JSONSerialization` with the specified reading options.
+    ///
+    /// - parameter options: The JSON serialization reading options. Defaults to `.allowFragments`.
+    ///
+    /// - returns: A JSON object response serializer.
+    public static func jsonResponseSerializer(
+        options: JSONSerialization.ReadingOptions = .allowFragments)
+        -> DataResponseSerializer<Any>
+    {
+        return DataResponseSerializer { _, response, data, error in
+            return Request.serializeResponseJSON(options: options, response: response, data: data, error: error)
+        }
+    }
+
+    /// Adds a handler to be called once the request has finished.
+    ///
+    /// - parameter options:           The JSON serialization reading options. Defaults to `.allowFragments`.
+    /// - parameter completionHandler: A closure to be executed once the request has finished.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    public func responseJSON(
+        queue: DispatchQueue? = nil,
+        options: JSONSerialization.ReadingOptions = .allowFragments,
+        completionHandler: @escaping (DataResponse<Any>) -> Void)
+        -> Self
+    {
+        return response(
+            queue: queue,
+            responseSerializer: DataRequest.jsonResponseSerializer(options: options),
+            completionHandler: completionHandler
+        )
+    }
+}
+
+extension DownloadRequest {
+    /// Creates a response serializer that returns a JSON object result type constructed from the response data using
+    /// `JSONSerialization` with the specified reading options.
+    ///
+    /// - parameter options: The JSON serialization reading options. Defaults to `.allowFragments`.
+    ///
+    /// - returns: A JSON object response serializer.
+    public static func jsonResponseSerializer(
+        options: JSONSerialization.ReadingOptions = .allowFragments)
+        -> DownloadResponseSerializer<Any>
+    {
+        return DownloadResponseSerializer { _, response, fileURL, error in
+            guard error == nil else { return .failure(error!) }
+
+            guard let fileURL = fileURL else {
+                return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
+            }
+
+            do {
+                let data = try Data(contentsOf: fileURL)
+                return Request.serializeResponseJSON(options: options, response: response, data: data, error: error)
+            } catch {
+                return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
+            }
+        }
+    }
+
+    /// Adds a handler to be called once the request has finished.
+    ///
+    /// - parameter options:           The JSON serialization reading options. Defaults to `.allowFragments`.
+    /// - parameter completionHandler: A closure to be executed once the request has finished.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    public func responseJSON(
+        queue: DispatchQueue? = nil,
+        options: JSONSerialization.ReadingOptions = .allowFragments,
+        completionHandler: @escaping (DownloadResponse<Any>) -> Void)
+        -> Self
+    {
+        return response(
+            queue: queue,
+            responseSerializer: DownloadRequest.jsonResponseSerializer(options: options),
+            completionHandler: completionHandler
+        )
+    }
+}
+
+// MARK: - Property List
+
+extension Request {
+    /// Returns a plist object contained in a result type constructed from the response data using
+    /// `PropertyListSerialization` with the specified reading options.
+    ///
+    /// - parameter options:  The property list reading options. Defaults to `[]`.
+    /// - parameter response: The response from the server.
+    /// - parameter data:     The data returned from the server.
+    /// - parameter error:    The error already encountered if it exists.
+    ///
+    /// - returns: The result data type.
+    public static func serializeResponsePropertyList(
+        options: PropertyListSerialization.ReadOptions,
+        response: HTTPURLResponse?,
+        data: Data?,
+        error: Error?)
+        -> Result<Any>
+    {
+        guard error == nil else { return .failure(error!) }
+
+        if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success(NSNull()) }
+
+        guard let validData = data, validData.count > 0 else {
+            return .failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength))
+        }
+
+        do {
+            let plist = try PropertyListSerialization.propertyList(from: validData, options: options, format: nil)
+            return .success(plist)
+        } catch {
+            return .failure(AFError.responseSerializationFailed(reason: .propertyListSerializationFailed(error: error)))
+        }
+    }
+}
+
+extension DataRequest {
+    /// Creates a response serializer that returns an object constructed from the response data using
+    /// `PropertyListSerialization` with the specified reading options.
+    ///
+    /// - parameter options: The property list reading options. Defaults to `[]`.
+    ///
+    /// - returns: A property list object response serializer.
+    public static func propertyListResponseSerializer(
+        options: PropertyListSerialization.ReadOptions = [])
+        -> DataResponseSerializer<Any>
+    {
+        return DataResponseSerializer { _, response, data, error in
+            return Request.serializeResponsePropertyList(options: options, response: response, data: data, error: error)
+        }
+    }
+
+    /// Adds a handler to be called once the request has finished.
+    ///
+    /// - parameter options:           The property list reading options. Defaults to `[]`.
+    /// - parameter completionHandler: A closure to be executed once the request has finished.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    public func responsePropertyList(
+        queue: DispatchQueue? = nil,
+        options: PropertyListSerialization.ReadOptions = [],
+        completionHandler: @escaping (DataResponse<Any>) -> Void)
+        -> Self
+    {
+        return response(
+            queue: queue,
+            responseSerializer: DataRequest.propertyListResponseSerializer(options: options),
+            completionHandler: completionHandler
+        )
+    }
+}
+
+extension DownloadRequest {
+    /// Creates a response serializer that returns an object constructed from the response data using
+    /// `PropertyListSerialization` with the specified reading options.
+    ///
+    /// - parameter options: The property list reading options. Defaults to `[]`.
+    ///
+    /// - returns: A property list object response serializer.
+    public static func propertyListResponseSerializer(
+        options: PropertyListSerialization.ReadOptions = [])
+        -> DownloadResponseSerializer<Any>
+    {
+        return DownloadResponseSerializer { _, response, fileURL, error in
+            guard error == nil else { return .failure(error!) }
+
+            guard let fileURL = fileURL else {
+                return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
+            }
+
+            do {
+                let data = try Data(contentsOf: fileURL)
+                return Request.serializeResponsePropertyList(options: options, response: response, data: data, error: error)
+            } catch {
+                return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
+            }
+        }
+    }
+
+    /// Adds a handler to be called once the request has finished.
+    ///
+    /// - parameter options:           The property list reading options. Defaults to `[]`.
+    /// - parameter completionHandler: A closure to be executed once the request has finished.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    public func responsePropertyList(
+        queue: DispatchQueue? = nil,
+        options: PropertyListSerialization.ReadOptions = [],
+        completionHandler: @escaping (DownloadResponse<Any>) -> Void)
+        -> Self
+    {
+        return response(
+            queue: queue,
+            responseSerializer: DownloadRequest.propertyListResponseSerializer(options: options),
+            completionHandler: completionHandler
+        )
+    }
+}
+
+/// A set of HTTP response status code that do not contain response data.
+private let emptyDataStatusCodes: Set<Int> = [204, 205]
