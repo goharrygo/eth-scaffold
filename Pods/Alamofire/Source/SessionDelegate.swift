@@ -612,3 +612,115 @@ extension SessionDelegate: URLSessionDownloadDelegate {
         didFinishDownloadingTo location: URL)
     {
         if let downloadTaskDidFinishDownloadingToURL = downloadTaskDidFinishDownloadingToURL {
+            downloadTaskDidFinishDownloadingToURL(session, downloadTask, location)
+        } else if let delegate = self[downloadTask]?.delegate as? DownloadTaskDelegate {
+            delegate.urlSession(session, downloadTask: downloadTask, didFinishDownloadingTo: location)
+        }
+    }
+
+    /// Periodically informs the delegate about the download’s progress.
+    ///
+    /// - parameter session:                   The session containing the download task.
+    /// - parameter downloadTask:              The download task.
+    /// - parameter bytesWritten:              The number of bytes transferred since the last time this delegate
+    ///                                        method was called.
+    /// - parameter totalBytesWritten:         The total number of bytes transferred so far.
+    /// - parameter totalBytesExpectedToWrite: The expected length of the file, as provided by the Content-Length
+    ///                                        header. If this header was not provided, the value is
+    ///                                        `NSURLSessionTransferSizeUnknown`.
+    open func urlSession(
+        _ session: URLSession,
+        downloadTask: URLSessionDownloadTask,
+        didWriteData bytesWritten: Int64,
+        totalBytesWritten: Int64,
+        totalBytesExpectedToWrite: Int64)
+    {
+        if let downloadTaskDidWriteData = downloadTaskDidWriteData {
+            downloadTaskDidWriteData(session, downloadTask, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
+        } else if let delegate = self[downloadTask]?.delegate as? DownloadTaskDelegate {
+            delegate.urlSession(
+                session,
+                downloadTask: downloadTask,
+                didWriteData: bytesWritten,
+                totalBytesWritten: totalBytesWritten,
+                totalBytesExpectedToWrite: totalBytesExpectedToWrite
+            )
+        }
+    }
+
+    /// Tells the delegate that the download task has resumed downloading.
+    ///
+    /// - parameter session:            The session containing the download task that finished.
+    /// - parameter downloadTask:       The download task that resumed. See explanation in the discussion.
+    /// - parameter fileOffset:         If the file's cache policy or last modified date prevents reuse of the
+    ///                                 existing content, then this value is zero. Otherwise, this value is an
+    ///                                 integer representing the number of bytes on disk that do not need to be
+    ///                                 retrieved again.
+    /// - parameter expectedTotalBytes: The expected length of the file, as provided by the Content-Length header.
+    ///                                 If this header was not provided, the value is NSURLSessionTransferSizeUnknown.
+    open func urlSession(
+        _ session: URLSession,
+        downloadTask: URLSessionDownloadTask,
+        didResumeAtOffset fileOffset: Int64,
+        expectedTotalBytes: Int64)
+    {
+        if let downloadTaskDidResumeAtOffset = downloadTaskDidResumeAtOffset {
+            downloadTaskDidResumeAtOffset(session, downloadTask, fileOffset, expectedTotalBytes)
+        } else if let delegate = self[downloadTask]?.delegate as? DownloadTaskDelegate {
+            delegate.urlSession(
+                session,
+                downloadTask: downloadTask,
+                didResumeAtOffset: fileOffset,
+                expectedTotalBytes: expectedTotalBytes
+            )
+        }
+    }
+}
+
+// MARK: - URLSessionStreamDelegate
+
+#if !os(watchOS)
+
+@available(iOS 9.0, macOS 10.11, tvOS 9.0, *)
+extension SessionDelegate: URLSessionStreamDelegate {
+    /// Tells the delegate that the read side of the connection has been closed.
+    ///
+    /// - parameter session:    The session.
+    /// - parameter streamTask: The stream task.
+    open func urlSession(_ session: URLSession, readClosedFor streamTask: URLSessionStreamTask) {
+        streamTaskReadClosed?(session, streamTask)
+    }
+
+    /// Tells the delegate that the write side of the connection has been closed.
+    ///
+    /// - parameter session:    The session.
+    /// - parameter streamTask: The stream task.
+    open func urlSession(_ session: URLSession, writeClosedFor streamTask: URLSessionStreamTask) {
+        streamTaskWriteClosed?(session, streamTask)
+    }
+
+    /// Tells the delegate that the system has determined that a better route to the host is available.
+    ///
+    /// - parameter session:    The session.
+    /// - parameter streamTask: The stream task.
+    open func urlSession(_ session: URLSession, betterRouteDiscoveredFor streamTask: URLSessionStreamTask) {
+        streamTaskBetterRouteDiscovered?(session, streamTask)
+    }
+
+    /// Tells the delegate that the stream task has been completed and provides the unopened stream objects.
+    ///
+    /// - parameter session:      The session.
+    /// - parameter streamTask:   The stream task.
+    /// - parameter inputStream:  The new input stream.
+    /// - parameter outputStream: The new output stream.
+    open func urlSession(
+        _ session: URLSession,
+        streamTask: URLSessionStreamTask,
+        didBecome inputStream: InputStream,
+        outputStream: OutputStream)
+    {
+        streamTaskDidBecomeInputAndOutputStreams?(session, streamTask, inputStream, outputStream)
+    }
+}
+
+#endif
