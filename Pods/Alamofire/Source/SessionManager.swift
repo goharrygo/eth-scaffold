@@ -424,3 +424,474 @@ open class SessionManager {
         if let downloadable = downloadable {
             downloadTask = .download(downloadable, nil)
         }
+
+        let underlyingError = error.underlyingAdaptError ?? error
+
+        let download = DownloadRequest(session: session, requestTask: downloadTask, error: underlyingError)
+        download.downloadDelegate.destination = destination
+
+        if let retrier = retrier, error is AdaptError {
+            allowRetrier(retrier, toRetry: download, with: underlyingError)
+        } else {
+            if startRequestsImmediately { download.resume() }
+        }
+
+        return download
+    }
+
+    // MARK: - Upload Request
+
+    // MARK: File
+
+    /// Creates an `UploadRequest` from the specified `url`, `method` and `headers` for uploading the `file`.
+    ///
+    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
+    ///
+    /// - parameter file:    The file to upload.
+    /// - parameter url:     The URL.
+    /// - parameter method:  The HTTP method. `.post` by default.
+    /// - parameter headers: The HTTP headers. `nil` by default.
+    ///
+    /// - returns: The created `UploadRequest`.
+    @discardableResult
+    open func upload(
+        _ fileURL: URL,
+        to url: URLConvertible,
+        method: HTTPMethod = .post,
+        headers: HTTPHeaders? = nil)
+        -> UploadRequest
+    {
+        do {
+            let urlRequest = try URLRequest(url: url, method: method, headers: headers)
+            return upload(fileURL, with: urlRequest)
+        } catch {
+            return upload(nil, failedWith: error)
+        }
+    }
+
+    /// Creates a `UploadRequest` from the specified `urlRequest` for uploading the `file`.
+    ///
+    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
+    ///
+    /// - parameter file:       The file to upload.
+    /// - parameter urlRequest: The URL request.
+    ///
+    /// - returns: The created `UploadRequest`.
+    @discardableResult
+    open func upload(_ fileURL: URL, with urlRequest: URLRequestConvertible) -> UploadRequest {
+        do {
+            let urlRequest = try urlRequest.asURLRequest()
+            return upload(.file(fileURL, urlRequest))
+        } catch {
+            return upload(nil, failedWith: error)
+        }
+    }
+
+    // MARK: Data
+
+    /// Creates an `UploadRequest` from the specified `url`, `method` and `headers` for uploading the `data`.
+    ///
+    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
+    ///
+    /// - parameter data:    The data to upload.
+    /// - parameter url:     The URL.
+    /// - parameter method:  The HTTP method. `.post` by default.
+    /// - parameter headers: The HTTP headers. `nil` by default.
+    ///
+    /// - returns: The created `UploadRequest`.
+    @discardableResult
+    open func upload(
+        _ data: Data,
+        to url: URLConvertible,
+        method: HTTPMethod = .post,
+        headers: HTTPHeaders? = nil)
+        -> UploadRequest
+    {
+        do {
+            let urlRequest = try URLRequest(url: url, method: method, headers: headers)
+            return upload(data, with: urlRequest)
+        } catch {
+            return upload(nil, failedWith: error)
+        }
+    }
+
+    /// Creates an `UploadRequest` from the specified `urlRequest` for uploading the `data`.
+    ///
+    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
+    ///
+    /// - parameter data:       The data to upload.
+    /// - parameter urlRequest: The URL request.
+    ///
+    /// - returns: The created `UploadRequest`.
+    @discardableResult
+    open func upload(_ data: Data, with urlRequest: URLRequestConvertible) -> UploadRequest {
+        do {
+            let urlRequest = try urlRequest.asURLRequest()
+            return upload(.data(data, urlRequest))
+        } catch {
+            return upload(nil, failedWith: error)
+        }
+    }
+
+    // MARK: InputStream
+
+    /// Creates an `UploadRequest` from the specified `url`, `method` and `headers` for uploading the `stream`.
+    ///
+    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
+    ///
+    /// - parameter stream:  The stream to upload.
+    /// - parameter url:     The URL.
+    /// - parameter method:  The HTTP method. `.post` by default.
+    /// - parameter headers: The HTTP headers. `nil` by default.
+    ///
+    /// - returns: The created `UploadRequest`.
+    @discardableResult
+    open func upload(
+        _ stream: InputStream,
+        to url: URLConvertible,
+        method: HTTPMethod = .post,
+        headers: HTTPHeaders? = nil)
+        -> UploadRequest
+    {
+        do {
+            let urlRequest = try URLRequest(url: url, method: method, headers: headers)
+            return upload(stream, with: urlRequest)
+        } catch {
+            return upload(nil, failedWith: error)
+        }
+    }
+
+    /// Creates an `UploadRequest` from the specified `urlRequest` for uploading the `stream`.
+    ///
+    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
+    ///
+    /// - parameter stream:     The stream to upload.
+    /// - parameter urlRequest: The URL request.
+    ///
+    /// - returns: The created `UploadRequest`.
+    @discardableResult
+    open func upload(_ stream: InputStream, with urlRequest: URLRequestConvertible) -> UploadRequest {
+        do {
+            let urlRequest = try urlRequest.asURLRequest()
+            return upload(.stream(stream, urlRequest))
+        } catch {
+            return upload(nil, failedWith: error)
+        }
+    }
+
+    // MARK: MultipartFormData
+
+    /// Encodes `multipartFormData` using `encodingMemoryThreshold` and calls `encodingCompletion` with new
+    /// `UploadRequest` using the `url`, `method` and `headers`.
+    ///
+    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
+    /// payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
+    /// efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
+    /// be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
+    /// footprint low, then the data can be uploaded as a stream from the resulting file. Streaming from disk MUST be
+    /// used for larger payloads such as video content.
+    ///
+    /// The `encodingMemoryThreshold` parameter allows Alamofire to automatically determine whether to encode in-memory
+    /// or stream from disk. If the content length of the `MultipartFormData` is below the `encodingMemoryThreshold`,
+    /// encoding takes place in-memory. If the content length exceeds the threshold, the data is streamed to disk
+    /// during the encoding process. Then the result is uploaded as data or as a stream depending on which encoding
+    /// technique was used.
+    ///
+    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
+    ///
+    /// - parameter multipartFormData:       The closure used to append body parts to the `MultipartFormData`.
+    /// - parameter encodingMemoryThreshold: The encoding memory threshold in bytes.
+    ///                                      `multipartFormDataEncodingMemoryThreshold` by default.
+    /// - parameter url:                     The URL.
+    /// - parameter method:                  The HTTP method. `.post` by default.
+    /// - parameter headers:                 The HTTP headers. `nil` by default.
+    /// - parameter encodingCompletion:      The closure called when the `MultipartFormData` encoding is complete.
+    open func upload(
+        multipartFormData: @escaping (MultipartFormData) -> Void,
+        usingThreshold encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
+        to url: URLConvertible,
+        method: HTTPMethod = .post,
+        headers: HTTPHeaders? = nil,
+        encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
+    {
+        do {
+            let urlRequest = try URLRequest(url: url, method: method, headers: headers)
+
+            return upload(
+                multipartFormData: multipartFormData,
+                usingThreshold: encodingMemoryThreshold,
+                with: urlRequest,
+                encodingCompletion: encodingCompletion
+            )
+        } catch {
+            DispatchQueue.main.async { encodingCompletion?(.failure(error)) }
+        }
+    }
+
+    /// Encodes `multipartFormData` using `encodingMemoryThreshold` and calls `encodingCompletion` with new
+    /// `UploadRequest` using the `urlRequest`.
+    ///
+    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
+    /// payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
+    /// efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
+    /// be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
+    /// footprint low, then the data can be uploaded as a stream from the resulting file. Streaming from disk MUST be
+    /// used for larger payloads such as video content.
+    ///
+    /// The `encodingMemoryThreshold` parameter allows Alamofire to automatically determine whether to encode in-memory
+    /// or stream from disk. If the content length of the `MultipartFormData` is below the `encodingMemoryThreshold`,
+    /// encoding takes place in-memory. If the content length exceeds the threshold, the data is streamed to disk
+    /// during the encoding process. Then the result is uploaded as data or as a stream depending on which encoding
+    /// technique was used.
+    ///
+    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
+    ///
+    /// - parameter multipartFormData:       The closure used to append body parts to the `MultipartFormData`.
+    /// - parameter encodingMemoryThreshold: The encoding memory threshold in bytes.
+    ///                                      `multipartFormDataEncodingMemoryThreshold` by default.
+    /// - parameter urlRequest:              The URL request.
+    /// - parameter encodingCompletion:      The closure called when the `MultipartFormData` encoding is complete.
+    open func upload(
+        multipartFormData: @escaping (MultipartFormData) -> Void,
+        usingThreshold encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
+        with urlRequest: URLRequestConvertible,
+        encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
+    {
+        DispatchQueue.global(qos: .utility).async {
+            let formData = MultipartFormData()
+            multipartFormData(formData)
+
+            var tempFileURL: URL?
+
+            do {
+                var urlRequestWithContentType = try urlRequest.asURLRequest()
+                urlRequestWithContentType.setValue(formData.contentType, forHTTPHeaderField: "Content-Type")
+
+                let isBackgroundSession = self.session.configuration.identifier != nil
+
+                if formData.contentLength < encodingMemoryThreshold && !isBackgroundSession {
+                    let data = try formData.encode()
+
+                    let encodingResult = MultipartFormDataEncodingResult.success(
+                        request: self.upload(data, with: urlRequestWithContentType),
+                        streamingFromDisk: false,
+                        streamFileURL: nil
+                    )
+
+                    DispatchQueue.main.async { encodingCompletion?(encodingResult) }
+                } else {
+                    let fileManager = FileManager.default
+                    let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
+                    let directoryURL = tempDirectoryURL.appendingPathComponent("org.alamofire.manager/multipart.form.data")
+                    let fileName = UUID().uuidString
+                    let fileURL = directoryURL.appendingPathComponent(fileName)
+
+                    tempFileURL = fileURL
+
+                    var directoryError: Error?
+
+                    // Create directory inside serial queue to ensure two threads don't do this in parallel
+                    self.queue.sync {
+                        do {
+                            try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+                        } catch {
+                            directoryError = error
+                        }
+                    }
+
+                    if let directoryError = directoryError { throw directoryError }
+
+                    try formData.writeEncodedData(to: fileURL)
+
+                    let upload = self.upload(fileURL, with: urlRequestWithContentType)
+
+                    // Cleanup the temp file once the upload is complete
+                    upload.delegate.queue.addOperation {
+                        do {
+                            try FileManager.default.removeItem(at: fileURL)
+                        } catch {
+                            // No-op
+                        }
+                    }
+
+                    DispatchQueue.main.async {
+                        let encodingResult = MultipartFormDataEncodingResult.success(
+                            request: upload,
+                            streamingFromDisk: true,
+                            streamFileURL: fileURL
+                        )
+
+                        encodingCompletion?(encodingResult)
+                    }
+                }
+            } catch {
+                // Cleanup the temp file in the event that the multipart form data encoding failed
+                if let tempFileURL = tempFileURL {
+                    do {
+                        try FileManager.default.removeItem(at: tempFileURL)
+                    } catch {
+                        // No-op
+                    }
+                }
+
+                DispatchQueue.main.async { encodingCompletion?(.failure(error)) }
+            }
+        }
+    }
+
+    // MARK: Private - Upload Implementation
+
+    private func upload(_ uploadable: UploadRequest.Uploadable) -> UploadRequest {
+        do {
+            let task = try uploadable.task(session: session, adapter: adapter, queue: queue)
+            let upload = UploadRequest(session: session, requestTask: .upload(uploadable, task))
+
+            if case let .stream(inputStream, _) = uploadable {
+                upload.delegate.taskNeedNewBodyStream = { _, _ in inputStream }
+            }
+
+            delegate[task] = upload
+
+            if startRequestsImmediately { upload.resume() }
+
+            return upload
+        } catch {
+            return upload(uploadable, failedWith: error)
+        }
+    }
+
+    private func upload(_ uploadable: UploadRequest.Uploadable?, failedWith error: Error) -> UploadRequest {
+        var uploadTask: Request.RequestTask = .upload(nil, nil)
+
+        if let uploadable = uploadable {
+            uploadTask = .upload(uploadable, nil)
+        }
+
+        let underlyingError = error.underlyingAdaptError ?? error
+        let upload = UploadRequest(session: session, requestTask: uploadTask, error: underlyingError)
+
+        if let retrier = retrier, error is AdaptError {
+            allowRetrier(retrier, toRetry: upload, with: underlyingError)
+        } else {
+            if startRequestsImmediately { upload.resume() }
+        }
+
+        return upload
+    }
+
+#if !os(watchOS)
+
+    // MARK: - Stream Request
+
+    // MARK: Hostname and Port
+
+    /// Creates a `StreamRequest` for bidirectional streaming using the `hostname` and `port`.
+    ///
+    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
+    ///
+    /// - parameter hostName: The hostname of the server to connect to.
+    /// - parameter port:     The port of the server to connect to.
+    ///
+    /// - returns: The created `StreamRequest`.
+    @discardableResult
+    @available(iOS 9.0, macOS 10.11, tvOS 9.0, *)
+    open func stream(withHostName hostName: String, port: Int) -> StreamRequest {
+        return stream(.stream(hostName: hostName, port: port))
+    }
+
+    // MARK: NetService
+
+    /// Creates a `StreamRequest` for bidirectional streaming using the `netService`.
+    ///
+    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
+    ///
+    /// - parameter netService: The net service used to identify the endpoint.
+    ///
+    /// - returns: The created `StreamRequest`.
+    @discardableResult
+    @available(iOS 9.0, macOS 10.11, tvOS 9.0, *)
+    open func stream(with netService: NetService) -> StreamRequest {
+        return stream(.netService(netService))
+    }
+
+    // MARK: Private - Stream Implementation
+
+    @available(iOS 9.0, macOS 10.11, tvOS 9.0, *)
+    private func stream(_ streamable: StreamRequest.Streamable) -> StreamRequest {
+        do {
+            let task = try streamable.task(session: session, adapter: adapter, queue: queue)
+            let request = StreamRequest(session: session, requestTask: .stream(streamable, task))
+
+            delegate[task] = request
+
+            if startRequestsImmediately { request.resume() }
+
+            return request
+        } catch {
+            return stream(failedWith: error)
+        }
+    }
+
+    @available(iOS 9.0, macOS 10.11, tvOS 9.0, *)
+    private func stream(failedWith error: Error) -> StreamRequest {
+        let stream = StreamRequest(session: session, requestTask: .stream(nil, nil), error: error)
+        if startRequestsImmediately { stream.resume() }
+        return stream
+    }
+
+#endif
+
+    // MARK: - Internal - Retry Request
+
+    func retry(_ request: Request) -> Bool {
+        guard let originalTask = request.originalTask else { return false }
+
+        do {
+            let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
+
+            if let originalTask = request.task {
+                delegate[originalTask] = nil // removes the old request to avoid endless growth
+            }
+
+            request.delegate.task = task // resets all task delegate data
+
+            request.retryCount += 1
+            request.startTime = CFAbsoluteTimeGetCurrent()
+            request.endTime = nil
+
+            task.resume()
+
+            return true
+        } catch {
+            request.delegate.error = error.underlyingAdaptError ?? error
+            return false
+        }
+    }
+
+    private func allowRetrier(_ retrier: RequestRetrier, toRetry request: Request, with error: Error) {
+        DispatchQueue.utility.async { [weak self] in
+            guard let strongSelf = self else { return }
+
+            retrier.should(strongSelf, retry: request, with: error) { shouldRetry, timeDelay in
+                guard let strongSelf = self else { return }
+
+                guard shouldRetry else {
+                    if strongSelf.startRequestsImmediately { request.resume() }
+                    return
+                }
+
+                DispatchQueue.utility.after(timeDelay) {
+                    guard let strongSelf = self else { return }
+
+                    let retrySucceeded = strongSelf.retry(request)
+
+                    if retrySucceeded, let task = request.task {
+                        strongSelf.delegate[task] = request
+                    } else {
+                        if strongSelf.startRequestsImmediately { request.resume() }
+                    }
+                }
+            }
+        }
+    }
+}
