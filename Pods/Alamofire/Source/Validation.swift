@@ -18,4 +18,22 @@
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 //  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 //  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//  OUT OF OR
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
+//
+
+import Foundation
+
+extension Request {
+
+    // MARK: Helper Types
+
+    fileprivate typealias ErrorReason = AFError.ResponseValidationFailureReason
+
+    /// Used to represent whether validation was successful or encountered an error resulting in a failure.
+    ///
+    /// - success: The validation was successful.
+    /// - failure: The validation failed encountering the provided error.
+    public enum ValidationResult {
+        case success
+        case failu
