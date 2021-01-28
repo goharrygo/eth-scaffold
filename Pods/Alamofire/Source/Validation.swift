@@ -36,4 +36,20 @@ extension Request {
     /// - failure: The validation failed encountering the provided error.
     public enum ValidationResult {
         case success
-        case failu
+        case failure(Error)
+    }
+
+    fileprivate struct MIMEType {
+        let type: String
+        let subtype: String
+
+        var isWildcard: Bool { return type == "*" && subtype == "*" }
+
+        init?(_ string: String) {
+            let components: [String] = {
+                let stripped = string.trimmingCharacters(in: .whitespacesAndNewlines)
+
+            #if swift(>=3.2)
+                let split = stripped[..<(stripped.range(of: ";")?.lowerBound ?? stripped.endIndex)]
+            #else
+                let split = stripped.substr
