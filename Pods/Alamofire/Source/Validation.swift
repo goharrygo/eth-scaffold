@@ -52,4 +52,20 @@ extension Request {
             #if swift(>=3.2)
                 let split = stripped[..<(stripped.range(of: ";")?.lowerBound ?? stripped.endIndex)]
             #else
-                let split = stripped.substr
+                let split = stripped.substring(to: stripped.range(of: ";")?.lowerBound ?? stripped.endIndex)
+            #endif
+
+                return split.components(separatedBy: "/")
+            }()
+
+            if let type = components.first, let subtype = components.last {
+                self.type = type
+                self.subtype = subtype
+            } else {
+                return nil
+            }
+        }
+
+        func matches(_ mime: MIMEType) -> Bool {
+            switch (type, subtype) {
+            case (mime.type, mime.subtype), (mime.type, "*"), ("*", mime.subtype), ("*", 
