@@ -68,4 +68,27 @@ extension Request {
 
         func matches(_ mime: MIMEType) -> Bool {
             switch (type, subtype) {
-            case (mime.type, mime.subtype), (mime.type, "*"), ("*", mime.subtype), ("*", 
+            case (mime.type, mime.subtype), (mime.type, "*"), ("*", mime.subtype), ("*", "*"):
+                return true
+            default:
+                return false
+            }
+        }
+    }
+
+    // MARK: Properties
+
+    fileprivate var acceptableStatusCodes: [Int] { return Array(200..<300) }
+
+    fileprivate var acceptableContentTypes: [String] {
+        if let accept = request?.value(forHTTPHeaderField: "Accept") {
+            return accept.components(separatedBy: ",")
+        }
+
+        return ["*/*"]
+    }
+
+    // MARK: Status Code
+
+    fileprivate func validate<S: Sequence>(
+        statusCode acceptableStatusCodes: S
