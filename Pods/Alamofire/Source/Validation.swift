@@ -91,4 +91,22 @@ extension Request {
     // MARK: Status Code
 
     fileprivate func validate<S: Sequence>(
-        statusCode acceptableStatusCodes: S
+        statusCode acceptableStatusCodes: S,
+        response: HTTPURLResponse)
+        -> ValidationResult
+        where S.Iterator.Element == Int
+    {
+        if acceptableStatusCodes.contains(response.statusCode) {
+            return .success
+        } else {
+            let reason: ErrorReason = .unacceptableStatusCode(code: response.statusCode)
+            return .failure(AFError.responseValidationFailed(reason: reason))
+        }
+    }
+
+    // MARK: Content Type
+
+    fileprivate func validate<S: Sequence>(
+        contentType acceptableContentTypes: S,
+        response: HTTPURLResponse,
+        data: Dat
