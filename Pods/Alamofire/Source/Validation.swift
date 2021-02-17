@@ -141,4 +141,22 @@ extension Request {
 
         let error: AFError = {
             let reason: ErrorReason = .unacceptableContentType(
-                a
+                acceptableContentTypes: Array(acceptableContentTypes),
+                responseContentType: responseContentType
+            )
+
+            return AFError.responseValidationFailed(reason: reason)
+        }()
+
+        return .failure(error)
+    }
+}
+
+// MARK: -
+
+extension DataRequest {
+    /// A closure used to validate a request that takes a URL request, a URL response and data, and returns whether the
+    /// request was valid.
+    public typealias Validation = (URLRequest?, HTTPURLResponse, Data?) -> ValidationResult
+
+    /// Validates the request, using the
