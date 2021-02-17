@@ -126,4 +126,19 @@ extension Request {
             }
 
             let error: AFError = {
-                let reason: Erro
+                let reason: ErrorReason = .missingContentType(acceptableContentTypes: Array(acceptableContentTypes))
+                return AFError.responseValidationFailed(reason: reason)
+            }()
+
+            return .failure(error)
+        }
+
+        for contentType in acceptableContentTypes {
+            if let acceptableMIMEType = MIMEType(contentType), acceptableMIMEType.matches(responseMIMEType) {
+                return .success
+            }
+        }
+
+        let error: AFError = {
+            let reason: ErrorReason = .unacceptableContentType(
+                a
