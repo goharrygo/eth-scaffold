@@ -159,4 +159,17 @@ extension DataRequest {
     /// request was valid.
     public typealias Validation = (URLRequest?, HTTPURLResponse, Data?) -> ValidationResult
 
-    /// Validates the request, using the
+    /// Validates the request, using the specified closure.
+    ///
+    /// If validation fails, subsequent calls to response handlers will have an associated error.
+    ///
+    /// - parameter validation: A closure to validate the request.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    public func validate(_ validation: @escaping Validation) -> Self {
+        let validationExecution: () -> Void = { [unowned self] in
+            if
+                let response = self.response,
+                self.delegate.error == nil,
+                case let .
