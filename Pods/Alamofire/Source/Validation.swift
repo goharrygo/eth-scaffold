@@ -109,4 +109,21 @@ extension Request {
     fileprivate func validate<S: Sequence>(
         contentType acceptableContentTypes: S,
         response: HTTPURLResponse,
-        data: Dat
+        data: Data?)
+        -> ValidationResult
+        where S.Iterator.Element == String
+    {
+        guard let data = data, data.count > 0 else { return .success }
+
+        guard
+            let responseContentType = response.mimeType,
+            let responseMIMEType = MIMEType(responseContentType)
+        else {
+            for contentType in acceptableContentTypes {
+                if let mimeType = MIMEType(contentType), mimeType.isWildcard {
+                    return .success
+                }
+            }
+
+            let error: AFError = {
+                let reason: Erro
