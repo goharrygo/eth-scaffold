@@ -199,4 +199,16 @@ extension DataRequest {
 
     /// Validates that the response has a content type in the specified sequence.
     ///
-    /// If validation fails, subsequent calls to response handlers will have an associat
+    /// If validation fails, subsequent calls to response handlers will have an associated error.
+    ///
+    /// - parameter contentType: The acceptable content types, which may specify wildcard types and/or subtypes.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    public func validate<S: Sequence>(contentType acceptableContentTypes: S) -> Self where S.Iterator.Element == String {
+        return validate { [unowned self] _, response, data in
+            return self.validate(contentType: acceptableContentTypes, response: response, data: data)
+        }
+    }
+
+    /// Validates that the response has a status code
