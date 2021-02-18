@@ -172,4 +172,19 @@ extension DataRequest {
             if
                 let response = self.response,
                 self.delegate.error == nil,
-                case let .
+                case let .failure(error) = validation(self.request, response, self.delegate.data)
+            {
+                self.delegate.error = error
+            }
+        }
+
+        validations.append(validationExecution)
+
+        return self
+    }
+
+    /// Validates that the response has a status code in the specified sequence.
+    ///
+    /// If validation fails, subsequent calls to response handlers will have an associated error.
+    ///
+    /// - parameter range: The range of acceptable status code
