@@ -187,4 +187,16 @@ extension DataRequest {
     ///
     /// If validation fails, subsequent calls to response handlers will have an associated error.
     ///
-    /// - parameter range: The range of acceptable status code
+    /// - parameter range: The range of acceptable status codes.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    public func validate<S: Sequence>(statusCode acceptableStatusCodes: S) -> Self where S.Iterator.Element == Int {
+        return validate { [unowned self] _, response, _ in
+            return self.validate(statusCode: acceptableStatusCodes, response: response)
+        }
+    }
+
+    /// Validates that the response has a content type in the specified sequence.
+    ///
+    /// If validation fails, subsequent calls to response handlers will have an associat
