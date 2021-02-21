@@ -211,4 +211,19 @@ extension DataRequest {
         }
     }
 
-    /// Validates that the response has a status code
+    /// Validates that the response has a status code in the default acceptable range of 200...299, and that the content
+    /// type matches any specified in the Accept HTTP header field.
+    ///
+    /// If validation fails, subsequent calls to response handlers will have an associated error.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    public func validate() -> Self {
+        return validate(statusCode: self.acceptableStatusCodes).validate(contentType: self.acceptableContentTypes)
+    }
+}
+
+// MARK: -
+
+extension DownloadRequest {
+    /// A closure used 
