@@ -269,4 +269,16 @@ extension DownloadRequest {
     ///
     /// - parameter range: The range of acceptable status codes.
     ///
-    /// - retu
+    /// - returns: The request.
+    @discardableResult
+    public func validate<S: Sequence>(statusCode acceptableStatusCodes: S) -> Self where S.Iterator.Element == Int {
+        return validate { [unowned self] _, response, _, _ in
+            return self.validate(statusCode: acceptableStatusCodes, response: response)
+        }
+    }
+
+    /// Validates that the response has a content type in the specified sequence.
+    ///
+    /// If validation fails, subsequent calls to response handlers will have an associated error.
+    ///
+    /// - par
