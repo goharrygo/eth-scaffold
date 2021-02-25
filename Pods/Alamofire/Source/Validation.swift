@@ -290,4 +290,16 @@ extension DownloadRequest {
             let fileURL = self.downloadDelegate.fileURL
 
             guard let validFileURL = fileURL else {
-                return .failure(AFError.responseValidationFail
+                return .failure(AFError.responseValidationFailed(reason: .dataFileNil))
+            }
+
+            do {
+                let data = try Data(contentsOf: validFileURL)
+                return self.validate(contentType: acceptableContentTypes, response: response, data: data)
+            } catch {
+                return .failure(AFError.responseValidationFailed(reason: .dataFileReadFailed(at: validFileURL)))
+            }
+        }
+    }
+
+    /// Validates that the response has a status code in the default acceptable range of 200...299, and that the 
