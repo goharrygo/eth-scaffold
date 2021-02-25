@@ -281,4 +281,13 @@ extension DownloadRequest {
     ///
     /// If validation fails, subsequent calls to response handlers will have an associated error.
     ///
-    /// - par
+    /// - parameter contentType: The acceptable content types, which may specify wildcard types and/or subtypes.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    public func validate<S: Sequence>(contentType acceptableContentTypes: S) -> Self where S.Iterator.Element == String {
+        return validate { [unowned self] _, response, _, _ in
+            let fileURL = self.downloadDelegate.fileURL
+
+            guard let validFileURL = fileURL else {
+                return .failure(AFError.responseValidationFail
