@@ -158,3 +158,289 @@ Run `carthage` to build the framework and drag the built CryptoSwift.framework i
 #### Swift Package Manager
 
 You can use [Swift Package Manager](https://swift.org/package-manager/) and specify dependency in `Package.swift` by adding this:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMinor(from: "0.8.0"))
+]
+```
+
+or more strict
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .exact("0.8.0"))
+]
+```
+
+See: [Package.swift - manual](http://blog.krzyzanowskim.com/2016/08/09/package-swift-manual/)
+ 
+## Usage
+
+* [Basics (data types, conversion, ...)](#basics)
+* [Digest (MD5, SHA...)](#calculate-digest)
+* [Message authenticators (HMAC, CMAC...)](#message-authenticators-1)
+* [Password-Based Key Derivation Function (PBKDF2, ...)](#password-based-key-derivation-functions)
+* [HMAC-based Key Derivation Function (HKDF)](#hmac-based-key-derivation-function)
+* [Data Padding](#data-padding)
+* [ChaCha20](#chacha20)
+* [Rabbit](#rabbit)
+* [Blowfish](#blowfish)
+* [Advanced Encryption Standard (AES)](#aes)
+* [Authenticated Encryption with Associated Data (AEAD)](#aead)
+
+also check [Playground](/CryptoSwift.playground/Contents.swift)
+
+##### Basics
+
+```swift
+import CryptoSwift
+```
+
+CryptoSwift uses array of bytes aka `Array<UInt8>` as a base type for all operations. Every data may be converted to a stream of bytes. You will find convenience functions that accept `String` or `Data`, and it will be internally converted to the array of bytes.
+
+##### Data types conversion
+
+For you convenience **CryptoSwift** provides two functions to easily convert array of bytes to `Data` and another way around:
+
+Data from bytes:
+
+```swift
+let data = Data(bytes: [0x01, 0x02, 0x03])
+```
+
+`Data` to `Array<UInt8>`
+
+```swift
+let bytes = data.bytes                     // [1,2,3]
+```
+
+[Hexadecimal](https://en.wikipedia.org/wiki/Hexadecimal) encoding:
+
+```swift
+let bytes = Array<UInt8>(hex: "0x010203")  // [1,2,3]
+let hex   = bytes.toHexString()            // "010203"
+```
+
+Build bytes out of `String`
+```swift
+let bytes: Array<UInt8> = "password".bytes  // Array("password".utf8)
+```
+
+Also... check out helpers that work with **Base64** encoded data:
+```swift
+"aPf/i9th9iX+vf49eR7PYk2q7S5xmm3jkRLejgzHNJs=".decryptBase64ToString(cipher)
+"aPf/i9th9iX+vf49eR7PYk2q7S5xmm3jkRLejgzHNJs=".decryptBase64(cipher)
+bytes.toBase64()
+```
+
+##### Calculate Digest
+
+Hashing a data or array of bytes (aka `Array<UInt8>`)
+```swift
+/* Hash struct usage */
+let bytes:Array<UInt8> = [0x01, 0x02, 0x03]
+let digest = input.md5()
+let digest = Digest.md5(bytes)
+```
+
+```swift
+let data = Data(bytes: [0x01, 0x02, 0x03])
+
+let hash = data.md5()
+let hash = data.sha1()
+let hash = data.sha224()
+let hash = data.sha256()
+let hash = data.sha384()
+let hash = data.sha512()    
+```
+```swift
+do {
+    var digest = MD5()
+    let partial1 = try digest.update(withBytes: [0x31, 0x32])
+    let partial2 = try digest.update(withBytes: [0x33])
+    let result = try digest.finish()
+} catch { }
+```
+    
+Hashing a String and printing result
+
+```swift
+let hash = "123".md5() // "123".bytes.md5()
+```
+
+##### Calculate CRC
+
+```swift
+bytes.crc16()
+data.crc16()
+
+bytes.crc32()
+data.crc32()
+```
+
+##### Message authenticators
+
+```swift
+// Calculate Message Authentication Code (MAC) for message
+let key:Array<UInt8> = [1,2,3,4,5,6,7,8,9,10,...]
+
+try Poly1305(key: key).authenticate(bytes)
+try HMAC(key: key, variant: .sha256).authenticate(bytes)
+try CMAC(key: key).authenticate(bytes)
+```
+
+##### Password-Based Key Derivation Functions
+
+```swift
+let password: Array<UInt8> = Array("s33krit".utf8)
+let salt: Array<UInt8> = Array("nacllcan".utf8)
+
+try PKCS5.PBKDF2(password: password, salt: salt, iterations: 4096, variant: .sha256).calculate()
+```
+
+##### HMAC-based Key Derivation Function
+
+```swift
+let password: Array<UInt8> = Array("s33krit".utf8)
+let salt: Array<UInt8> = Array("nacllcan".utf8)
+
+try HKDF(password: password, salt: salt, variant: .sha256).calculate()
+```
+
+##### Data Padding
+    
+Some content-encryption algorithms assume the input length is a multiple of `k` octets, where `k` is greater than one. For such algorithms, the input shall be padded.
+
+```swift
+Padding.pkcs7.add(to: bytes, blockSize: AES.blockSize)
+```
+
+#### Working with Ciphers
+##### ChaCha20
+
+```swift
+let encrypted = try ChaCha20(key: key, iv: iv).encrypt(message)
+let decrypted = try ChaCha20(key: key, iv: iv).decrypt(encrypted)
+```
+
+##### Rabbit
+
+```swift
+let encrypted = try Rabbit(key: key, iv: iv).encrypt(message)
+let decrypted = try Rabbit(key: key, iv: iv).decrypt(encrypted)
+```
+##### Blowfish
+
+```swift
+let encrypted = try Blowfish(key: key, blockMode: .CBC(iv: iv), padding: .pkcs7).encrypt(message)
+let decrypted = try Blowfish(key: key, blockMode: .CBC(iv: iv), padding: .pkcs7).decrypt(encrypted)
+```
+
+##### AES
+
+Notice regarding padding: *Manual padding of data is optional, and CryptoSwift is using PKCS7 padding by default. If you need manually disable/enable padding, you can do this by setting parameter for __AES__ class*
+
+Variant of AES encryption (AES-128, AES-192, AES-256) depends on given key length:
+
+- AES-128 = 16 bytes
+- AES-192 = 24 bytes
+- AES-256 = 32 bytes
+
+AES-256 example
+```swift
+try AES(key: [1,2,3,...,32], blockMode: .CBC(iv: [1,2,3,...,16]), padding: .pkcs7)
+```
+
+###### All at once
+```swift
+do {
+    let aes = try AES(key: "passwordpassword", iv: "drowssapdrowssap") // aes128
+    let ciphertext = try aes.encrypt(Array("Nullam quis risus eget urna mollis ornare vel eu leo.".utf8))
+} catch { }
+```
+
+###### Incremental updates
+
+Incremental operations use instance of Cryptor and encrypt/decrypt one part at a time, this way you can save on memory for large files. 
+
+```swift
+do {
+    var encryptor = try AES(key: "passwordpassword", iv: "drowssapdrowssap").makeEncryptor()
+
+    var ciphertext = Array<UInt8>()
+    // aggregate partial results
+    ciphertext += try encryptor.update(withBytes: Array("Nullam quis risus ".utf8))
+    ciphertext += try encryptor.update(withBytes: Array("eget urna mollis ".utf8))
+    ciphertext += try encryptor.update(withBytes: Array("ornare vel eu leo.".utf8))
+    // finish at the end
+    ciphertext += try encryptor.finish()
+
+    print(ciphertext.toHexString())
+} catch {
+    print(error)
+}
+```
+
+See [Playground](/CryptoSwift.playground/Contents.swift) for sample code that work with stream.
+
+###### AES Advanced usage
+```swift
+let input: Array<UInt8> = [0,1,2,3,4,5,6,7,8,9]
+
+let key: Array<UInt8> = [0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00]
+let iv: Array<UInt8> = AES.randomIV(AES.blockSize)
+
+do {
+    let encrypted = try AES(key: key, blockMode: .CBC(iv: iv), padding: .pkcs7).encrypt(input)
+    let decrypted = try AES(key: key, blockMode: .CBC(iv: iv), padding: .pkcs7).decrypt(encrypted)
+} catch {
+    print(error)
+}    
+```
+    
+AES without data padding
+
+```swift
+let input: Array<UInt8> = [0,1,2,3,4,5,6,7,8,9]
+let encrypted: Array<UInt8> = try! AES(key: Array("secret0key000000".utf8), blockMode: .CBC(iv: Array("0123456789012345".utf8)), padding: .noPadding).encrypt(input)
+```
+
+Using convenience extensions
+    
+```swift
+let plain = Data(bytes: [0x01, 0x02, 0x03])
+let encrypted = try! plain.encrypt(ChaCha20(key: key, iv: iv))
+let decrypted = try! encrypted.decrypt(ChaCha20(key: key, iv: iv))
+```
+
+##### AEAD
+
+```swift
+let encrypt = try AEADChaCha20Poly1305.encrypt(plaintext, key: key, iv: nonce, authenticationHeader: header)
+let decrypt = try AEADChaCha20Poly1305.decrypt(ciphertext, key: key, iv: nonce, authenticationHeader: header, authenticationTag: tagArr: tag)
+```
+
+## Author
+
+CryptoSwift is owned and maintained by [Marcin Krzyżanowski](http://www.krzyzanowskim.com)
+
+You can follow me on Twitter at [@krzyzanowskim](http://twitter.com/krzyzanowskim) for project updates and releases.
+
+## License
+
+Copyright (C) 2014-2017 Marcin Krzyżanowski <marcin@krzyzanowskim.com>
+This software is provided 'as-is', without any express or implied warranty. 
+
+In no event will the authors be held liable for any damages arising from the use of this software. 
+
+Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
+
+- The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, **an acknowledgment in the product documentation is required**.
+- Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+- This notice may not be removed or altered from any source or binary distribution.
+- Redistributions of any form whatsoever must retain the following acknowledgment: 'This product includes software developed by the "Marcin Krzyzanowski" (http://krzyzanowskim.com/).'
+
+## Changelog
+
+See [CHANGELOG](./CHANGELOG) file.
