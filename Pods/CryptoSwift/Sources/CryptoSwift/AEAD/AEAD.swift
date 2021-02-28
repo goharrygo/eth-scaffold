@@ -35,4 +35,6 @@ extension AEAD {
         mac += UInt64(bigEndian: UInt64(authenticationHeader.count)).bytes()
         mac += UInt64(bigEndian: UInt64(cipherText.count)).bytes()
 
-        return try authenticator.authenti
+        return try authenticator.authenticate(mac)
+    }
+}
