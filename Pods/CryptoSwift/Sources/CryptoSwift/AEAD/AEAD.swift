@@ -10,4 +10,18 @@
 //  Permission is granted to anyone to use this software for any purpose,including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
 //
 //  - The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation is required.
-//  - Altered source versions must be plainly marked as s
+//  - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+//  - This notice may not be removed or altered from any source or binary distribution.
+//
+//
+
+// https://www.iana.org/assignments/aead-parameters/aead-parameters.xhtml
+
+/// Authenticated Encryption with Associated Data (AEAD)
+public protocol AEAD {
+    static var kLen: Int { get } // key length
+    static var ivRange: Range<Int> { get } // nonce length
+}
+
+extension AEAD {
+    static func calculateAuthenticationTag(authenticator: Authenticator, cipherText: Array<UInt8>, authenticationH
