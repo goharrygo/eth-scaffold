@@ -27,4 +27,16 @@ public final class AEADChaCha20Poly1305: AEAD {
 
         var polykey = Array<UInt8>(repeating: 0, count: kLen)
         var toEncrypt = polykey
-        polykey = try cipher.encrypt(polyke
+        polykey = try cipher.encrypt(polykey)
+        toEncrypt += polykey
+        toEncrypt += plainText
+
+        let fullCipherText = try cipher.encrypt(toEncrypt)
+        let cipherText = Array(fullCipherText.dropFirst(64))
+
+        let tag = try calculateAuthenticationTag(authenticator: Poly1305(key: polykey), cipherText: cipherText, authenticationHeader: authenticationHeader)
+        return (cipherText, tag)
+    }
+
+    /// Authenticated decryption
+    public static func decrypt(_ cipherText: Array<UInt8>, key: Array<UInt8>, iv: Array<UInt8>, authenticationHeader: Array<UInt8>,
