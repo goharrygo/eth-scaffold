@@ -9,4 +9,12 @@
 //
 //  Permission is granted to anyone to use this software for any purpose,including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
 //
-//  - The origin of this 
+//  - The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation is required.
+//  - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+//  - This notice may not be removed or altered from any source or binary distribution.
+//
+//
+//  https://tools.ietf.org/html/rfc7539#section-2.8.1
+
+/// AEAD_CHACHA20_POLY1305
+public final class AEADChaCha20Poly1305: AEAD
