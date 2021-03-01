@@ -17,4 +17,14 @@
 //  https://tools.ietf.org/html/rfc7539#section-2.8.1
 
 /// AEAD_CHACHA20_POLY1305
-public final class AEADChaCha20Poly1305: AEAD
+public final class AEADChaCha20Poly1305: AEAD {
+    public static let kLen = 32 // key length
+    public static var ivRange = Range<Int>(12...12)
+
+    /// Authenticated encryption
+    public static func encrypt(_ plainText: Array<UInt8>, key: Array<UInt8>, iv: Array<UInt8>, authenticationHeader: Array<UInt8>) throws -> (cipherText: Array<UInt8>, authenticationTag: Array<UInt8>) {
+        let cipher = try ChaCha20(key: key, iv: iv)
+
+        var polykey = Array<UInt8>(repeating: 0, count: kLen)
+        var toEncrypt = polykey
+        polykey = try cipher.encrypt(polyke
