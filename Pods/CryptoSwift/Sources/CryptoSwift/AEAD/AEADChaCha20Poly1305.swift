@@ -50,4 +50,10 @@ public final class AEADChaCha20Poly1305: AEAD {
 
         var toDecrypt = Array<UInt8>(reserveCapacity: cipherText.count + 64)
         toDecrypt += polykey
-      
+        toDecrypt += polykey
+        toDecrypt += cipherText
+        let fullPlainText = try chacha.decrypt(toDecrypt)
+        let plainText = Array(fullPlainText.dropFirst(64))
+        return (plainText, true)
+    }
+}
