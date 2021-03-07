@@ -74,4 +74,17 @@ extension AES {
         private let paddingRequired: Bool
 
         private var offset: Int = 0
-        private var offsetToRemove: 
+        private var offsetToRemove: Int = 0
+
+        init(aes: AES) throws {
+            padding = aes.padding
+
+            switch aes.blockMode {
+            case .CFB, .OFB, .CTR:
+                // CFB, OFB, CTR uses encryptBlock to decrypt
+                worker = try aes.blockMode.worker(blockSize: AES.blockSize, cipherOperation: aes.encrypt)
+            default:
+                worker = try aes.blockMode.worker(blockSize: AES.blockSize, cipherOperation: aes.decrypt)
+            }
+
+            paddingRequired = aes.blockMode.opt
