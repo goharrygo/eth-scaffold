@@ -56,4 +56,22 @@ extension AES {
                     processedBytes += chunk.count
                 }
             }
-            accumulat
+            accumulated.removeFirst(processedBytes)
+            processedBytesTotalCount += processedBytes
+            return encrypted
+        }
+    }
+}
+
+// MARK: Decryptor
+
+extension AES {
+    public struct Decryptor: RandomAccessCryptor {
+        private var worker: BlockModeWorker
+        private let padding: Padding
+        private var accumulated = Array<UInt8>()
+        private var processedBytesTotalCount: Int = 0
+        private let paddingRequired: Bool
+
+        private var offset: Int = 0
+        private var offsetToRemove: 
