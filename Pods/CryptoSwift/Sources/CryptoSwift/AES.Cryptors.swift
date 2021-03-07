@@ -43,3 +43,17 @@ extension AES {
 
         public mutating func update(withBytes bytes: ArraySlice<UInt8>, isLast: Bool = false) throws -> Array<UInt8> {
             accumulated += bytes
+
+            if isLast {
+                accumulated = padding.add(to: accumulated, blockSize: AES.blockSize)
+            }
+
+            var processedBytes = 0
+            var encrypted = Array<UInt8>(reserveCapacity: accumulated.count)
+            for chunk in accumulated.batched(by: AES.blockSize) {
+                if isLast || (accumulated.count - processedBytes) >= AES.blockSize {
+                    encrypted += worker.encrypt(chunk)
+                    processedBytes += chunk.count
+                }
+            }
+            accumulat
