@@ -31,4 +31,15 @@ extension AES {
     public struct Encryptor: Updatable {
         private var worker: BlockModeWorker
         private let padding: Padding
-        private var 
+        private var accumulated = Array<UInt8>()
+        private var processedBytesTotalCount: Int = 0
+        private let paddingRequired: Bool
+
+        init(aes: AES) throws {
+            padding = aes.padding
+            worker = try aes.blockMode.worker(blockSize: AES.blockSize, cipherOperation: aes.encrypt)
+            paddingRequired = aes.blockMode.options.contains(.paddingRequired)
+        }
+
+        public mutating func update(withBytes bytes: ArraySlice<UInt8>, isLast: Bool = false) throws -> Array<UInt8> {
+            accumulated += bytes
