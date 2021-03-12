@@ -87,4 +87,18 @@ extension AES {
                 worker = try aes.blockMode.worker(blockSize: AES.blockSize, cipherOperation: aes.decrypt)
             }
 
-            paddingRequired = aes.blockMode.opt
+            paddingRequired = aes.blockMode.options.contains(.paddingRequired)
+        }
+
+        public mutating func update(withBytes bytes: ArraySlice<UInt8>, isLast: Bool = false) throws -> Array<UInt8> {
+            // prepend "offset" number of bytes at the beginning
+            if offset > 0 {
+                accumulated += Array<UInt8>(repeating: 0, count: offset) + bytes
+                offsetToRemove = offset
+                offset = 0
+            } else {
+                accumulated += bytes
+            }
+
+            var processedBytes = 0
+       
