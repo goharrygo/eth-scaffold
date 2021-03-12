@@ -112,4 +112,19 @@ extension AES {
                         offsetToRemove = 0
                     }
 
-                   
+                    processedBytes += chunk.count
+                }
+            }
+            accumulated.removeFirst(processedBytes)
+            processedBytesTotalCount += processedBytes
+
+            if isLast {
+                plaintext = padding.remove(from: plaintext, blockSize: AES.blockSize)
+            }
+
+            return plaintext
+        }
+
+        @discardableResult public mutating func seek(to position: Int) -> Bool {
+            guard var worker = self.worker as? RandomAccessBlockModeWorker else {
+                return fal
