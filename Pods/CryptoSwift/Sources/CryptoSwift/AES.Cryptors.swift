@@ -101,4 +101,15 @@ extension AES {
             }
 
             var processedBytes = 0
-       
+            var plaintext = Array<UInt8>(reserveCapacity: accumulated.count)
+            for chunk in accumulated.batched(by: AES.blockSize) {
+                if isLast || (accumulated.count - processedBytes) >= AES.blockSize {
+                    plaintext += worker.decrypt(chunk)
+
+                    // remove "offset" from the beginning of first chunk
+                    if offsetToRemove > 0 {
+                        plaintext.removeFirst(offsetToRemove)
+                        offsetToRemove = 0
+                    }
+
+                   
