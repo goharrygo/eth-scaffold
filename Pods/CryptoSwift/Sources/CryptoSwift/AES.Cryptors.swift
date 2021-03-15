@@ -127,4 +127,17 @@ extension AES {
 
         @discardableResult public mutating func seek(to position: Int) -> Bool {
             guard var worker = self.worker as? RandomAccessBlockModeWorker else {
-                return fal
+                return false
+            }
+
+            worker.counter = UInt(position / AES.blockSize)
+            self.worker = worker
+
+            offset = position % AES.blockSize
+
+            accumulated = []
+
+            return true
+        }
+    }
+}
