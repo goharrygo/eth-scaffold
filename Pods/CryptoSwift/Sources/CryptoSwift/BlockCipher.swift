@@ -1,3 +1,4 @@
+
 //
 //  CryptoSwift
 //
@@ -13,13 +14,6 @@
 //  - This notice may not be removed or altered from any source or binary distribution.
 //
 
-public enum Bit: Int {
-    case zero
-    case one
-}
-
-extension Bit {
-    func inverted() -> Bit {
-        return self == .zero ? .one : .zero
-    }
+protocol BlockCipher: Cipher {
+    static var blockSize: Int { get }
 }

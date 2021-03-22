@@ -1,3 +1,4 @@
+
 //
 //  CryptoSwift
 //
@@ -13,13 +14,10 @@
 //  - This notice may not be removed or altered from any source or binary distribution.
 //
 
-public enum Bit: Int {
-    case zero
-    case one
-}
+struct BlockModeOptions: OptionSet {
+    let rawValue: Int
 
-extension Bit {
-    func inverted() -> Bit {
-        return self == .zero ? .one : .zero
-    }
+    static let none = BlockModeOptions(rawValue: 1 << 0)
+    static let initializationVectorRequired = BlockModeOptions(rawValue: 1 << 1)
+    static let paddingRequired = BlockModeOptions(rawValue: 1 << 2)
 }
