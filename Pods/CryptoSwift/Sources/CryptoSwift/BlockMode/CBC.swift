@@ -34,4 +34,12 @@ struct CBCModeWorker: BlockModeWorker {
         return ciphertext
     }
 
-    mutating func decrypt(_
+    mutating func decrypt(_ ciphertext: ArraySlice<UInt8>) -> Array<UInt8> {
+        guard let plaintext = cipherOperation(ciphertext) else {
+            return Array(ciphertext)
+        }
+        let result: Array<UInt8> = xor(prev ?? iv, plaintext)
+        prev = ciphertext
+        return result
+    }
+}
