@@ -37,4 +37,15 @@ struct CTRModeWorker: RandomAccessBlockModeWorker {
         return xor(plaintext, ciphertext)
     }
 
-    mutating func decrypt(_ ciphertext: ArraySlice<UInt8>) -> Array<U
+    mutating func decrypt(_ ciphertext: ArraySlice<UInt8>) -> Array<UInt8> {
+        return encrypt(ciphertext)
+    }
+}
+
+private func buildNonce(_ iv: ArraySlice<UInt8>, counter: UInt64) -> Array<UInt8> {
+    let noncePartLen = AES.blockSize / 2
+    let noncePrefix = Array(iv[iv.startIndex..<iv.startIndex.advanced(by: noncePartLen)])
+    let nonceSuffix = Array(iv[iv.startIndex.advanced(by: noncePartLen)..<iv.startIndex.advanced(by: iv.count)])
+    let c = UInt64(bytes: nonceSuffix) + counter
+    return noncePrefix + c.bytes()
+}
