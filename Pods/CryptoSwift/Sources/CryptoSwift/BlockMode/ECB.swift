@@ -21,4 +21,17 @@ struct ECBModeWorker: BlockModeWorker {
     let cipherOperation: CipherOperationOnBlock
 
     init(cipherOperation: @escaping CipherOperationOnBlock) {
-        self.cipherOperati
+        self.cipherOperation = cipherOperation
+    }
+
+    mutating func encrypt(_ plaintext: ArraySlice<UInt8>) -> Array<UInt8> {
+        guard let ciphertext = cipherOperation(plaintext) else {
+            return Array(plaintext)
+        }
+        return ciphertext
+    }
+
+    mutating func decrypt(_ ciphertext: ArraySlice<UInt8>) -> Array<UInt8> {
+        return encrypt(ciphertext)
+    }
+}
