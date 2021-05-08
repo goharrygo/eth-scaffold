@@ -51,4 +51,20 @@ public final class CMAC: Authenticator {
         if blockCount == 0 {
             lastBlockComplete = false
         } else {
-    
+            lastBlockComplete = bytes.count % CMAC.BlockSize == 0
+        }
+        var paddedBytes = bytes
+        if !lastBlockComplete {
+            bitPadding(to: &paddedBytes, blockSize: CMAC.BlockSize)
+        }
+
+        var blocks = Array(paddedBytes.batched(by: CMAC.BlockSize))
+        var lastBlock = blocks.popLast()!
+        if lastBlockComplete {
+            lastBlock = xor(lastBlock, subKey1)
+        } else {
+            lastBlock = xor(lastBlock, subKey2)
+        }
+
+        var x = Array<UInt8>(repeating: 0x00, count: CMAC.BlockSize)
+  
