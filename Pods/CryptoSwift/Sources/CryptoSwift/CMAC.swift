@@ -67,4 +67,21 @@ public final class CMAC: Authenticator {
         }
 
         var x = Array<UInt8>(repeating: 0x00, count: CMAC.BlockSize)
-  
+        var y = Array<UInt8>(repeating: 0x00, count: CMAC.BlockSize)
+        for block in blocks {
+            y = xor(block, x)
+            x = try aes.encrypt(y)
+        }
+        y = xor(lastBlock, x)
+        return try aes.encrypt(y)
+    }
+
+    // MARK: Helper methods
+
+    /**
+     Performs left shift by one bit to the bit string aquired after concatenating al bytes in the byte array
+     - parameters:
+     - bytes: byte array
+     - returns: bit shifted bit string split again in array of bytes
+     */
+    private func leftShiftOneBit(_ bytes: Array<U
