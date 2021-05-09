@@ -84,4 +84,16 @@ public final class CMAC: Authenticator {
      - bytes: byte array
      - returns: bit shifted bit string split again in array of bytes
      */
-    private func leftShiftOneBit(_ bytes: Array<U
+    private func leftShiftOneBit(_ bytes: Array<UInt8>) -> Array<UInt8> {
+        var shifted = Array<UInt8>(repeating: 0x00, count: bytes.count)
+        let last = bytes.count - 1
+        for index in 0..<last {
+            shifted[index] = bytes[index] << 1
+            if (bytes[index + 1] & 0x80) != 0 {
+                shifted[index] += 0x01
+            }
+        }
+        shifted[last] = bytes[last] << 1
+        return shifted
+    }
+}
