@@ -110,3 +110,228 @@ public final class ChaCha20: BlockCipher {
             x10 = x10 &+ x14
             x6 ^= x10
             x6 = (x6 << 7) | (x6 >> 25)
+            x3 = x3 &+ x7
+            x15 ^= x3
+            x15 = (x15 << 16) | (x15 >> 16)
+            x11 = x11 &+ x15
+            x7 ^= x11
+            x7 = (x7 << 12) | (x7 >> 20)
+            x3 = x3 &+ x7
+            x15 ^= x3
+            x15 = (x15 << 8) | (x15 >> 24)
+            x11 = x11 &+ x15
+            x7 ^= x11
+            x7 = (x7 << 7) | (x7 >> 25)
+            x0 = x0 &+ x5
+            x15 ^= x0
+            x15 = (x15 << 16) | (x15 >> 16)
+            x10 = x10 &+ x15
+            x5 ^= x10
+            x5 = (x5 << 12) | (x5 >> 20)
+            x0 = x0 &+ x5
+            x15 ^= x0
+            x15 = (x15 << 8) | (x15 >> 24)
+            x10 = x10 &+ x15
+            x5 ^= x10
+            x5 = (x5 << 7) | (x5 >> 25)
+            x1 = x1 &+ x6
+            x12 ^= x1
+            x12 = (x12 << 16) | (x12 >> 16)
+            x11 = x11 &+ x12
+            x6 ^= x11
+            x6 = (x6 << 12) | (x6 >> 20)
+            x1 = x1 &+ x6
+            x12 ^= x1
+            x12 = (x12 << 8) | (x12 >> 24)
+            x11 = x11 &+ x12
+            x6 ^= x11
+            x6 = (x6 << 7) | (x6 >> 25)
+            x2 = x2 &+ x7
+            x13 ^= x2
+            x13 = (x13 << 16) | (x13 >> 16)
+            x8 = x8 &+ x13
+            x7 ^= x8
+            x7 = (x7 << 12) | (x7 >> 20)
+            x2 = x2 &+ x7
+            x13 ^= x2
+            x13 = (x13 << 8) | (x13 >> 24)
+            x8 = x8 &+ x13
+            x7 ^= x8
+            x7 = (x7 << 7) | (x7 >> 25)
+            x3 = x3 &+ x4
+            x14 ^= x3
+            x14 = (x14 << 16) | (x14 >> 16)
+            x9 = x9 &+ x14
+            x4 ^= x9
+            x4 = (x4 << 12) | (x4 >> 20)
+            x3 = x3 &+ x4
+            x14 ^= x3
+            x14 = (x14 << 8) | (x14 >> 24)
+            x9 = x9 &+ x14
+            x4 ^= x9
+            x4 = (x4 << 7) | (x4 >> 25)
+        }
+
+        x0 = x0 &+ j0
+        x1 = x1 &+ j1
+        x2 = x2 &+ j2
+        x3 = x3 &+ j3
+        x4 = x4 &+ j4
+        x5 = x5 &+ j5
+        x6 = x6 &+ j6
+        x7 = x7 &+ j7
+        x8 = x8 &+ j8
+        x9 = x9 &+ j9
+        x10 = x10 &+ j10
+        x11 = x11 &+ j11
+        x12 = x12 &+ j12
+        x13 = x13 &+ j13
+        x14 = x14 &+ j14
+        x15 = x15 &+ j15
+
+        block.replaceSubrange(0..<4, with: x0.bigEndian.bytes())
+        block.replaceSubrange(4..<8, with: x1.bigEndian.bytes())
+        block.replaceSubrange(8..<12, with: x2.bigEndian.bytes())
+        block.replaceSubrange(12..<16, with: x3.bigEndian.bytes())
+        block.replaceSubrange(16..<20, with: x4.bigEndian.bytes())
+        block.replaceSubrange(20..<24, with: x5.bigEndian.bytes())
+        block.replaceSubrange(24..<28, with: x6.bigEndian.bytes())
+        block.replaceSubrange(28..<32, with: x7.bigEndian.bytes())
+        block.replaceSubrange(32..<36, with: x8.bigEndian.bytes())
+        block.replaceSubrange(36..<40, with: x9.bigEndian.bytes())
+        block.replaceSubrange(40..<44, with: x10.bigEndian.bytes())
+        block.replaceSubrange(44..<48, with: x11.bigEndian.bytes())
+        block.replaceSubrange(48..<52, with: x12.bigEndian.bytes())
+        block.replaceSubrange(52..<56, with: x13.bigEndian.bytes())
+        block.replaceSubrange(56..<60, with: x14.bigEndian.bytes())
+        block.replaceSubrange(60..<64, with: x15.bigEndian.bytes())
+    }
+
+    // XORKeyStream
+    func process(bytes: ArraySlice<UInt8>, counter: inout Array<UInt8>, key: Array<UInt8>) -> Array<UInt8> {
+        precondition(counter.count == 16)
+        precondition(key.count == 32)
+
+        var block = Array<UInt8>(repeating: 0, count: ChaCha20.blockSize)
+        var bytesSlice = bytes
+        var out = Array<UInt8>(reserveCapacity: bytesSlice.count)
+
+        while bytesSlice.count >= ChaCha20.blockSize {
+            core(block: &block, counter: counter, key: key)
+            for (i, x) in block.enumerated() {
+                out.append(bytesSlice[bytesSlice.startIndex + i] ^ x)
+            }
+            var u: UInt32 = 1
+            for i in 0..<4 {
+                u += UInt32(counter[i])
+                counter[i] = UInt8(u & 0xff)
+                u >>= 8
+            }
+            bytesSlice = bytesSlice[bytesSlice.startIndex + ChaCha20.blockSize..<bytesSlice.endIndex]
+        }
+
+        if bytesSlice.count > 0 {
+            core(block: &block, counter: counter, key: key)
+            for (i, v) in bytesSlice.enumerated() {
+                out.append(v ^ block[i])
+            }
+        }
+        return out
+    }
+}
+
+// MARK: Cipher
+
+extension ChaCha20: Cipher {
+    public func encrypt(_ bytes: ArraySlice<UInt8>) throws -> Array<UInt8> {
+        return process(bytes: bytes, counter: &counter, key: Array(key))
+    }
+
+    public func decrypt(_ bytes: ArraySlice<UInt8>) throws -> Array<UInt8> {
+        return try encrypt(bytes)
+    }
+}
+
+// MARK: Encryptor
+
+extension ChaCha20 {
+    public struct Encryptor: Updatable {
+        private var accumulated = Array<UInt8>()
+        private let chacha: ChaCha20
+
+        init(chacha: ChaCha20) {
+            self.chacha = chacha
+        }
+
+        public mutating func update(withBytes bytes: ArraySlice<UInt8>, isLast: Bool = false) throws -> Array<UInt8> {
+            accumulated += bytes
+
+            var encrypted = Array<UInt8>()
+            encrypted.reserveCapacity(accumulated.count)
+            for chunk in accumulated.batched(by: ChaCha20.blockSize) {
+                if isLast || accumulated.count >= ChaCha20.blockSize {
+                    encrypted += try chacha.encrypt(chunk)
+                    accumulated.removeFirst(chunk.count) // TODO: improve performance
+                }
+            }
+            return encrypted
+        }
+    }
+}
+
+// MARK: Decryptor
+
+extension ChaCha20 {
+    public struct Decryptor: Updatable {
+        private var accumulated = Array<UInt8>()
+
+        private var offset: Int = 0
+        private var offsetToRemove: Int = 0
+        private let chacha: ChaCha20
+
+        init(chacha: ChaCha20) {
+            self.chacha = chacha
+        }
+
+        public mutating func update(withBytes bytes: ArraySlice<UInt8>, isLast: Bool = true) throws -> Array<UInt8> {
+            // prepend "offset" number of bytes at the beginning
+            if offset > 0 {
+                accumulated += Array<UInt8>(repeating: 0, count: offset) + bytes
+                offsetToRemove = offset
+                offset = 0
+            } else {
+                accumulated += bytes
+            }
+
+            var plaintext = Array<UInt8>()
+            plaintext.reserveCapacity(accumulated.count)
+            for chunk in accumulated.batched(by: ChaCha20.blockSize) {
+                if isLast || accumulated.count >= ChaCha20.blockSize {
+                    plaintext += try chacha.decrypt(chunk)
+
+                    // remove "offset" from the beginning of first chunk
+                    if offsetToRemove > 0 {
+                        plaintext.removeFirst(offsetToRemove) // TODO: improve performance
+                        offsetToRemove = 0
+                    }
+
+                    accumulated.removeFirst(chunk.count)
+                }
+            }
+
+            return plaintext
+        }
+    }
+}
+
+// MARK: Cryptors
+
+extension ChaCha20: Cryptors {
+    public func makeEncryptor() -> ChaCha20.Encryptor {
+        return Encryptor(chacha: self)
+    }
+
+    public func makeDecryptor() -> ChaCha20.Decryptor {
+        return Decryptor(chacha: self)
+    }
+}
