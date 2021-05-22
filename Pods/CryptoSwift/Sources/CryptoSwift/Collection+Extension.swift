@@ -8,4 +8,16 @@
 //
 //  Permission is granted to anyone to use this software for any purpose,including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
 //
-//  - The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an ackn
+//  - The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation is required.
+//  - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+//  - This notice may not be removed or altered from any source or binary distribution.
+//
+extension Collection where Self.Element == UInt8, Self.Index == Int {
+    // Big endian order
+    func toUInt32Array() -> Array<UInt32> {
+        if isEmpty {
+            return []
+        }
+
+        var result = Array<UInt32>(reserveCapacity: 16)
+        
