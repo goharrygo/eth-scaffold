@@ -37,4 +37,9 @@ extension Collection where Self.Element == UInt8, Self.Index == Int {
         var result = Array<UInt64>(reserveCapacity: 32)
         for idx in stride(from: startIndex, to: endIndex, by: 8) {
             let val = UInt64(bytes: self, fromIndex: idx).bigEndian
-            result.append(v
+            result.append(val)
+        }
+
+        return result
+    }
+}
