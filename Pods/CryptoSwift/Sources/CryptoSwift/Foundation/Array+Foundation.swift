@@ -10,4 +10,23 @@
 //
 //  - The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation is required.
 //  - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
-//  - This notice may not be removed or altered from any source
+//  - This notice may not be removed or altered from any source or binary distribution.
+//
+
+import Foundation
+
+public extension Array where Element == UInt8 {
+    public func toBase64() -> String? {
+        return Data(bytes: self).base64EncodedString()
+    }
+
+    public init(base64: String) {
+        self.init()
+
+        guard let decodedData = Data(base64Encoded: base64) else {
+            return
+        }
+
+        append(contentsOf: decodedData.bytes)
+    }
+}
