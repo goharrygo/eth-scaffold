@@ -58,3 +58,35 @@ extension Data {
 
     public func crc32(seed: UInt32? = nil, reflect: Bool = true) -> Data {
         return Data(bytes: Checksum.crc32(bytes, seed: seed, reflect: reflect).bytes())
+    }
+
+    public func crc16(seed: UInt16? = nil) -> Data {
+        return Data(bytes: Checksum.crc16(bytes, seed: seed).bytes())
+    }
+
+    public func encrypt(cipher: Cipher) throws -> Data {
+        return Data(bytes: try cipher.encrypt(bytes.slice))
+    }
+
+    public func decrypt(cipher: Cipher) throws -> Data {
+        return Data(bytes: try cipher.decrypt(bytes.slice))
+    }
+
+    public func authenticate(with authenticator: Authenticator) throws -> Data {
+        return Data(bytes: try authenticator.authenticate(bytes))
+    }
+}
+
+extension Data {
+    public init(hex: String) {
+        self.init(bytes: Array<UInt8>(hex: hex))
+    }
+
+    public var bytes: Array<UInt8> {
+        return Array(self)
+    }
+
+    public func toHexString() -> String {
+        return bytes.toHexString()
+    }
+}
