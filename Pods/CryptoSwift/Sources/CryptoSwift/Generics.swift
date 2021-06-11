@@ -10,4 +10,23 @@
 //
 //  - The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation is required.
 //  - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
-//  - This notice may not be removed or altered from any source or binary dis
+//  - This notice may not be removed or altered from any source or binary distribution.
+//
+
+/** build bit pattern from array of bits */
+@_specialize(exported: true, where T == UInt8)
+func integerFrom<T: FixedWidthInteger>(_ bits: Array<Bit>) -> T {
+    var bitPattern: T = 0
+    for idx in bits.indices {
+        if bits[idx] == Bit.one {
+            let bit = T(UInt64(1) << UInt64(idx))
+            bitPattern = bitPattern | bit
+        }
+    }
+    return bitPattern
+}
+
+/// Array of bytes. Caution: don't use directly because generic is slow.
+///
+/// - parameter value: integer value
+/// - parameter length: l
