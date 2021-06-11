@@ -1,3 +1,4 @@
+
 //
 //  CryptoSwift
 //
@@ -15,27 +16,13 @@
 
 import Foundation
 
-extension String {
-    /// Return Base64 back to String
-    public func decryptBase64ToString(cipher: Cipher) throws -> String {
-        guard let decodedData = Data(base64Encoded: self, options: []) else {
-            throw CipherError.decrypt
-        }
+func perf(_ text: String, closure: () -> Void) {
+    let measurementStart = Date()
 
-        let decrypted = try decodedData.decrypt(cipher: cipher)
+    closure()
 
-        if let decryptedString = String(data: decrypted, encoding: String.Encoding.utf8) {
-            return decryptedString
-        }
+    let measurementStop = Date()
+    let executionTime = measurementStop.timeIntervalSince(measurementStart)
 
-        throw CipherError.decrypt
-    }
-
-    public func decryptBase64(cipher: Cipher) throws -> Array<UInt8> {
-        guard let decodedData = Data(base64Encoded: self, options: []) else {
-            throw CipherError.decrypt
-        }
-
-        return try decodedData.decrypt(cipher: cipher).bytes
-    }
+    print("\(text) \(executionTime)")
 }
