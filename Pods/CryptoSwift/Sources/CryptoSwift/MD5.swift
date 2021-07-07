@@ -99,3 +99,68 @@ public final class MD5: DigestType {
             default:
                 break
             }
+            dTemp = D
+            D = C
+            C = B
+
+            // break chunk into sixteen 32-bit words M[j], 0 ≤ j ≤ 15 and get M[g] value
+            let gAdvanced = g << 2
+
+            var Mg = UInt32(chunk[chunk.startIndex &+ gAdvanced])
+            Mg |= UInt32(chunk[chunk.startIndex &+ gAdvanced &+ 1]) << 8
+            Mg |= UInt32(chunk[chunk.startIndex &+ gAdvanced &+ 2]) << 16
+            Mg |= UInt32(chunk[chunk.startIndex &+ gAdvanced &+ 3]) << 24
+
+            B = B &+ rotateLeft(A &+ F &+ k[j] &+ Mg, by: s[j])
+            A = dTemp
+        }
+
+        currentHash[0] = currentHash[0] &+ A
+        currentHash[1] = currentHash[1] &+ B
+        currentHash[2] = currentHash[2] &+ C
+        currentHash[3] = currentHash[3] &+ D
+    }
+}
+
+extension MD5: Updatable {
+    public func update(withBytes bytes: ArraySlice<UInt8>, isLast: Bool = false) throws -> Array<UInt8> {
+        accumulated += bytes
+
+        if isLast {
+            let lengthInBits = (processedBytesTotalCount + accumulated.count) * 8
+            let lengthBytes = lengthInBits.bytes(totalBytes: 64 / 8) // A 64-bit representation of b
+
+            // Step 1. Append padding
+            bitPadding(to: &accumulated, blockSize: MD5.blockSize, allowance: 64 / 8)
+
+            // Step 2. Append Length a 64-bit representation of lengthInBits
+            accumulated += lengthBytes.reversed()
+        }
+
+        var processedBytes = 0
+        for chunk in accumulated.batched(by: MD5.blockSize) {
+            if isLast || (accumulated.count - processedBytes) >= MD5.blockSize {
+                process(block: chunk, currentHash: &accumulatedHash)
+                processedBytes += chunk.count
+            }
+        }
+        accumulated.removeFirst(processedBytes)
+        processedBytesTotalCount += processedBytes
+
+        // output current hash
+        var result = Array<UInt8>()
+        result.reserveCapacity(MD5.digestLength)
+
+        for hElement in accumulatedHash {
+            let hLE = hElement.littleEndian
+            result += Array<UInt8>(arrayLiteral: UInt8(hLE & 0xff), UInt8((hLE >> 8) & 0xff), UInt8((hLE >> 16) & 0xff), UInt8((hLE >> 24) & 0xff))
+        }
+
+        // reset hash value for instance
+        if isLast {
+            accumulatedHash = MD5.hashInitialValue
+        }
+
+        return result
+    }
+}
