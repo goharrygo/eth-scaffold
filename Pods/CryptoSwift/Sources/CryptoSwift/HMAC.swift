@@ -71,3 +71,36 @@ public final class HMAC: Authenticator {
     public init(key: Array<UInt8>, variant: HMAC.Variant = .md5) {
         self.variant = variant
         self.key = key
+
+        if key.count > variant.blockSize() {
+            if let hash = variant.calculateHash(key) {
+                self.key = hash
+            }
+        }
+
+        if key.count < variant.blockSize() {
+            self.key = ZeroPadding().add(to: key, blockSize: variant.blockSize())
+        }
+    }
+
+    // MARK: Authenticator
+
+    public func authenticate(_ bytes: Array<UInt8>) throws -> Array<UInt8> {
+        var opad = Array<UInt8>(repeating: 0x5c, count: variant.blockSize())
+        for idx in key.indices {
+            opad[idx] = key[idx] ^ opad[idx]
+        }
+        var ipad = Array<UInt8>(repeating: 0x36, count: variant.blockSize())
+        for idx in key.indices {
+            ipad[idx] = key[idx] ^ ipad[idx]
+        }
+
+        guard let ipadAndMessageHash = variant.calculateHash(ipad + bytes),
+            let result = variant.calculateHash(opad + ipadAndMessageHash) else {
+            throw Error.authenticateError
+        }
+
+        // return Array(result[0..<10]) // 80 bits
+        return result
+    }
+}
