@@ -20,4 +20,19 @@
     import Darwin
 #endif
 
-/* array 
+/* array of bits */
+extension Int {
+    init(bits: [Bit]) {
+        self.init(bitPattern: integerFrom(bits) as UInt)
+    }
+}
+
+extension FixedWidthInteger {
+    @_transparent
+    func bytes(totalBytes: Int = MemoryLayout<Self>.size) -> Array<UInt8> {
+        return arrayOfBytes(value: self, length: totalBytes)
+        // TODO: adjust bytes order
+        // var value = self
+        // return withUnsafeBytes(of: &value, Array.init).reversed()
+    }
+}
