@@ -1,3 +1,4 @@
+
 //
 //  CryptoSwift
 //
@@ -13,15 +14,20 @@
 //  - This notice may not be removed or altered from any source or binary distribution.
 //
 
-struct NoPadding: PaddingProtocol {
-    init() {
-    }
+/*
+ Bit shifting with overflow protection using overflow operator "&".
+ Approach is consistent with standard overflow operators &+, &-, &*, &/
+ and introduce new overflow operators for shifting: &<<, &>>
 
-    func add(to data: Array<UInt8>, blockSize _: Int) -> Array<UInt8> {
-        return data
-    }
+ Note: Works with unsigned integers values only
 
-    func remove(from data: Array<UInt8>, blockSize _: Int?) -> Array<UInt8> {
-        return data
-    }
-}
+ Usage
+
+ var i = 1       // init
+ var j = i &<< 2 //shift left
+ j &<<= 2        //shift left and assign
+
+ @see: https://medium.com/@krzyzanowskim/swiftly-shift-bits-and-protect-yourself-be33016ce071
+
+ This fuctonality is now implemented as part of Swift 3, SE-0104 https://github.com/apple/swift-evolution/blob/master/proposals/0104-improved-integers.md
+ */
