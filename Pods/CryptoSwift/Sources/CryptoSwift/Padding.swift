@@ -8,4 +8,17 @@
 //
 //  Permission is granted to anyone to use this software for any purpose,including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
 //
-//  - The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation is
+//  - The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation is required.
+//  - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+//  - This notice may not be removed or altered from any source or binary distribution.
+//
+
+public protocol PaddingProtocol {
+    func add(to: Array<UInt8>, blockSize: Int) -> Array<UInt8>
+    func remove(from: Array<UInt8>, blockSize: Int?) -> Array<UInt8>
+}
+
+public enum Padding: PaddingProtocol {
+    case noPadding, zeroPadding, pkcs7, pkcs5
+
+    public func add(to: Array<UInt8>, blockSize: I
