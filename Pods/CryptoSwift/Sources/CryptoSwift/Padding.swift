@@ -37,4 +37,13 @@ public enum Padding: PaddingProtocol {
     public func remove(from: Array<UInt8>, blockSize: Int?) -> Array<UInt8> {
         switch self {
         case .noPadding:
-     
+            return NoPadding().remove(from: from, blockSize: blockSize)
+        case .zeroPadding:
+            return ZeroPadding().remove(from: from, blockSize: blockSize)
+        case .pkcs7:
+            return PKCS7.Padding().remove(from: from, blockSize: blockSize)
+        case .pkcs5:
+            return PKCS5.Padding().remove(from: from, blockSize: blockSize)
+        }
+    }
+}
