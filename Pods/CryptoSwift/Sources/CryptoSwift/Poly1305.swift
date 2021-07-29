@@ -19,4 +19,28 @@
 ///  Poly1305 takes a 32-byte, one-time key and a message and produces a 16-byte tag that authenticates the
 ///  message such that an attacker has a negligible chance of producing a valid tag for an inauthentic message.
 
-publi
+public final class Poly1305: Authenticator {
+    public enum Error: Swift.Error {
+        case authenticateError
+    }
+
+    public static let blockSize: Int = 16
+
+    private let key: SecureBytes
+
+    /// - parameter key: 32-byte key
+    public init(key: Array<UInt8>) {
+        self.key = SecureBytes(bytes: key)
+    }
+
+    private func squeeze(h: inout Array<UInt32>) {
+        assert(h.count == 17)
+        var u: UInt32 = 0
+        for j in 0..<16 {
+            u = u &+ h[j]
+            h[j] = u & 255
+            u = u >> 8
+        }
+
+        u = u &+ h[16]
+        h[16]
