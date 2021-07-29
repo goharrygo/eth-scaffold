@@ -43,4 +43,28 @@ public final class Poly1305: Authenticator {
         }
 
         u = u &+ h[16]
-        h[16]
+        h[16] = u & 3
+        u = 5 * (u >> 2)
+
+        for j in 0..<16 {
+            u = u &+ h[j]
+            h[j] = u & 255
+            u = u >> 8
+        }
+
+        u = u &+ h[16]
+        h[16] = u
+    }
+
+    private func add(h: inout Array<UInt32>, c: Array<UInt32>) {
+        assert(h.count == 17 && c.count == 17)
+
+        var u: UInt32 = 0
+        for j in 0..<17 {
+            u = u &+ (h[j] &+ c[j])
+            h[j] = u & 255
+            u = u >> 8
+        }
+    }
+
+    private func mulmod(h: inout Array<UInt32>,
