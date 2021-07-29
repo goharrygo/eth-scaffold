@@ -67,4 +67,22 @@ public final class Poly1305: Authenticator {
         }
     }
 
-    private func mulmod(h: inout Array<UInt32>,
+    private func mulmod(h: inout Array<UInt32>, r: Array<UInt32>) {
+        var hr = Array<UInt32>(repeating: 0, count: 17)
+        var u: UInt32 = 0
+        for i in 0..<17 {
+            u = 0
+            for j in 0...i {
+                u = u &+ (h[j] * r[i &- j])
+            }
+            for j in (i + 1)..<17 {
+                u = u &+ (320 * h[j] * r[i &+ 17 &- j])
+            }
+            hr[i] = u
+        }
+        h = hr
+        squeeze(h: &h)
+    }
+
+    private func freeze(h: inout Array<UInt32>) {
+        let horig = h
