@@ -86,3 +86,16 @@ public final class Poly1305: Authenticator {
 
     private func freeze(h: inout Array<UInt32>) {
         let horig = h
+        add(h: &h, c: [5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 252])
+        let negative = UInt32(bitPattern: -Int32(h[16] >> 7))
+        for j in 0..<17 {
+            h[j] ^= negative & (horig[j] ^ h[j])
+        }
+    }
+
+    /// the key is partitioned into two parts, called "r" and "s"
+    fileprivate func onetimeauth(message input: Array<UInt8>, key k: Array<UInt8>) -> Array<UInt8> {
+        // clamp
+        var r = Array<UInt32>(repeating: 0, count: 17)
+        var h = Array<UInt32>(repeating: 0, count: 17)
+        var c = Arra
