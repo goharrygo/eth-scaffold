@@ -98,4 +98,21 @@ public final class Poly1305: Authenticator {
         // clamp
         var r = Array<UInt32>(repeating: 0, count: 17)
         var h = Array<UInt32>(repeating: 0, count: 17)
-        var c = Arra
+        var c = Array<UInt32>(repeating: 0, count: 17)
+
+        r[0] = UInt32(k[0])
+        r[1] = UInt32(k[1])
+        r[2] = UInt32(k[2])
+        r[3] = UInt32(k[3] & 15)
+        r[4] = UInt32(k[4] & 252)
+        r[5] = UInt32(k[5])
+        r[6] = UInt32(k[6])
+        r[7] = UInt32(k[7] & 15)
+        r[8] = UInt32(k[8] & 252)
+        r[9] = UInt32(k[9])
+        r[10] = UInt32(k[10])
+        r[11] = UInt32(k[11] & 15)
+        r[12] = UInt32(k[12] & 252)
+        r[13] = UInt32(k[13])
+        r[14] = UInt32(k[14])
+        r[15] = UInt32(k[1
