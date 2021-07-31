@@ -115,4 +115,28 @@ public final class Poly1305: Authenticator {
         r[12] = UInt32(k[12] & 252)
         r[13] = UInt32(k[13])
         r[14] = UInt32(k[14])
-        r[15] = UInt32(k[1
+        r[15] = UInt32(k[15] & 15)
+        r[16] = 0
+
+        var inlen = input.count
+        var inpos = 0
+        while inlen > 0 {
+            for j in 0..<c.count {
+                c[j] = 0
+            }
+
+            let maxj = min(inlen, 16)
+            for j in 0..<maxj {
+                c[j] = UInt32(input[inpos + j])
+            }
+            c[maxj] = 1
+            inpos = inpos + maxj
+            inlen = inlen - maxj
+            add(h: &h, c: c)
+            mulmod(h: &h, r: r)
+        }
+
+        freeze(h: &h)
+
+        for j in 0..<16 {
+            c[
