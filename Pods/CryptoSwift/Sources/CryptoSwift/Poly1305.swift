@@ -139,4 +139,27 @@ public final class Poly1305: Authenticator {
         freeze(h: &h)
 
         for j in 0..<16 {
-            c[
+            c[j] = UInt32(k[j + 16])
+        }
+        c[16] = 0
+        add(h: &h, c: c)
+
+        return h[0..<16].map {
+            UInt8($0 & 0xff)
+        }
+    }
+
+    // MARK: - Authenticator
+
+    /**
+     Calculate Message Authentication Code (MAC) for message.
+     Calculation context is discarder on instance deallocation.
+
+     - parameter bytes: Message
+
+     - returns: 16-byte tag that authenticates the message
+     */
+    public func authenticate(_ bytes: Array<UInt8>) throws -> Array<UInt8> {
+        return onetimeauth(message: bytes, key: Array(key))
+    }
+}
