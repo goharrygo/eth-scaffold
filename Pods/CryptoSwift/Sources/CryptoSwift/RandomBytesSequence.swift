@@ -31,4 +31,20 @@ struct RandomBytesSequence: Sequence {
             count = count + 1
 
             #if os(Linux) || os(Android) || os(FreeBSD)
-          
+                let fd = open("/dev/urandom", O_RDONLY)
+                if fd <= 0 {
+                    return nil
+                }
+
+                var value: UInt8 = 0
+                let result = read(fd, &value, MemoryLayout<UInt8>.size)
+                precondition(result == 1)
+
+                close(fd)
+                return value
+            #else
+                return UInt8(arc4random_uniform(UInt32(UInt8.max) + 1))
+            #endif
+        })
+    }
+}
