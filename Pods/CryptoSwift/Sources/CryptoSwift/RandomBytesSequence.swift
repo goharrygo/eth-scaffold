@@ -10,4 +10,25 @@
 //
 //  - The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation is required.
 //  - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
-/
+//  - This notice may not be removed or altered from any source or binary distribution.
+//
+
+#if os(Linux) || os(Android) || os(FreeBSD)
+    import Glibc
+#else
+    import Darwin
+#endif
+
+struct RandomBytesSequence: Sequence {
+    let size: Int
+
+    func makeIterator() -> AnyIterator<UInt8> {
+        var count = 0
+        return AnyIterator<UInt8>.init({ () -> UInt8? in
+            if count >= self.size {
+                return nil
+            }
+            count = count + 1
+
+            #if os(Linux) || os(Android) || os(FreeBSD)
+          
