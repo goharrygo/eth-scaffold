@@ -9,4 +9,23 @@
 //  Permission is granted to anyone to use this software for any purpose,including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
 //
 //  - The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation is required.
-//  - Altered source versions must be plainly marked as such, and must not be misrepresented as being the
+//  - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+//  - This notice may not be removed or altered from any source or binary distribution.
+//
+
+/** String extension */
+extension String {
+    public var bytes: Array<UInt8> {
+        return data(using: String.Encoding.utf8, allowLossyConversion: true)?.bytes ?? Array(utf8)
+    }
+
+    public func md5() -> String {
+        return bytes.md5().toHexString()
+    }
+
+    public func sha1() -> String {
+        return bytes.sha1().toHexString()
+    }
+
+    public func sha224() -> String {
+        return bytes.sha224
