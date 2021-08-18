@@ -28,4 +28,24 @@ extension String {
     }
 
     public func sha224() -> String {
-        return bytes.sha224
+        return bytes.sha224().toHexString()
+    }
+
+    public func sha256() -> String {
+        return bytes.sha256().toHexString()
+    }
+
+    public func sha384() -> String {
+        return bytes.sha384().toHexString()
+    }
+
+    public func sha512() -> String {
+        return bytes.sha512().toHexString()
+    }
+
+    public func sha3(_ variant: SHA3.Variant) -> String {
+        return bytes.sha3(variant).toHexString()
+    }
+
+    public func crc32(seed: UInt32? = nil, reflect: Bool = true) -> String {
+        return bytes.crc32(
