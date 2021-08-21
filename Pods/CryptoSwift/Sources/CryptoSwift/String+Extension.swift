@@ -48,4 +48,19 @@ extension String {
     }
 
     public func crc32(seed: UInt32? = nil, reflect: Bool = true) -> String {
-        return bytes.crc32(
+        return bytes.crc32(seed: seed, reflect: reflect).bytes().toHexString()
+    }
+
+    public func crc16(seed: UInt16? = nil) -> String {
+        return bytes.crc16(seed: seed).bytes().toHexString()
+    }
+
+    /// - parameter cipher: Instance of `Cipher`
+    /// - returns: hex string of bytes
+    public func encrypt(cipher: Cipher) throws -> String {
+        return try bytes.encrypt(cipher: cipher).toHexString()
+    }
+
+    /// - parameter cipher: Instance of `Cipher`
+    /// - returns: base64 encoded string of encrypted bytes
+    p
