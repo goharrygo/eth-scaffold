@@ -63,4 +63,15 @@ extension String {
 
     /// - parameter cipher: Instance of `Cipher`
     /// - returns: base64 encoded string of encrypted bytes
-    p
+    public func encryptToBase64(cipher: Cipher) throws -> String? {
+        return try bytes.encrypt(cipher: cipher).toBase64()
+    }
+
+    // decrypt() does not make sense for String
+
+    /// - parameter authenticator: Instance of `Authenticator`
+    /// - returns: hex string of string
+    public func authenticate<A: Authenticator>(with authenticator: A) throws -> String {
+        return try bytes.authenticate(with: authenticator).toHexString()
+    }
+}
