@@ -20,4 +20,16 @@ extension UInt64 {
         self = UInt64(bytes: bytes, fromIndex: bytes.startIndex)
     }
 
-    @_specialize(exp
+    @_specialize(exported: true, where T == ArraySlice<UInt8>)
+    init<T: Collection>(bytes: T, fromIndex index: T.Index) where T.Element == UInt8, T.Index == Int {
+        if bytes.isEmpty {
+            self = 0
+            return
+        }
+
+        let count = bytes.count
+
+        let val0 = count > 0 ? UInt64(bytes[index.advanced(by: 0)]) << 56 : 0
+        let val1 = count > 0 ? UInt64(bytes[index.advanced(by: 1)]) << 48 : 0
+        let val2 = count > 0 ? UInt64(bytes[index.advanced(by: 2)]) << 40 : 0
+        let val3 = count > 0 ? UInt64(byte
