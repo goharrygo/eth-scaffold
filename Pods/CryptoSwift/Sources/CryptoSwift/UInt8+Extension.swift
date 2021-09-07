@@ -48,4 +48,24 @@ extension UInt8 {
     }
 
     /** array of bits */
-    public func bits() -> 
+    public func bits() -> [Bit] {
+        let totalBitsCount = MemoryLayout<UInt8>.size * 8
+
+        var bitsArray = [Bit](repeating: Bit.zero, count: totalBitsCount)
+
+        for j in 0..<totalBitsCount {
+            let bitVal: UInt8 = 1 << UInt8(totalBitsCount - 1 - j)
+            let check = self & bitVal
+
+            if check != 0 {
+                bitsArray[j] = Bit.one
+            }
+        }
+        return bitsArray
+    }
+
+    public func bits() -> String {
+        var s = String()
+        let arr: [Bit] = bits()
+        for idx in arr.indices {
+           
