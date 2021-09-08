@@ -68,4 +68,9 @@ extension UInt8 {
         var s = String()
         let arr: [Bit] = bits()
         for idx in arr.indices {
-           
+            s += (arr[idx] == Bit.one ? "1" : "0")
+            if idx.advanced(by: 1) % 8 == 0 { s += " " }
+        }
+        return s
+    }
+}
