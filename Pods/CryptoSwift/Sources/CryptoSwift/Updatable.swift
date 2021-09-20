@@ -13,4 +13,14 @@
 //  - This notice may not be removed or altered from any source or binary distribution.
 //
 
-///
+/// A type that supports incremental updates. For example Digest or Cipher may be updatable
+/// and calculate result incerementally.
+public protocol Updatable {
+    /// Update given bytes in chunks.
+    ///
+    /// - parameter bytes: Bytes to process.
+    /// - parameter isLast: Indicate if given chunk is the last one. No more updates after this call.
+    /// - returns: Processed data or empty array.
+    mutating func update(withBytes bytes: ArraySlice<UInt8>, isLast: Bool) throws -> Array<UInt8>
+
+    /// Update given bytes in chunks
