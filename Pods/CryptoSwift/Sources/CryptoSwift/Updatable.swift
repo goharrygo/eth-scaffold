@@ -23,4 +23,16 @@ public protocol Updatable {
     /// - returns: Processed data or empty array.
     mutating func update(withBytes bytes: ArraySlice<UInt8>, isLast: Bool) throws -> Array<UInt8>
 
-    /// Update given bytes in chunks
+    /// Update given bytes in chunks.
+    ///
+    /// - Parameters:
+    ///   - bytes: Bytes to process.
+    ///   - isLast: Indicate if given chunk is the last one. No more updates after this call.
+    ///   - output: Resulting bytes callback.
+    /// - Returns: Processed data or empty array.
+    mutating func update(withBytes bytes: ArraySlice<UInt8>, isLast: Bool, output: (_ bytes: Array<UInt8>) -> Void) throws
+
+    /// Finish updates. This may apply padding.
+    /// - parameter bytes: Bytes to process
+    /// - returns: Processed data.
+    mutating 
