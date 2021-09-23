@@ -62,4 +62,19 @@ extension Updatable {
         return try update(withBytes: [], isLast: true)
     }
 
-    public mutating func finish(withBytes bytes: ArraySlice<UInt8>, output: (_ bytes: Arra
+    public mutating func finish(withBytes bytes: ArraySlice<UInt8>, output: (_ bytes: Array<UInt8>) -> Void) throws {
+        let processed = try update(withBytes: bytes, isLast: true)
+        if !processed.isEmpty {
+            output(processed)
+        }
+    }
+
+    public mutating func finish(output: (Array<UInt8>) -> Void) throws {
+        try finish(withBytes: [], output: output)
+    }
+}
+
+extension Updatable {
+    @discardableResult
+    public mutating func update(withBytes bytes: Array<UInt8>, isLast: Bool = false) throws -> Array<UInt8> {
+        return try update(withBytes: bytes.slice, isLast:
