@@ -35,4 +35,15 @@ public protocol Updatable {
     /// Finish updates. This may apply padding.
     /// - parameter bytes: Bytes to process
     /// - returns: Processed data.
-    mutating 
+    mutating func finish(withBytes bytes: ArraySlice<UInt8>) throws -> Array<UInt8>
+
+    /// Finish updates. This may apply padding.
+    /// - parameter bytes: Bytes to process
+    /// - parameter output: Resulting data
+    /// - returns: Processed data.
+    mutating func finish(withBytes bytes: ArraySlice<UInt8>, output: (_ bytes: Array<UInt8>) -> Void) throws
+}
+
+extension Updatable {
+    public mutating func update(withBytes bytes: ArraySlice<UInt8>, isLast: Bool = false, output: (_ bytes: Array<UInt8>) -> Void) throws {
+        let process
