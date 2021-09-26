@@ -77,4 +77,17 @@ extension Updatable {
 extension Updatable {
     @discardableResult
     public mutating func update(withBytes bytes: Array<UInt8>, isLast: Bool = false) throws -> Array<UInt8> {
-        return try update(withBytes: bytes.slice, isLast:
+        return try update(withBytes: bytes.slice, isLast: isLast)
+    }
+
+    public mutating func update(withBytes bytes: Array<UInt8>, isLast: Bool = false, output: (_ bytes: Array<UInt8>) -> Void) throws {
+        return try update(withBytes: bytes.slice, isLast: isLast, output: output)
+    }
+
+    @discardableResult
+    public mutating func finish(withBytes bytes: Array<UInt8>) throws -> Array<UInt8> {
+        return try finish(withBytes: bytes.slice)
+    }
+
+    public mutating func finish(withBytes bytes: Array<UInt8>, output: (_ bytes: Array<UInt8>) -> Void) throws {
+        return try finish(withBytes: bytes.slice, output: output
