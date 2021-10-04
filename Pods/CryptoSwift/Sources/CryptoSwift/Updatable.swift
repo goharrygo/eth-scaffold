@@ -90,4 +90,6 @@ extension Updatable {
     }
 
     public mutating func finish(withBytes bytes: Array<UInt8>, output: (_ bytes: Array<UInt8>) -> Void) throws {
-        return try finish(withBytes: bytes.slice, output: output
+        return try finish(withBytes: bytes.slice, output: output)
+    }
+}
