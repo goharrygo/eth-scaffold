@@ -37,4 +37,11 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     
     /**
      Defines the direction and method in which the `MarqueeLabel` instance scrolls.
-     `MarqueeLabel` supports six default types of scr
+     `MarqueeLabel` supports six default types of scrolling: `Left`, `LeftRight`, `Right`, `RightLeft`, `Continuous`, and `ContinuousReverse`.
+     
+     Given the nature of how text direction works, the options for the `type` property require specific text alignments
+     and will set the textAlignment property accordingly.
+     
+     - `LeftRight` and `Left` types are ONLY compatible with a label text alignment of `NSTextAlignmentLeft`.
+     - `RightLeft` and `Right` types are ONLY compatible with a label text alignment of `NSTextAlignmentRight`.
+     - `Continu
