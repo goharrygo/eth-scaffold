@@ -69,4 +69,14 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      
      When a custom sequence is not supplied, the default sequences are used per the defined `type`.
      
-     `ScrollStep` steps are the primary step typ
+     `ScrollStep` steps are the primary step types, and define the position of the label at a given time in the sequence.
+     `FadeStep` steps are secondary steps that define the edge fade state (leading, trailing, or both) around the `ScrollStep`
+     steps.
+     
+     Defaults to nil.
+     
+     - Attention: Use of the `scrollSequence` property requires understanding of how MarqueeLabel works for effective
+     use. As a reference, it is suggested to review the methodology used to build the sequences for the default types.
+     
+     - SeeAlso: type
+ 
