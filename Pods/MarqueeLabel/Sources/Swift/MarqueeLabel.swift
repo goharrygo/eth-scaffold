@@ -61,4 +61,12 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     }
     
     /**
-     An optional custom scroll "sequence", defined by an array of `ScrollStep` or `FadeStep` insta
+     An optional custom scroll "sequence", defined by an array of `ScrollStep` or `FadeStep` instances. A sequence
+     defines a single scroll/animation loop, which will continue to be automatically repeated like the default types.
+     
+     A `type` value is still required when using a custom sequence. The `type` value defines the `home` and `away`
+     values used in the `ScrollStep` instances, and the `type` value determines which way the label will scroll.
+     
+     When a custom sequence is not supplied, the default sequences are used per the defined `type`.
+     
+     `ScrollStep` steps are the primary step typ
