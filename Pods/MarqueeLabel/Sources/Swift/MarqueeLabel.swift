@@ -44,4 +44,21 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      
      - `LeftRight` and `Left` types are ONLY compatible with a label text alignment of `NSTextAlignmentLeft`.
      - `RightLeft` and `Right` types are ONLY compatible with a label text alignment of `NSTextAlignmentRight`.
-     - `Continu
+     - `Continuous` does not require a text alignment (it is effectively centered).
+     - `ContinuousReverse` does not require a text alignment (it is effectively centered).
+     
+     Defaults to `Continuous`.
+     
+     - SeeAlso: textAlignment
+     */
+    open var type: MarqueeType = .continuous {
+        didSet {
+            if type == oldValue {
+                return
+            }
+            updateAndScroll()
+        }
+    }
+    
+    /**
+     An optional custom scroll "sequence", defined by an array of `ScrollStep` or `FadeStep` insta
