@@ -79,4 +79,20 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      use. As a reference, it is suggested to review the methodology used to build the sequences for the default types.
      
      - SeeAlso: type
- 
+     - SeeAlso: ScrollStep
+     - SeeAlso: FadeStep
+     */
+    open var scrollSequence: Array<MarqueeStep>?
+    
+    /**
+     Specifies the animation curve used in the scrolling motion of the labels.
+     Allowable options:
+     
+     - `UIViewAnimationOptionCurveEaseInOut`
+     - `UIViewAnimationOptionCurveEaseIn`
+     - `UIViewAnimationOptionCurveEaseOut`
+     - `UIViewAnimationOptionCurveLinear`
+     
+     Defaults to `UIViewAnimationOptionCurveEaseInOut`.
+     */
+    open var animationCurve: UIViewAnimati
