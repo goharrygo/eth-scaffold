@@ -104,4 +104,13 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      Changes to this property take effect immediately, removing any in-flight animation as well as any edge fade. Note that `MarqueeLabel`
      will respect the current values of the `lineBreakMode` and `textAlignment`properties while labelized.
      
-     To simply prevent automatic scr
+     To simply prevent automatic scrolling, use the `holdScrolling` property.
+     
+     Defaults to `false`.
+     
+     - SeeAlso: holdScrolling
+     - SeeAlso: lineBreakMode
+     - Note: The label will not automatically scroll when this property is set to `true`.
+     - Warning: The UILabel default setting for the `lineBreakMode` property is `NSLineBreakByTruncatingTail`, which truncates
+     the text adds an ellipsis glyph (...). Set the `lineBreakMode` property to `NSLineBreakByClipping` in order to avoid the
+     ellipsis, especially if using an e
