@@ -95,4 +95,13 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      
      Defaults to `UIViewAnimationOptionCurveEaseInOut`.
      */
-    open var animationCurve: UIViewAnimati
+    open var animationCurve: UIViewAnimationCurve = .linear
+    
+    /**
+     A boolean property that sets whether the `MarqueeLabel` should behave like a normal `UILabel`.
+     
+     When set to `true` the `MarqueeLabel` will behave and look like a normal `UILabel`, and  will not begin any scrolling animations.
+     Changes to this property take effect immediately, removing any in-flight animation as well as any edge fade. Note that `MarqueeLabel`
+     will respect the current values of the `lineBreakMode` and `textAlignment`properties while labelized.
+     
+     To simply prevent automatic scr
