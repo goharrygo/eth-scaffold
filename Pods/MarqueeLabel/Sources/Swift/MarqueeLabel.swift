@@ -129,4 +129,22 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      When set to `true`, `MarqueeLabel` will not automatically scroll even its text is larger than the specified frame,
      although the specified edge fades will remain.
      
-     To set `MarqueeLabel` to act like a normal UILabel, use the `
+     To set `MarqueeLabel` to act like a normal UILabel, use the `labelize` property.
+     
+     Defaults to `false`.
+     
+     - Note: The label will not automatically scroll when this property is set to `true`.
+     - SeeAlso: labelize
+     */
+    @IBInspectable open var holdScrolling: Bool = false {
+        didSet {
+            if holdScrolling != oldValue {
+                if oldValue == true && !(awayFromHome || labelize || tapToScroll ) && labelShouldScroll() {
+                    updateAndScroll(true)
+                }
+            }
+        }
+    }
+    
+    /**
+     A boolean prope
