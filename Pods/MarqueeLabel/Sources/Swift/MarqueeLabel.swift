@@ -113,4 +113,20 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      - Note: The label will not automatically scroll when this property is set to `true`.
      - Warning: The UILabel default setting for the `lineBreakMode` property is `NSLineBreakByTruncatingTail`, which truncates
      the text adds an ellipsis glyph (...). Set the `lineBreakMode` property to `NSLineBreakByClipping` in order to avoid the
-     ellipsis, especially if using an e
+     ellipsis, especially if using an edge transparency fade.
+     */
+    @IBInspectable open var labelize: Bool = false {
+        didSet {
+            if labelize != oldValue {
+                updateAndScroll()
+            }
+        }
+    }
+    
+    /**
+     A boolean property that sets whether the `MarqueeLabel` should hold (prevent) automatic label scrolling.
+     
+     When set to `true`, `MarqueeLabel` will not automatically scroll even its text is larger than the specified frame,
+     although the specified edge fades will remain.
+     
+     To set `MarqueeLabel` to act like a normal UILabel, use the `
