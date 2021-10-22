@@ -147,4 +147,14 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     }
     
     /**
-     A boolean prope
+     A boolean property that sets whether the `MarqueeLabel` should only begin a scroll when tapped.
+     
+     If this property is set to `true`, the `MarqueeLabel` will only begin a scroll animation cycle when tapped. The label will
+     not automatically being a scroll. This setting overrides the setting of the `holdScrolling` property.
+     
+     Defaults to `false`.
+     
+     - Note: The label will not automatically scroll when this property is set to `false`.
+     - SeeAlso: holdScrolling
+     */
+    @IBInspectable open var tapToScroll: Bool =
