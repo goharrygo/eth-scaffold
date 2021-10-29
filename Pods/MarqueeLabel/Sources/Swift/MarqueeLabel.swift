@@ -168,4 +168,23 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
                     if let recognizer = self.gestureRecognizers!.first as UIGestureRecognizer? {
                         self.removeGestureRecognizer(recognizer)
                     }
-                    
+                    isUserInteractionEnabled = false
+                }
+            }
+        }
+    }
+    
+    /**
+     A read-only boolean property that indicates if the label's scroll animation has been paused.
+     
+     - SeeAlso: pauseLabel
+     - SeeAlso: unpauseLabel
+     */
+    open var isPaused: Bool {
+        return (sublabel.layer.speed == 0.0)
+    }
+    
+    /**
+     A boolean property that indicates if the label is currently away from the home location.
+     
+     The "home" location is the traditional location of `UILabel` text. This prop
