@@ -157,4 +157,15 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      - Note: The label will not automatically scroll when this property is set to `false`.
      - SeeAlso: holdScrolling
      */
-    @IBInspectable open var tapToScroll: Bool =
+    @IBInspectable open var tapToScroll: Bool = false {
+        didSet {
+            if tapToScroll != oldValue {
+                if tapToScroll {
+                    let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(MarqueeLabel.labelWasTapped(_:)))
+                    self.addGestureRecognizer(tapRecognizer)
+                    isUserInteractionEnabled = true
+                } else {
+                    if let recognizer = self.gestureRecognizers!.first as UIGestureRecognizer? {
+                        self.removeGestureRecognizer(recognizer)
+                    }
+                    
