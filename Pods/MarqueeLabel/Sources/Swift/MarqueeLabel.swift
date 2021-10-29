@@ -187,4 +187,17 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     /**
      A boolean property that indicates if the label is currently away from the home location.
      
-     The "home" location is the traditional location of `UILabel` text. This prop
+     The "home" location is the traditional location of `UILabel` text. This property essentially reflects if a scroll animation is underway.
+     */
+    open var awayFromHome: Bool {
+        if let presentationLayer = sublabel.layer.presentation() {
+            return !(presentationLayer.position.x == homeLabelFrame.origin.x)
+        }
+        
+        return false
+    }
+    
+    /**
+     The `MarqueeLabel` scrolling speed may be defined by one of two ways:
+     - Rate(CGFloat): The speed is defined by a rate of motion, in units of points per second.
+     - Duration(CGFloat): The speed is defined by t
