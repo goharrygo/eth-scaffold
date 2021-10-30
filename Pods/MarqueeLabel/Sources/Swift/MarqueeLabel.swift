@@ -238,4 +238,21 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         }
     }
     
-  
+    @available(*, deprecated : 2.6, message : "Use speed property instead")
+    @IBInspectable open var scrollDuration: CGFloat {
+        get {
+            switch speed {
+            case .duration(let duration): return duration
+            case .rate(_): return 0.0
+            }
+        }
+        set {
+            speed = .duration(newValue)
+        }
+    }
+    
+    @available(*, deprecated : 2.6, message : "Use speed property instead")
+    @IBInspectable open var scrollRate: CGFloat {
+        get {
+            switch speed {
+         
