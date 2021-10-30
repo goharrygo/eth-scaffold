@@ -255,4 +255,18 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     @IBInspectable open var scrollRate: CGFloat {
         get {
             switch speed {
-         
+            case .duration(_): return 0.0
+            case .rate(let rate): return rate
+            }
+        }
+        set {
+            speed = .rate(newValue)
+        }
+    }
+    
+    /**
+     A buffer (offset) between the leading edge of the label text and the label frame.
+     
+     This property adds additional space between the leading edge of the label text and the label frame. The
+     leading edge is the edge of the label text facing the direction of scroll (i.e. the edge that animates
+     offscreen first during scrolling).
