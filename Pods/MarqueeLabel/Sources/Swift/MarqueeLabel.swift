@@ -200,4 +200,23 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     /**
      The `MarqueeLabel` scrolling speed may be defined by one of two ways:
      - Rate(CGFloat): The speed is defined by a rate of motion, in units of points per second.
-     - Duration(CGFloat): The speed is defined by t
+     - Duration(CGFloat): The speed is defined by the time to complete a scrolling animation cycle, in units of seconds.
+     
+     Each case takes an associated `CGFloat` value, which is the rate/duration desired.
+     */
+    public enum SpeedLimit {
+        case rate(CGFloat)
+        case duration(CGFloat)
+        
+        var value: CGFloat {
+            switch self {
+            case .rate(let rate):
+                return rate
+            case .duration(let duration):
+                return duration
+            }
+        }
+    }
+    
+    /**
+     Defines the speed of the `Marquee
