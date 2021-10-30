@@ -219,4 +219,23 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     }
     
     /**
-     Defines the speed of the `Marquee
+     Defines the speed of the `MarqueeLabel` scrolling animation.
+     
+     The speed is set by specifying a case of the `SpeedLimit` enum along with an associated value.
+     
+     - SeeAlso: SpeedLimit
+     */
+    open var speed: SpeedLimit = .duration(7.0) {
+        didSet {
+            switch (speed, oldValue) {
+            case (.rate(let a), .rate(let b)) where a == b:
+                return
+            case (.duration(let a), .duration(let b)) where a == b:
+                return
+            default:
+                updateAndScroll()
+            }
+        }
+    }
+    
+  
