@@ -270,3 +270,14 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      This property adds additional space between the leading edge of the label text and the label frame. The
      leading edge is the edge of the label text facing the direction of scroll (i.e. the edge that animates
      offscreen first during scrolling).
+     
+     Defaults to `0`.
+     
+     - Note: The value set to this property affects label positioning at all times (including when `labelize` is set to `true`),
+     including when the text string length is short enough that the label does not need to scroll.
+     - Note: For Continuous-type labels, the smallest value of `leadingBuffer`, `trailingBuffer`, and `fadeLength`
+     is used as spacing between the two label instances. Zero is an allowable value for all three properties.
+     
+     - SeeAlso: trailingBuffer
+     */
+    @IBInspectable o
