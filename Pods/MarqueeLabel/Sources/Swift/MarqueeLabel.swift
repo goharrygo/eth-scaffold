@@ -307,3 +307,16 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     @IBInspectable open var trailingBuffer: CGFloat = 0.0 {
         didSet {
             if trailingBuffer != oldValue {
+                updateAndScroll()
+            }
+        }
+    }
+    
+    /**
+     The length of transparency fade at the left and right edges of the frame.
+     
+     This propery sets the size (in points) of the view edge transparency fades on the left and right edges of a `MarqueeLabel`. The
+     transparency fades from an alpha of 1.0 (fully visible) to 0.0 (fully transparent) over this distance. Values set to this property
+     will be sanitized to prevent a fade length greater than 1/2 of the frame width.
+     
+   
