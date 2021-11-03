@@ -280,4 +280,17 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      
      - SeeAlso: trailingBuffer
      */
-    @IBInspectable o
+    @IBInspectable open var leadingBuffer: CGFloat = 0.0 {
+        didSet {
+            if leadingBuffer != oldValue {
+                updateAndScroll()
+            }
+        }
+    }
+    
+    /**
+     A buffer (offset) between the trailing edge of the label text and the label frame.
+     
+     This property adds additional space (buffer) between the trailing edge of the label text and the label frame. The
+     trailing edge is the edge of the label text facing away from the direction of scroll (i.e. the edge that animates
+     offscreen last during scrol
