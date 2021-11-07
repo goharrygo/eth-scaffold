@@ -337,4 +337,19 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     @IBInspectable open var animationDelay: CGFloat = 1.0
     
     
-    /** The read-only/computed duration of the scrol
+    /** The read-only/computed duration of the scroll animation (not including delay).
+     
+     The value of this property is calculated from the value set to the `speed` property. If a duration-type speed is
+     used to set the label animation speed, `animationDuration` will be equivalent to that value.
+     */
+    public var animationDuration: CGFloat {
+        switch self.speed {
+        case .rate(let rate):
+            return CGFloat(fabs(self.awayOffset) / rate)
+        case .duration(let duration):
+            return duration
+        }
+    }
+    
+    //
+    // MARK: - Class Functions 
