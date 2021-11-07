@@ -352,4 +352,13 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     }
     
     //
-    // MARK: - Class Functions 
+    // MARK: - Class Functions and Helpers
+    //
+    
+    /**
+     Convenience method to restart all `MarqueeLabel` instances that have the specified view controller in their next responder chain.
+    
+     - Parameter controller: The view controller for which to restart all `MarqueeLabel` instances.
+    
+     - Warning: View controllers that appear with animation (such as from underneath a modal-style controller) can cause some `MarqueeLabel` text
+     position "jumping" when this method is used in `viewDidAppear` if scroll animations are already underway. Use this method inside `viewWil
