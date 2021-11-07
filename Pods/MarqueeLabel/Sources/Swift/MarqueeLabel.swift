@@ -319,4 +319,22 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      transparency fades from an alpha of 1.0 (fully visible) to 0.0 (fully transparent) over this distance. Values set to this property
      will be sanitized to prevent a fade length greater than 1/2 of the frame width.
      
-   
+     Defaults to `0`.
+     */
+    @IBInspectable open var fadeLength: CGFloat = 0.0 {
+        didSet {
+            if fadeLength != oldValue {
+                applyGradientMask(fadeLength, animated: true)
+                updateAndScroll()
+            }
+        }
+    }
+    
+    
+    /**
+     The length of delay in seconds that the label pauses at the completion of a scroll.
+     */
+    @IBInspectable open var animationDelay: CGFloat = 1.0
+    
+    
+    /** The read-only/computed duration of the scrol
