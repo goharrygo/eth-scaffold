@@ -361,4 +361,18 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      - Parameter controller: The view controller for which to restart all `MarqueeLabel` instances.
     
      - Warning: View controllers that appear with animation (such as from underneath a modal-style controller) can cause some `MarqueeLabel` text
-     position "jumping" when this method is used in `viewDidAppear` if scroll animations are already underway. Use this method inside `viewWil
+     position "jumping" when this method is used in `viewDidAppear` if scroll animations are already underway. Use this method inside `viewWillAppear:`
+     instead to avoid this problem.
+    
+     - Warning: This method may not function properly if passed the parent view controller when using view controller containment.
+    
+     - SeeAlso: restartLabel
+     - SeeAlso: controllerViewDidAppear:
+     - SeeAlso: controllerViewWillAppear:
+     */
+    open class func restartLabelsOfController(_ controller: UIViewController) {
+        MarqueeLabel.notifyController(controller, message: .Restart)
+    }
+    
+    /**
+     Convenience method to restart all `MarqueeLab
