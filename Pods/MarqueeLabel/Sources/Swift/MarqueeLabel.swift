@@ -388,4 +388,15 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     }
     
     /**
-     Convenience method to res
+     Convenience method to restart all `MarqueeLabel` instances that have the specified view controller in their next responder chain.
+     
+     Alternative to `restartLabelsOfController`. This method is retained for backwards compatibility and future enhancements.
+     
+     - Parameter controller: The view controller that did appear.
+     - SeeAlso: restartLabel
+     - SeeAlso: controllerViewWillAppear
+     */
+    open class func controllerViewDidAppear(_ controller: UIViewController) {
+        MarqueeLabel.restartLabelsOfController(controller)
+    }
+ 
