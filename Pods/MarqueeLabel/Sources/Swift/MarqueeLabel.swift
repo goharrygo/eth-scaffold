@@ -399,4 +399,17 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     open class func controllerViewDidAppear(_ controller: UIViewController) {
         MarqueeLabel.restartLabelsOfController(controller)
     }
- 
+    
+    /**
+     Labelizes all `MarqueeLabel` instances that have the specified view controller in their next responder chain.
+    
+     The `labelize` property of all recognized `MarqueeLabel` instances will be set to `true`.
+     
+     - Parameter controller: The view controller for which all `MarqueeLabel` instances should be labelized.
+     - SeeAlso: labelize
+     */
+    open class func controllerLabelsLabelize(_ controller: UIViewController) {
+        MarqueeLabel.notifyController(controller, message: .Labelize)
+    }
+    
+    /
