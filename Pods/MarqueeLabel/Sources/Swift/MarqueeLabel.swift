@@ -433,4 +433,12 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      Returns a newly initialized `MarqueeLabel` instance with the specified scroll rate and edge transparency fade length.
     
      - Parameter frame: A rectangle specifying the initial location and size of the view in its superview's coordinates. Text (for the given font, font size, etc.) that does not fit in this frame will automatically scroll.
-     - Parameter pixelsPerSec: A rate of scroll for the label scroll animation. Must be non-zero. Note that th
+     - Parameter pixelsPerSec: A rate of scroll for the label scroll animation. Must be non-zero. Note that this will be the peak (mid-transition) rate for ease-type animation.
+     - Parameter fadeLength: A length of transparency fade at the left and right edges of the `MarqueeLabel` instance's frame.
+     - Returns: An initialized `MarqueeLabel` object or nil if the object couldn't be created.
+     - SeeAlso: fadeLength
+     */
+    public init(frame: CGRect, rate: CGFloat, fadeLength fade: CGFloat) {
+        speed = .rate(rate)
+        fadeLength = CGFloat(min(fade, frame.size.width/2.0))
+        super.init(fram
