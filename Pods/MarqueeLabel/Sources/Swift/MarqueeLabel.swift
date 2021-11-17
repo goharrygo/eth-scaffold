@@ -412,4 +412,13 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         MarqueeLabel.notifyController(controller, message: .Labelize)
     }
     
-    /
+    /**
+     De-labelizes all `MarqueeLabel` instances that have the specified view controller in their next responder chain.
+     
+     The `labelize` property of all recognized `MarqueeLabel` instances will be set to `false`.
+     
+     - Parameter controller: The view controller for which all `MarqueeLabel` instances should be de-labelized.
+     - SeeAlso: labelize
+     */
+    open class func controllerLabelsAnimate(_ controller: UIViewController) {
+        MarqueeLabel.notifyController(controll
