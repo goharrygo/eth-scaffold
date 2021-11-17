@@ -421,4 +421,16 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      - SeeAlso: labelize
      */
     open class func controllerLabelsAnimate(_ controller: UIViewController) {
-        MarqueeLabel.notifyController(controll
+        MarqueeLabel.notifyController(controller, message: .Animate)
+    }
+
+    
+    //
+    // MARK: - Initialization
+    //
+    
+    /**
+     Returns a newly initialized `MarqueeLabel` instance with the specified scroll rate and edge transparency fade length.
+    
+     - Parameter frame: A rectangle specifying the initial location and size of the view in its superview's coordinates. Text (for the given font, font size, etc.) that does not fit in this frame will automatically scroll.
+     - Parameter pixelsPerSec: A rate of scroll for the label scroll animation. Must be non-zero. Note that th
