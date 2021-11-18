@@ -471,4 +471,20 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      
      The default scroll duration of 7.0 seconds and fade length of 0.0 are used.
      
-     - Parameter frame: A rectangle specifying the initial location and size of the view in its superview's coordinates. Text (for the given font
+     - Parameter frame: A rectangle specifying the initial location and size of the view in its superview's coordinates. Text (for the given font, font size, etc.) that does not fit in this frame will automatically scroll.
+     - Returns: An initialized `MarqueeLabel` object or nil if the object couldn't be created.
+    */
+    convenience public override init(frame: CGRect) {
+        self.init(frame: frame, duration:7.0, fadeLength:0.0)
+    }
+    
+    private func setup() {
+        // Create sublabel
+        sublabel = UILabel(frame: self.bounds)
+        sublabel.tag = 700
+        sublabel.layer.anchorPoint = CGPoint.zero
+
+        // Add sublabel
+        addSubview(sublabel)
+        
+        
