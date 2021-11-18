@@ -457,3 +457,18 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     public init(frame: CGRect, duration: CGFloat, fadeLength fade: CGFloat) {
         speed = .duration(duration)
         fadeLength = CGFloat(min(fade, frame.size.width/2.0))
+        super.init(frame: frame)
+        setup()
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setup()
+    }
+    
+    /**
+     Returns a newly initialized `MarqueeLabel` instance.
+     
+     The default scroll duration of 7.0 seconds and fade length of 0.0 are used.
+     
+     - Parameter frame: A rectangle specifying the initial location and size of the view in its superview's coordinates. Text (for the given font
