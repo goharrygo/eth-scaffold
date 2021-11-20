@@ -487,4 +487,11 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         // Add sublabel
         addSubview(sublabel)
         
+        // Configure self
+        super.clipsToBounds = true
+        super.numberOfLines = 1
         
+        // Add notification observers
+        // Custom class notifications
+        NotificationCenter.default.addObserver(self, selector: #selector(MarqueeLabel.restartForViewController(_:)), name: NSNotification.Name(rawValue: MarqueeKeys.Restart.rawValue), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MarqueeLabel.labelizeForController(_:)), name: NSNotification.Name(rawVa
