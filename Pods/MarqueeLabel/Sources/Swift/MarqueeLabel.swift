@@ -498,4 +498,21 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(MarqueeLabel.animateForController(_:)), name: NSNotification.Name(rawValue: MarqueeKeys.Animate.rawValue), object: nil)
         // UIApplication state notifications
         NotificationCenter.default.addObserver(self, selector: #selector(MarqueeLabel.restartLabel), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(MarqueeLabel.shutdownLabe
+        NotificationCenter.default.addObserver(self, selector: #selector(MarqueeLabel.shutdownLabel), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+    }
+    
+    override open func awakeFromNib() {
+        super.awakeFromNib()
+        forwardPropertiesToSublabel()
+    }
+    
+    @available(iOS 8.0, *)
+    override open func prepareForInterfaceBuilder() {
+        super.prepareForInterfaceBuilder()
+        forwardPropertiesToSublabel()
+    }
+    
+    private func forwardPropertiesToSublabel() {
+        /*
+        Note that this method is currently ONLY called from awakeFromNib, i.e. when
+        text
