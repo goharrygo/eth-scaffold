@@ -515,4 +515,11 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     private func forwardPropertiesToSublabel() {
         /*
         Note that this method is currently ONLY called from awakeFromNib, i.e. when
-        text
+        text properties are set via a Storyboard. As the Storyboard/IB doesn't currently
+        support attributed strings, there's no need to "forward" the super attributedString value.
+        */
+        
+        // Since we're a UILabel, we actually do implement all of UILabel's properties.
+        // We don't care about these values, we just want to forward them on to our sublabel.
+        let properties = ["baselineAdjustment", "enabled", "highlighted", "highlightedTextColor",
+                          "minimumFontSize", "shadowOffset", "textAl
