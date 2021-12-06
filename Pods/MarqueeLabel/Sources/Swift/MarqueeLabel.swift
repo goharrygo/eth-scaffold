@@ -533,4 +533,28 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         sublabel.backgroundColor = super.backgroundColor ?? UIColor.clear
         sublabel.shadowColor = super.shadowColor
         sublabel.shadowOffset = super.shadowOffset
-        for prop in propertie
+        for prop in properties {
+            let value = super.value(forKey: prop)
+            sublabel.setValue(value, forKeyPath: prop)
+        }
+    }
+    
+    //
+    // MARK: - MarqueeLabel Heavy Lifting
+    //
+
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+        
+        updateAndScroll(true)
+    }
+
+    override open func willMove(toWindow newWindow: UIWindow?) {
+        if newWindow == nil {
+            shutdownLabel()
+        }
+    }
+    
+    override open func didMoveToWindow() {
+        if self.window == nil {
+           
