@@ -522,4 +522,15 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         // Since we're a UILabel, we actually do implement all of UILabel's properties.
         // We don't care about these values, we just want to forward them on to our sublabel.
         let properties = ["baselineAdjustment", "enabled", "highlighted", "highlightedTextColor",
-                          "minimumFontSize", "shadowOffset", "textAl
+                          "minimumFontSize", "shadowOffset", "textAlignment",
+                          "userInteractionEnabled", "adjustsFontSizeToFitWidth",
+                          "lineBreakMode", "numberOfLines", "contentMode"]
+        
+        // Iterate through properties
+        sublabel.text = super.text
+        sublabel.font = super.font
+        sublabel.textColor = super.textColor
+        sublabel.backgroundColor = super.backgroundColor ?? UIColor.clear
+        sublabel.shadowColor = super.shadowColor
+        sublabel.shadowOffset = super.shadowOffset
+        for prop in propertie
