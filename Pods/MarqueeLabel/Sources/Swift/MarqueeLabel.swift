@@ -557,4 +557,26 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     
     override open func didMoveToWindow() {
         if self.window == nil {
-           
+            shutdownLabel()
+        } else {
+            updateAndScroll()
+        }
+    }
+    
+    private func updateAndScroll() {
+        updateAndScroll(true)
+    }
+    
+    private func updateAndScroll(_ shouldBeginScroll: Bool) {
+        // Check if scrolling can occur
+        if !labelReadyForScroll() {
+            return
+        }
+        
+        // Calculate expected size
+        let expectedLabelSize = sublabelSize()
+        
+        // Invalidate intrinsic size
+        invalidateIntrinsicContentSize()
+        
+        // Move
