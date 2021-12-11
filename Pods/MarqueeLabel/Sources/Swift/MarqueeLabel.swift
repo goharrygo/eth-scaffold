@@ -579,4 +579,17 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         // Invalidate intrinsic size
         invalidateIntrinsicContentSize()
         
-        // Move
+        // Move label to home
+        returnLabelToHome()
+        
+        // Check if label should scroll
+        // Note that the holdScrolling propery does not affect this
+        if !labelShouldScroll() {
+            // Set text alignment and break mode to act like a normal label
+            sublabel.textAlignment = super.textAlignment
+            sublabel.lineBreakMode = super.lineBreakMode
+            
+            let labelFrame: CGRect
+            switch type {
+            case .continuousReverse, .rightLeft:
+                labelFrame = bounds.divided(atDistance: leadingBuf
