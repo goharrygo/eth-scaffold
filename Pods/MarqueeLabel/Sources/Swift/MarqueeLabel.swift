@@ -592,4 +592,16 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
             let labelFrame: CGRect
             switch type {
             case .continuousReverse, .rightLeft:
-                labelFrame = bounds.divided(atDistance: leadingBuf
+                labelFrame = bounds.divided(atDistance: leadingBuffer, from: CGRectEdge.maxXEdge).remainder.integral
+            default:
+                labelFrame = CGRect(x: leadingBuffer, y: 0.0, width: bounds.size.width - leadingBuffer, height: bounds.size.height).integral
+            }
+            
+            homeLabelFrame = labelFrame
+            awayOffset = 0.0
+            
+            // Remove an additional sublabels (for continuous types)
+            repliLayer?.instanceCount = 1;
+            
+            // Set the sublabel frame to calculated labelFrame
+            sublabel.frame = labe
