@@ -618,4 +618,12 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         let minTrailing = max(max(leadingBuffer, trailingBuffer), fadeLength)
         
         // Determine positions and generate scroll steps
-        let sequence: [Marqu
+        let sequence: [MarqueeStep]
+        
+        switch type {
+        case .continuous, .continuousReverse:
+            if (type == .continuous) {
+                homeLabelFrame = CGRect(x: leadingBuffer, y: 0.0, width: expectedLabelSize.width, height: bounds.size.height).integral
+                awayOffset = -(homeLabelFrame.size.width + minTrailing)
+            } else { // .ContinuousReverse
+                homeLabelFrame = CGRect(x: bounds.size.width - (expectedLabelSize.width + leadingBuffer), y: 0.0, width: expectedLabelSize.width, height:
