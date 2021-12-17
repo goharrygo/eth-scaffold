@@ -604,4 +604,18 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
             repliLayer?.instanceCount = 1;
             
             // Set the sublabel frame to calculated labelFrame
-            sublabel.frame = labe
+            sublabel.frame = labelFrame
+            
+            // Remove fade, as by definition none is needed in this case
+            removeGradientMask()
+            
+            return
+        }
+        
+        // Label DOES need to scroll
+        
+        // Spacing between primary and second sublabel must be at least equal to leadingBuffer, and at least equal to the fadeLength
+        let minTrailing = max(max(leadingBuffer, trailingBuffer), fadeLength)
+        
+        // Determine positions and generate scroll steps
+        let sequence: [Marqu
