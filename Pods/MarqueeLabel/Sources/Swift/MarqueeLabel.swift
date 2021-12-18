@@ -635,4 +635,10 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
             let offscreenAmount = homeLabelFrame.size.width
             let startFadeFraction = fabs(offscreenAmount / offsetDistance)
             // Find when the animation will hit that point
-            let startFadeTimeFraction = timingFunctionForAnimationCurve(animationCurve).durationPe
+            let startFadeTimeFraction = timingFunctionForAnimationCurve(animationCurve).durationPercentageForPositionPercentage(startFadeFraction, duration: (animationDelay + animationDuration))
+            let startFadeTime = startFadeTimeFraction * animationDuration
+            
+            sequence = scrollSequence ?? [
+                ScrollStep(timeStep: 0.0, position: .home, edgeFades: .trailing),                   // Starting point, at home, with trailing fade
+                ScrollStep(timeStep: animationDelay, position: .home, edgeFades: .trailing),        // Delay at home, maintaining fade state
+                FadeStep(time
