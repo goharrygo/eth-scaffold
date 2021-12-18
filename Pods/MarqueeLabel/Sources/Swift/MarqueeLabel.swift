@@ -626,4 +626,13 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
                 homeLabelFrame = CGRect(x: leadingBuffer, y: 0.0, width: expectedLabelSize.width, height: bounds.size.height).integral
                 awayOffset = -(homeLabelFrame.size.width + minTrailing)
             } else { // .ContinuousReverse
-                homeLabelFrame = CGRect(x: bounds.size.width - (expectedLabelSize.width + leadingBuffer), y: 0.0, width: expectedLabelSize.width, height:
+                homeLabelFrame = CGRect(x: bounds.size.width - (expectedLabelSize.width + leadingBuffer), y: 0.0, width: expectedLabelSize.width, height: bounds.size.height).integral
+                awayOffset = (homeLabelFrame.size.width + minTrailing)
+            }
+            
+            // Find when the lead label will be totally offscreen
+            let offsetDistance = awayOffset
+            let offscreenAmount = homeLabelFrame.size.width
+            let startFadeFraction = fabs(offscreenAmount / offsetDistance)
+            // Find when the animation will hit that point
+            let startFadeTimeFraction = timingFunctionForAnimationCurve(animationCurve).durationPe
