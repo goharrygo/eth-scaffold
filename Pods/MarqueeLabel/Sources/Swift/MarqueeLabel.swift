@@ -657,4 +657,10 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
             
         case .leftRight, .left, .rightLeft, .right:
             if (type == .leftRight || type == .left) {
-                homeLabelFrame = CGRect(x: leadingBuffer, y: 0.0, w
+                homeLabelFrame = CGRect(x: leadingBuffer, y: 0.0, width: expectedLabelSize.width, height: bounds.size.height).integral
+                awayOffset = bounds.size.width - (expectedLabelSize.width + leadingBuffer + trailingBuffer)
+                // Enforce text alignment for this type
+                sublabel.textAlignment = NSTextAlignment.left
+            } else {
+                homeLabelFrame = CGRect(x: bounds.size.width - (expectedLabelSize.width + leadingBuffer), y: 0.0, width: expectedLabelSize.width, height: bounds.size.height).integral
+                awayOffset = (expectedLabelSize.w
