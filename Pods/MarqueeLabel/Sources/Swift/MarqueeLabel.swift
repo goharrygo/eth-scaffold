@@ -644,4 +644,17 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
                 FadeStep(timeStep: 0.2, edgeFades: [.leading, .trailing]),                          // 0.2 sec after scroll start, fade leading edge in as well
                 FadeStep(timeStep: (startFadeTime - animationDuration),                             // Maintain fade state until just before reaching end of scroll animation
                          edgeFades: [.leading, .trailing]),
-                ScrollStep(timeStep: animationDuration, timingFunction: animationCurve,             // Ending point (back at home), with animationCurve transition, with
+                ScrollStep(timeStep: animationDuration, timingFunction: animationCurve,             // Ending point (back at home), with animationCurve transition, with trailing fade
+                           position: .away, edgeFades: .trailing)
+            ]
+            
+            // Set frame and text
+            sublabel.frame = homeLabelFrame
+            
+            // Configure replication
+            repliLayer?.instanceCount = 2
+            repliLayer?.instanceTransform = CATransform3DMakeTranslation(-awayOffset, 0.0, 0.0)
+            
+        case .leftRight, .left, .rightLeft, .right:
+            if (type == .leftRight || type == .left) {
+                homeLabelFrame = CGRect(x: leadingBuffer, y: 0.0, w
