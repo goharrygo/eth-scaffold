@@ -663,4 +663,16 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
                 sublabel.textAlignment = NSTextAlignment.left
             } else {
                 homeLabelFrame = CGRect(x: bounds.size.width - (expectedLabelSize.width + leadingBuffer), y: 0.0, width: expectedLabelSize.width, height: bounds.size.height).integral
-                awayOffset = (expectedLabelSize.w
+                awayOffset = (expectedLabelSize.width + trailingBuffer + leadingBuffer) - bounds.size.width
+                // Enforce text alignment for this type
+                sublabel.textAlignment = NSTextAlignment.right
+            }
+            // Set frame and text
+            sublabel.frame = homeLabelFrame
+            
+            // Remove any replication
+            repliLayer?.instanceCount = 1
+            
+            if (type == .leftRight || type == .rightLeft) {
+                sequence = scrollSequence ?? [
+                    ScrollStep(timeStep: 0.0, position: .home, 
