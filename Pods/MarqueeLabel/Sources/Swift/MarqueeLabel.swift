@@ -688,4 +688,8 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
                         position: .home, edgeFades: .trailing)
                 ]
             } else { // .left or .right
-                sequence 
+                sequence = scrollSequence ?? [
+                    ScrollStep(timeStep: 0.0, position: .home, edgeFades: .trailing),               // Starting point, at home, with trailing fade
+                    ScrollStep(timeStep: animationDelay, position: .home, edgeFades: .trailing),    // Delay at home, maintaining fade state
+                    FadeStep(timeStep: 0.2, edgeFades: [.leading, .trailing]),                      // 0.2 sec after delay ends, fade leading edge in as well
+                    FadeStep(timeStep: -0.2, edgeFades: [.le
