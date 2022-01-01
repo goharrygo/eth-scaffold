@@ -714,4 +714,15 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         // Bound the expected size
         let maximumLabelSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         // Calculate the expected size
-        var expectedLabelS
+        var expectedLabelSize = sublabel.sizeThatFits(maximumLabelSize)
+        
+        #if os(tvOS)
+            // Sanitize width to 16384.0 (largest width a UILabel will draw on tvOS)
+            expectedLabelSize.width = min(expectedLabelSize.width, 16384.0)
+        #else
+            // Sanitize width to 5461.0 (largest width a UILabel will draw on an iPhone 6S Plus)
+            expectedLabelSize.width = min(expectedLabelSize.width, 5461.0)
+        #endif
+
+        // Adjust to own height (make text baseline match normal label)
+        expectedLabelSize.height =
