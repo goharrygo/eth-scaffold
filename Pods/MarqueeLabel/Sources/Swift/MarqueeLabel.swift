@@ -725,4 +725,26 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         #endif
 
         // Adjust to own height (make text baseline match normal label)
-        expectedLabelSize.height =
+        expectedLabelSize.height = bounds.size.height
+        return expectedLabelSize
+    }
+    
+    override open func sizeThatFits(_ size: CGSize) -> CGSize {
+        var fitSize = sublabel.sizeThatFits(size)
+        fitSize.width += leadingBuffer
+        return fitSize
+    }
+    
+    //
+    // MARK: - Animation Handling
+    //
+    
+    open func labelShouldScroll() -> Bool {
+        // Check for nil string
+        if sublabel.text == nil {
+            return false
+        }
+        
+        // Check for empty string
+        if sublabel.text!.isEmpty {
+            return 
