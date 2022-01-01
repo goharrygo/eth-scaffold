@@ -698,4 +698,20 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
                     ScrollStep(timeStep: animationDelay, position: .away, edgeFades: .leading),     // "Delay" at away, maintaining fade state
                 ]
             }
-       
+        }
+        
+        
+        
+        // Configure gradient for current condition
+        applyGradientMask(fadeLength, animated: !self.labelize)
+        
+        if !tapToScroll && !holdScrolling && shouldBeginScroll {
+            beginScroll(sequence)
+        }
+    }
+    
+    private func sublabelSize() -> CGSize {
+        // Bound the expected size
+        let maximumLabelSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        // Calculate the expected size
+        var expectedLabelS
