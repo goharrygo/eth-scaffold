@@ -747,4 +747,21 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         
         // Check for empty string
         if sublabel.text!.isEmpty {
-            return 
+            return false
+        }
+        
+        // Check if the label string fits
+        let labelTooLarge = (sublabelSize().width + leadingBuffer) > self.bounds.size.width + CGFloat.ulpOfOne
+        let animationHasDuration = speed.value > 0.0
+        return (!labelize && labelTooLarge && animationHasDuration)
+    }
+    
+    private func labelReadyForScroll() -> Bool {
+        // Check if we have a superview
+        if superview == nil {
+            return false
+        }
+        
+        // Check if we are attached to a window
+        if window == nil {
+     
