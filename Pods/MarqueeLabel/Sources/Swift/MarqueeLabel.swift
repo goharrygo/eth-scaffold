@@ -817,4 +817,14 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         #if !TARGET_INTERFACE_BUILDER
             if fadeLength > 0.0 {
                 // Remove any setup animation, but apply final values
-                if let setupAn
+                if let setupAnim = maskLayer?.animation(forKey: "setupFade") as? CABasicAnimation, let finalColors = setupAnim.toValue as? [CGColor] {
+                    maskLayer?.colors = finalColors
+                }
+                maskLayer?.removeAnimation(forKey: "setupFade")
+                
+                // Generate animation if needed
+                if let previousAnimation = fader?.anim {
+                    gradientAnimation = previousAnimation
+                } else {
+                    gradientAnimation = nil
+       
