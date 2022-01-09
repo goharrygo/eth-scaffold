@@ -764,4 +764,25 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         
         // Check if we are attached to a window
         if window == nil {
-     
+            return false
+        }
+        
+        // Check if our view controller is ready
+        let viewController = firstAvailableViewController()
+        if viewController != nil {
+            if !viewController!.isViewLoaded {
+                return false
+            }
+        }
+        
+        return true
+    }
+    
+    private func returnLabelToHome() {
+        // Remove any gradient animation
+        maskLayer?.removeAllAnimations()
+        
+        // Remove all sublabel position animations
+        sublabel.layer.removeAllAnimations()
+        
+        // 
