@@ -827,4 +827,22 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
                     gradientAnimation = previousAnimation
                 } else {
                     gradientAnimation = nil
-       
+                }
+                
+                // Apply fade animation
+                maskLayer?.add(gradientAnimation!, forKey: "gradient")
+            } else {
+                // No animation needed
+                fader = nil
+            }
+        #else
+            fader = nil;
+        #endif
+        
+        scrollCompletionBlock = { [weak self] (finished: Bool) -> () in
+            guard (self != nil) else {
+                return
+            }
+            
+            // Call returned home function
+            self!.labelReturnedToHome
