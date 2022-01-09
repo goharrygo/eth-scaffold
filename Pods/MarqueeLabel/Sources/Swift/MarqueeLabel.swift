@@ -785,4 +785,21 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         // Remove all sublabel position animations
         sublabel.layer.removeAllAnimations()
         
-        // 
+        // Remove completion block
+        scrollCompletionBlock = nil
+    }
+    
+    private func beginScroll(_ sequence: [MarqueeStep]) {
+        let scroller = generateScrollAnimation(sequence)
+        let fader = generateGradientAnimation(sequence, totalDuration: scroller.duration)
+        
+        scroll(scroller, fader: fader)
+    }
+    
+    private func scroll(_ scroller: MLAnimation, fader: MLAnimation?) {
+        // Check for conditions which would prevent scrolling
+        if !labelReadyForScroll() {
+            return
+        }
+        // Convert fader to var
+        var fader = f
