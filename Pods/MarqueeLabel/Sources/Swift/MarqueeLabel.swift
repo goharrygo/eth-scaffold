@@ -802,4 +802,19 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
             return
         }
         // Convert fader to var
-        var fader = f
+        var fader = fader
+        
+        // Call pre-animation hook
+        labelWillBeginScroll()
+        
+        // Start animation transactions
+        CATransaction.begin()
+        CATransaction.setAnimationDuration(TimeInterval(scroller.duration))
+        
+        // Create gradient animation, if needed
+        let gradientAnimation: CAKeyframeAnimation?
+        // Check for IBDesignable
+        #if !TARGET_INTERFACE_BUILDER
+            if fadeLength > 0.0 {
+                // Remove any setup animation, but apply final values
+                if let setupAn
