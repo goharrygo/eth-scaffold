@@ -845,4 +845,14 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
             }
             
             // Call returned home function
-            self!.labelReturnedToHome
+            self!.labelReturnedToHome(true)
+            
+            // Check to ensure that:
+            
+            // 1) The instance is still attached to a window - this completion block is called for
+            //    many reasons, including if the animation is removed due to the view being removed
+            //    from the UIWindow (typically when the view controller is no longer the "top" view)
+            guard self!.window != nil else {
+                return
+            }
+            // 2) We don't double fire if an animation a
