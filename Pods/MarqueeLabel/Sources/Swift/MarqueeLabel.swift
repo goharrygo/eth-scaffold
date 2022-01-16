@@ -866,4 +866,18 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
             }
             // 4) A completion block still exists for the NEXT loop. A notable case here is if
             // returnLabelToHome() was called during a subclass's labelReturnToHome() function
-      
+            guard (self!.scrollCompletionBlock != nil) else {
+                return
+            }
+            
+            // Begin again, if conditions met
+            if (self!.labelShouldScroll() && !self!.tapToScroll && !self!.holdScrolling) {
+                // Perform completion callback
+                self!.scroll(scroller, fader: fader)
+            }
+        }
+        
+        // Perform scroll animation
+        scroller.anim.setValue(true, forKey: MarqueeKeys.CompletionClosure.rawValue)
+        scroller.anim.delegate = self
+    
