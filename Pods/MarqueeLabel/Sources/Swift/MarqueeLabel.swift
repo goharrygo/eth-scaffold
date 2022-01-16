@@ -880,4 +880,16 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         // Perform scroll animation
         scroller.anim.setValue(true, forKey: MarqueeKeys.CompletionClosure.rawValue)
         scroller.anim.delegate = self
+        if type == .left || type == .right {
+            // Make it stay at away permanently
+            scroller.anim.isRemovedOnCompletion = false
+            scroller.anim.fillMode = kCAFillModeForwards
+        }
+        sublabel.layer.add(scroller.anim, forKey: "position")
+        
+        CATransaction.commit()
+    }
     
+    private func generateScrollAnimation(_ sequence: [MarqueeStep]) -> MLAnimation {
+        // Create scroller, which defines the animation to perform
+        let homeOrigin = homeLabelFrame.origin
