@@ -855,4 +855,15 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
             guard self!.window != nil else {
                 return
             }
-            // 2) We don't double fire if an animation a
+            // 2) We don't double fire if an animation already exists
+            guard self!.sublabel.layer.animation(forKey: "position") == nil else {
+                return
+            }
+            // 3) We don't not start automatically if the animation was unexpectedly interrupted
+            guard finished else {
+                // Do not continue into the next loop
+                return
+            }
+            // 4) A completion block still exists for the NEXT loop. A notable case here is if
+            // returnLabelToHome() was called during a subclass's labelReturnToHome() function
+      
