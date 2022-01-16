@@ -893,3 +893,15 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     private func generateScrollAnimation(_ sequence: [MarqueeStep]) -> MLAnimation {
         // Create scroller, which defines the animation to perform
         let homeOrigin = homeLabelFrame.origin
+        let awayOrigin = offsetCGPoint(homeLabelFrame.origin, offset: awayOffset)
+        
+        let scrollSteps = sequence.filter({ $0 is ScrollStep }) as! [ScrollStep]
+        let totalDuration = scrollSteps.reduce(0.0) { $0 + $1.timeStep }
+        
+        // Build scroll data
+        var totalTime: CGFloat = 0.0
+        var scrollKeyTimes = [NSNumber]()
+        var scrollKeyValues = [NSValue]()
+        var scrollTimingFunctions = [CAMediaTimingFunction]()
+        
+        for (offset, step) in scrollSteps.en
