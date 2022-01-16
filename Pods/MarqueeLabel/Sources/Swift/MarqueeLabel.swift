@@ -904,4 +904,18 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         var scrollKeyValues = [NSValue]()
         var scrollTimingFunctions = [CAMediaTimingFunction]()
         
-        for (offset, step) in scrollSteps.en
+        for (offset, step) in scrollSteps.enumerated() {
+            // Scroll Times
+            totalTime += step.timeStep
+            scrollKeyTimes.append(NSNumber(value:Float(totalTime/totalDuration)))
+            
+            // Scroll Values
+            let scrollPosition: CGPoint
+            switch step.position {
+            case .home:
+                scrollPosition = homeOrigin
+            case .away:
+                scrollPosition = awayOrigin
+            case .partial(let frac):
+                scrollPosition = offsetCGPoint(homeOrigin, offset: awayOffset*frac)
+   
