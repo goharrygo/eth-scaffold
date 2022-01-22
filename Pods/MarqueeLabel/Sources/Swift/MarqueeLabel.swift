@@ -954,4 +954,11 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
             // Include all Scroll Steps
             if element is ScrollStep { return true }
             
-            // Include all Fade Steps that have a directly prece
+            // Include all Fade Steps that have a directly preceding or subsequent Scroll Step
+            // Exception: Fade Step cannot be first step
+            if offset == 0 { return false }
+            
+            // Subsequent step if 1) positive/zero time step and 2) follows a Scroll Step
+            let subsequent = element.timeStep >= 0 && (sequence[max(0, offset - 1)] is ScrollStep)
+            // Precedent step if 1) negative time step and 2) precedes a Scroll Step
+            let precedent = element.timeStep < 0 && (sequence[min(sequence.count - 1, offs
