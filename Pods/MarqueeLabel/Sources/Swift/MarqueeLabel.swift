@@ -930,4 +930,17 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         // Create animation
         let animation = CAKeyframeAnimation(keyPath: "position")
         // Set values
-        animation.keyTimes
+        animation.keyTimes = scrollKeyTimes
+        animation.values = scrollKeyValues
+        animation.timingFunctions = scrollTimingFunctions
+        
+        return (anim: animation, duration: totalDuration)
+    }
+    
+    private func generateGradientAnimation(_ sequence: [MarqueeStep], totalDuration: CGFloat) -> MLAnimation {
+        // Setup
+        var totalTime: CGFloat = 0.0
+        var stepTime: CGFloat = 0.0
+        var fadeKeyValues = [[CGColor]]()
+        var fadeKeyTimes = [NSNumber]()
+        var fa
