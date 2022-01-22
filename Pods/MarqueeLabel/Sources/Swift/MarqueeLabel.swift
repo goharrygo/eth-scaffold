@@ -943,4 +943,15 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         var stepTime: CGFloat = 0.0
         var fadeKeyValues = [[CGColor]]()
         var fadeKeyTimes = [NSNumber]()
-        var fa
+        var fadeTimingFunctions = [CAMediaTimingFunction]()
+        let transp = UIColor.clear.cgColor
+        let opaque = UIColor.black.cgColor
+        
+        // Filter to get only scroll steps and valid precedent/subsequent fade steps
+        let fadeSteps = sequence.enumerated().filter { (arg: (offset: Int, element: MarqueeStep)) -> Bool in
+            let (offset, element) = arg
+            
+            // Include all Scroll Steps
+            if element is ScrollStep { return true }
+            
+            // Include all Fade Steps that have a directly prece
