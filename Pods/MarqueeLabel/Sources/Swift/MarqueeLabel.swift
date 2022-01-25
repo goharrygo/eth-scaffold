@@ -977,4 +977,14 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
                     stepTime = totalTime + step.timeStep
                 } else {
                     // Is a Precedent, grab next step
-  
+                    stepTime = totalTime + fadeSteps[offset + 1].element.timeStep + step.timeStep
+                }
+            }
+            fadeKeyTimes.append(NSNumber(value:Float(stepTime/totalDuration)))
+            
+            // Fade Values
+            let values: [CGColor]
+            let leading = step.edgeFades.contains(.leading) ? transp : opaque
+            let trailing = step.edgeFades.contains(.trailing) ? transp : opaque
+            switch type {
+            case .leftRight, .left, .continuo
