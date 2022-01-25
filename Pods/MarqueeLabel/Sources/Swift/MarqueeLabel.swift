@@ -987,4 +987,17 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
             let leading = step.edgeFades.contains(.leading) ? transp : opaque
             let trailing = step.edgeFades.contains(.trailing) ? transp : opaque
             switch type {
-            case .leftRight, .left, .continuo
+            case .leftRight, .left, .continuous:
+                values = [leading, opaque, opaque, trailing]
+            case .rightLeft, .right, .continuousReverse:
+                values = [trailing, opaque, opaque, leading]
+            }
+            fadeKeyValues.append(values)
+            
+            // Fade Timing Function
+            // Only need n-1 timing functions, so discard the first value as it's unused
+            if offset == 0 { continue }
+            fadeTimingFunctions.append(timingFunctionForAnimationCurve(step.timingFunction))
+        }
+        
+        // Create new an
