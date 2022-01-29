@@ -1000,4 +1000,18 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
             fadeTimingFunctions.append(timingFunctionForAnimationCurve(step.timingFunction))
         }
         
-        // Create new an
+        // Create new animation
+        let animation = CAKeyframeAnimation(keyPath: "colors")
+        
+        animation.values = fadeKeyValues
+        animation.keyTimes = fadeKeyTimes
+        animation.timingFunctions = fadeTimingFunctions
+        
+        return (anim: animation, duration: max(totalTime,totalDuration))
+    }
+    
+    private func applyGradientMask(_ fadeLength: CGFloat, animated: Bool, firstStep: MarqueeStep? = nil) {
+        // Remove any in-flight animations
+        maskLayer?.removeAllAnimations()
+        
+        // Check for zero-length fade
