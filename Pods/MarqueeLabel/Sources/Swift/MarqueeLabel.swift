@@ -1015,3 +1015,19 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         maskLayer?.removeAllAnimations()
         
         // Check for zero-length fade
+        if (fadeLength <= 0.0) {
+            removeGradientMask()
+            return
+        }
+        
+        // Configure gradient mask without implicit animations
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        
+        // Determine if gradient mask needs to be created
+        let gradientMask: CAGradientLayer
+        if let currentMask = self.maskLayer {
+            // Mask layer already configured
+            gradientMask = currentMask
+        } else {
+            // No
