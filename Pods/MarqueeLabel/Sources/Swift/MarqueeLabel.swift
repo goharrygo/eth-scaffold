@@ -1030,4 +1030,16 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
             // Mask layer already configured
             gradientMask = currentMask
         } else {
-            // No
+            // No mask exists, create new mask
+            gradientMask = CAGradientLayer()
+            gradientMask.shouldRasterize = true
+            gradientMask.rasterizationScale = UIScreen.main.scale
+            gradientMask.startPoint = CGPoint(x:0.0, y:0.5)
+            gradientMask.endPoint = CGPoint(x:1.0, y:0.5)
+        }
+        
+        // Check if there is a mask to layer size mismatch
+        if gradientMask.bounds != self.layer.bounds {
+            // Adjust stops based on fade length
+            let leftFadeStop = fadeLength/self.bounds.size.width
+            l
