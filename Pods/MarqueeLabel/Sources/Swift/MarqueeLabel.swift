@@ -1042,4 +1042,18 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         if gradientMask.bounds != self.layer.bounds {
             // Adjust stops based on fade length
             let leftFadeStop = fadeLength/self.bounds.size.width
-            l
+            let rightFadeStop = 1.0 - fadeLength/self.bounds.size.width
+            gradientMask.locations = [0.0, leftFadeStop, rightFadeStop, 1.0].map { NSNumber(value: Float($0)) }
+        }
+        
+        gradientMask.bounds = self.layer.bounds
+        gradientMask.position = CGPoint(x:self.bounds.midX, y:self.bounds.midY)
+        
+        // Set up colors
+        let transparent = UIColor.clear.cgColor
+        let opaque = UIColor.black.cgColor
+        
+        // Set mask
+        self.layer.mask = gradientMask
+        
+        // D
