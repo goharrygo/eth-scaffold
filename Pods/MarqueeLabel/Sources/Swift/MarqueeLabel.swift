@@ -1070,4 +1070,18 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         }
         
         // Check for IBDesignable
-        #if T
+        #if TARGET_INTERFACE_BUILDER
+            gradientMask.colors = adjustedColors
+            CATransaction.commit()
+            return
+        #endif
+        
+        if (animated) {
+            // Finish transaction
+            CATransaction.commit()
+            
+            // Create animation for color change
+            let colorAnimation = GradientSetupAnimation(keyPath: "colors")
+            colorAnimation.fromValue = gradientMask.colors
+            colorAnimation.toValue = adjustedColors
+            colorAnimation.fillM
