@@ -1056,4 +1056,18 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         // Set mask
         self.layer.mask = gradientMask
         
-        // D
+        // Determine colors for non-scrolling label (i.e. at home)
+        let adjustedColors: [CGColor]
+        let trailingFadeNeeded = self.labelShouldScroll()
+        
+        switch (type) {
+        case .continuousReverse, .rightLeft:
+            adjustedColors = [(trailingFadeNeeded ? transparent : opaque), opaque, opaque, opaque]
+        
+        // .Continuous, .LeftRight
+        default:
+            adjustedColors = [opaque, opaque, opaque, (trailingFadeNeeded ? transparent : opaque)]
+        }
+        
+        // Check for IBDesignable
+        #if T
