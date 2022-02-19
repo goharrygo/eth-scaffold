@@ -1099,4 +1099,20 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     }
     
     private func timingFunctionForAnimationCurve(_ curve: UIViewAnimationCurve) -> CAMediaTimingFunction {
-        let timingFunction: 
+        let timingFunction: String?
+        
+        switch curve {
+        case .easeIn:
+            timingFunction = kCAMediaTimingFunctionEaseIn
+        case .easeInOut:
+            timingFunction = kCAMediaTimingFunctionEaseInEaseOut
+        case .easeOut:
+            timingFunction = kCAMediaTimingFunctionEaseOut
+        default:
+            timingFunction = kCAMediaTimingFunctionLinear
+        }
+        
+        return CAMediaTimingFunction(name: timingFunction!)
+    }
+    
+    private func transactionDurationType(_ labelType: MarqueeType
