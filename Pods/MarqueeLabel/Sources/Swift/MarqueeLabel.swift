@@ -1151,4 +1151,17 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     }
     
     fileprivate weak var repliLayer: CAReplicatorLayer? {
+        return self.layer as? CAReplicatorLayer
+    }
+    
+    fileprivate weak var maskLayer: CAGradientLayer? {
+        return self.layer.mask as! CAGradientLayer?
+    }
+    
+    fileprivate var scrollCompletionBlock: MLAnimationCompletionBlock?
+    
+    override open func draw(_ layer: CALayer, in ctx: CGContext) {
+        // Do NOT call super, to prevent UILabel superclass from drawing into context
+        // Label drawing is handled by sublabel and CAReplicatorLayer layer class
         
+        // Draw only background co
