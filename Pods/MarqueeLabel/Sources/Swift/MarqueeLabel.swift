@@ -1084,4 +1084,19 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
             let colorAnimation = GradientSetupAnimation(keyPath: "colors")
             colorAnimation.fromValue = gradientMask.colors
             colorAnimation.toValue = adjustedColors
-            colorAnimation.fillM
+            colorAnimation.fillMode = kCAFillModeForwards
+            colorAnimation.isRemovedOnCompletion = false
+            colorAnimation.delegate = self
+            gradientMask.add(colorAnimation, forKey: "setupFade")
+        } else {
+            gradientMask.colors = adjustedColors
+            CATransaction.commit()
+        }
+    }
+    
+    private func removeGradientMask() {
+        self.layer.mask = nil
+    }
+    
+    private func timingFunctionForAnimationCurve(_ curve: UIViewAnimationCurve) -> CAMediaTimingFunction {
+        let timingFunction: 
