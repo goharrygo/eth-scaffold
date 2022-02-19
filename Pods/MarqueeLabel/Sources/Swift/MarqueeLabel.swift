@@ -1115,4 +1115,18 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         return CAMediaTimingFunction(name: timingFunction!)
     }
     
-    private func transactionDurationType(_ labelType: MarqueeType
+    private func transactionDurationType(_ labelType: MarqueeType, interval: CGFloat, delay: CGFloat) -> TimeInterval {
+        switch (labelType) {
+        case .leftRight, .rightLeft:
+            return TimeInterval(2.0 * (delay + interval))
+        default:
+            return TimeInterval(delay + interval)
+        }
+    }
+    
+    public func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        if let setupAnim = anim as? GradientSetupAnimation {
+            if let finalColors = setupAnim.toValue as? [CGColor] {
+                maskLayer?.colors = finalColors
+            }
+            // Remove regardless, s
