@@ -1129,4 +1129,26 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
             if let finalColors = setupAnim.toValue as? [CGColor] {
                 maskLayer?.colors = finalColors
             }
-            // Remove regardless, s
+            // Remove regardless, since we set removeOnCompletion = false
+            maskLayer?.removeAnimation(forKey: "setupFade")
+        } else {
+            scrollCompletionBlock?(flag)
+        }
+    }
+    
+    
+    //
+    // MARK: - Private details
+    //
+    
+    private var sublabel = UILabel()
+    
+    fileprivate var homeLabelFrame = CGRect.zero
+    fileprivate var awayOffset: CGFloat = 0.0
+    
+    override open class var layerClass: AnyClass {
+        return CAReplicatorLayer.self
+    }
+    
+    fileprivate weak var repliLayer: CAReplicatorLayer? {
+        
