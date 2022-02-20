@@ -1179,4 +1179,16 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     }
     
     class fileprivate func notifyController(_ controller: UIViewController, message: MarqueeKeys) {
-        NotificationCenter.default.post(name: Notif
+        NotificationCenter.default.post(name: Notification.Name(rawValue: message.rawValue), object: nil, userInfo: ["controller" : controller])
+    }
+    
+    @objc public func restartForViewController(_ notification: Notification) {
+        if let controller = (notification as NSNotification).userInfo?["controller"] as? UIViewController {
+            if controller === self.firstAvailableViewController() {
+                self.restartLabel()
+            }
+        }
+    }
+    
+    @objc public func labelizeForController(_ notification: Notification) {
+        if let controller = (notification as N
