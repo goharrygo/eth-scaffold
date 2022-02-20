@@ -1164,4 +1164,19 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         // Do NOT call super, to prevent UILabel superclass from drawing into context
         // Label drawing is handled by sublabel and CAReplicatorLayer layer class
         
-        // Draw only background co
+        // Draw only background color
+        if let bgColor = backgroundColor {
+            ctx.setFillColor(bgColor.cgColor);
+            ctx.fill(layer.bounds);
+        }
+    }
+    
+    fileprivate enum MarqueeKeys: String {
+        case Restart = "MLViewControllerRestart"
+        case Labelize = "MLShouldLabelize"
+        case Animate = "MLShouldAnimate"
+        case CompletionClosure = "MLAnimationCompletion"
+    }
+    
+    class fileprivate func notifyController(_ controller: UIViewController, message: MarqueeKeys) {
+        NotificationCenter.default.post(name: Notif
