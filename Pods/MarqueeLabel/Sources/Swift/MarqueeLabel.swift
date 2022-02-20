@@ -1191,4 +1191,20 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     }
     
     @objc public func labelizeForController(_ notification: Notification) {
-        if let controller = (notification as N
+        if let controller = (notification as NSNotification).userInfo?["controller"] as? UIViewController {
+            if controller === self.firstAvailableViewController() {
+                self.labelize = true
+            }
+        }
+    }
+    
+    @objc public func animateForController(_ notification: Notification) {
+        if let controller = (notification as NSNotification).userInfo?["controller"] as? UIViewController {
+            if controller === self.firstAvailableViewController() {
+                self.labelize = false
+            }
+        }
+    }
+    
+    
+    //
