@@ -1208,3 +1208,14 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     
     
     //
+    // MARK: - Label Control
+    //
+    
+    /**
+     Overrides any non-size condition which is preventing the receiver from automatically scrolling, and begins a scroll animation.
+    
+     Currently the only non-size conditions which can prevent a label from scrolling are the `tapToScroll` and `holdScrolling` properties. This
+     method will not force a label with a string that fits inside the label bounds (i.e. that would not automatically scroll) to begin a scroll
+     animation.
+    
+     Upon the completion of the first forced scroll animati
