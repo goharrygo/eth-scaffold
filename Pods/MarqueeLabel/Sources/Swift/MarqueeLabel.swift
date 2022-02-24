@@ -1299,4 +1299,22 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         sublabel.layer.timeOffset = labelPauseTime
         
         // Pause gradient fade animation
-        let gradientPauseTime = maskLayer?.convertTi
+        let gradientPauseTime = maskLayer?.convertTime(CACurrentMediaTime(), from:nil)
+        maskLayer?.speed = 0.0
+        maskLayer?.timeOffset = gradientPauseTime!
+    }
+    
+    /**
+     Un-pauses a previously paused text scrolling animation. This method has no effect if the label was not previously paused using `pauseLabel`.
+     
+     - SeeAlso: pauseLabel
+     */
+    public func unpauseLabel() {
+        // Only unpause if label was previously paused
+        guard (isPaused) else {
+            return
+        }
+        
+        // Unpause sublabel position animations
+        let labelPausedTime = sublabel.layer.timeOffset
+   
