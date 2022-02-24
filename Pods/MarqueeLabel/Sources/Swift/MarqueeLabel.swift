@@ -1218,4 +1218,18 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      method will not force a label with a string that fits inside the label bounds (i.e. that would not automatically scroll) to begin a scroll
      animation.
     
-     Upon the completion of the first forced scroll animati
+     Upon the completion of the first forced scroll animation, the receiver will not automatically continue to scroll unless the conditions
+     preventing scrolling have been removed.
+    
+     - Note: This method has no effect if called during an already in-flight scroll animation.
+    
+     - SeeAlso: restartLabel
+    */
+    public func triggerScrollStart() {
+        if labelShouldScroll() && !awayFromHome {
+            updateAndScroll()
+        }
+    }
+    
+    /**
+     Immediately resets the label to the home position, cancelling any in-flight scroll animation, 
