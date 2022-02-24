@@ -1232,4 +1232,21 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     }
     
     /**
-     Immediately resets the label to the home position, cancelling any in-flight scroll animation, 
+     Immediately resets the label to the home position, cancelling any in-flight scroll animation, and restarts the scroll animation if the appropriate conditions are met.
+     
+     - SeeAlso: resetLabel
+     - SeeAlso: triggerScrollStart
+     */
+    @objc public func restartLabel() {
+        // Shutdown the label
+        shutdownLabel()
+        // Restart scrolling if appropriate
+        if labelShouldScroll() && !tapToScroll && !holdScrolling {
+            updateAndScroll()
+        }
+    }
+    
+    /**
+     Resets the label text, recalculating the scroll animation.
+     
+     The text is immediately returned to the 
