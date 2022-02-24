@@ -1263,4 +1263,13 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     }
     
     /**
-     Immediately r
+     Immediately resets the label to the home position, cancelling any in-flight scroll animation.
+     
+     The text is immediately returned to the home position. Scrolling will not resume automatically after a call to this method.
+     To re-initiate scrolling use a call to `restartLabel` or `triggerScrollStart`, or make a change to a UILabel property such as text, bounds/frame,
+     font, font size, etc.
+     
+     - SeeAlso: restartLabel
+     - SeeAlso: triggerScrollStart
+     */
+    @objc public func shutdownLabel() {
