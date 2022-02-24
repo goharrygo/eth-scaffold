@@ -1285,4 +1285,18 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      - Note: This method has no effect if a scroll animation is NOT already in progress. To prevent automatic scrolling on a newly-initialized label prior to its presentation onscreen, see the `holdScrolling` property.
      
      - SeeAlso: holdScrolling
-     - SeeAls
+     - SeeAlso: unpauseLabel
+     */
+    public func pauseLabel() {
+        // Prevent pausing label while not in scrolling animation, or when already paused
+        guard (!isPaused && awayFromHome) else {
+            return
+        }
+        
+        // Pause sublabel position animations
+        let labelPauseTime = sublabel.layer.convertTime(CACurrentMediaTime(), from: nil)
+        sublabel.layer.speed = 0.0
+        sublabel.layer.timeOffset = labelPauseTime
+        
+        // Pause gradient fade animation
+        let gradientPauseTime = maskLayer?.convertTi
