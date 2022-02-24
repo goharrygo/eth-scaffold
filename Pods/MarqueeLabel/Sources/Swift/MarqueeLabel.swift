@@ -1273,3 +1273,16 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      - SeeAlso: triggerScrollStart
      */
     @objc public func shutdownLabel() {
+        // Bring label to home location
+        returnLabelToHome()
+        // Apply gradient mask for home location
+        applyGradientMask(fadeLength, animated: false)
+    }
+    
+    /**
+     Pauses the text scrolling animation, at any point during an in-progress animation.
+     
+     - Note: This method has no effect if a scroll animation is NOT already in progress. To prevent automatic scrolling on a newly-initialized label prior to its presentation onscreen, see the `holdScrolling` property.
+     
+     - SeeAlso: holdScrolling
+     - SeeAls
