@@ -1330,4 +1330,16 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         maskLayer?.beginTime = maskLayer!.convertTime(CACurrentMediaTime(), from:nil) - gradientPauseTime!
     }
     
- 
+    @objc public func labelWasTapped(_ recognizer: UIGestureRecognizer) {
+        if labelShouldScroll() && !awayFromHome {
+            updateAndScroll()
+        }
+    }
+    
+    /**
+     Called when the label animation is about to begin.
+     
+     The default implementation of this method does nothing. Subclasses may override this method in order to perform any custom actions just as
+     the label animation begins. This is only called in the event that the conditions for scrolling to begin are met.
+     */
+    open func labelWillBegi
