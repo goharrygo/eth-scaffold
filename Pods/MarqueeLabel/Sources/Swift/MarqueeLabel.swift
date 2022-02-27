@@ -1317,4 +1317,17 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         
         // Unpause sublabel position animations
         let labelPausedTime = sublabel.layer.timeOffset
-   
+        sublabel.layer.speed = 1.0
+        sublabel.layer.timeOffset = 0.0
+        sublabel.layer.beginTime = 0.0
+        sublabel.layer.beginTime = sublabel.layer.convertTime(CACurrentMediaTime(), from:nil) - labelPausedTime
+        
+        // Unpause gradient fade animation
+        let gradientPauseTime = maskLayer?.timeOffset
+        maskLayer?.speed = 1.0
+        maskLayer?.timeOffset = 0.0
+        maskLayer?.beginTime = 0.0
+        maskLayer?.beginTime = maskLayer!.convertTime(CACurrentMediaTime(), from:nil) - gradientPauseTime!
+    }
+    
+ 
