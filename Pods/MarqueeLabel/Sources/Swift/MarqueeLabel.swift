@@ -1353,4 +1353,12 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      The default implementation of this method does nothing. Subclasses may override this method in order to perform any custom actions jas as
      the label animation completes, and before the next animation would begin (assuming the scroll conditions are met).
      
-     - Parameter finished: A Boolean that indicates w
+     - Parameter finished: A Boolean that indicates whether or not the scroll animation actually finished before the completion handler was called.
+     
+     - Warning: This method will be called, and the `finished` parameter will be `NO`, when any property changes are made that would cause the label
+     scrolling to be automatically reset. This includes changes to label text and font/font size changes.
+     */
+    open func labelReturnedToHome(_ finished: Bool) {
+        // Default implementation does nothing - override to customize
+        return
+    }
