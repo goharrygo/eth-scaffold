@@ -1342,4 +1342,15 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
      The default implementation of this method does nothing. Subclasses may override this method in order to perform any custom actions just as
      the label animation begins. This is only called in the event that the conditions for scrolling to begin are met.
      */
-    open func labelWillBegi
+    open func labelWillBeginScroll() {
+        // Default implementation does nothing - override to customize
+        return
+    }
+    
+    /**
+     Called when the label animation has finished, and the label is at the home position.
+     
+     The default implementation of this method does nothing. Subclasses may override this method in order to perform any custom actions jas as
+     the label animation completes, and before the next animation would begin (assuming the scroll conditions are met).
+     
+     - Parameter finished: A Boolean that indicates w
