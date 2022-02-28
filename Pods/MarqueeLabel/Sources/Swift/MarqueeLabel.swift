@@ -1362,3 +1362,27 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         // Default implementation does nothing - override to customize
         return
     }
+    
+    //
+    // MARK: - Modified UILabel Functions/Getters/Setters
+    //
+    
+    #if os(iOS)
+    override open func forBaselineLayout() -> UIView {
+        // Use subLabel view for handling baseline layouts
+        return sublabel
+    }
+    
+    override open var forLastBaselineLayout: UIView {
+        // Use subLabel view for handling baseline layouts
+        return sublabel
+    }
+    #endif
+
+    override open var text: String? {
+        get {
+            return sublabel.text
+        }
+        
+        set {
+            if su
