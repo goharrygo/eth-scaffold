@@ -1385,4 +1385,24 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         }
         
         set {
-            if su
+            if sublabel.text == newValue {
+                return
+            }
+            sublabel.text = newValue
+            updateAndScroll()
+            super.text = text
+        }
+    }
+    
+    override open var attributedText: NSAttributedString? {
+        get {
+            return sublabel.attributedText
+        }
+        
+        set {
+            if sublabel.attributedText == newValue {
+                return
+            }
+            sublabel.attributedText = newValue
+            updateAndScroll()
+            super.attributedText = att
