@@ -1432,4 +1432,30 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         
         set {
             sublabel.textColor = newValue
-            s
+            super.textColor = newValue
+        }
+    }
+    
+    override open var backgroundColor: UIColor? {
+        get {
+            return sublabel.backgroundColor
+        }
+        
+        set {
+            sublabel.backgroundColor = newValue
+            super.backgroundColor = newValue
+        }
+    }
+    
+    override open var shadowColor: UIColor? {
+        get {
+            return sublabel.shadowColor
+        }
+        
+        set {
+            sublabel.shadowColor = newValue
+            super.shadowColor = newValue
+        }
+    }
+    
+    override open var shadowOffs
