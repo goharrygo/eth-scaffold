@@ -1547,4 +1547,26 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     
     override open var intrinsicContentSize: CGSize {
         var content = sublabel.intrinsicContentSize
-       
+        content.width += leadingBuffer
+        return content
+    }
+    
+    override open var tintColor: UIColor! {
+        get {
+            return sublabel.tintColor
+        }
+        
+        set {
+            sublabel.tintColor = newValue
+            super.tintColor = newValue
+        }
+    }
+    
+    override open func tintColorDidChange() {
+        super.tintColorDidChange()
+        sublabel.tintColorDidChange()
+    }
+    
+    override open var contentMode: UIViewContentMode {
+        get {
+            return sublabel.content
