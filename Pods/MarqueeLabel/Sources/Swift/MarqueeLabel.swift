@@ -1504,4 +1504,26 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     
     override open var numberOfLines: Int {
         get {
-            return super.numberOfLin
+            return super.numberOfLines
+        }
+        
+        set {
+            // By the nature of MarqueeLabel, this is 1
+            super.numberOfLines = 1
+        }
+    }
+    
+    override open var adjustsFontSizeToFitWidth: Bool {
+        get {
+            return super.adjustsFontSizeToFitWidth
+        }
+        
+        set {
+            // By the nature of MarqueeLabel, this is false
+            super.adjustsFontSizeToFitWidth = false
+        }
+    }
+    
+    override open var minimumScaleFactor: CGFloat {
+        get {
+            r
