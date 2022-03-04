@@ -1405,4 +1405,31 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
             }
             sublabel.attributedText = newValue
             updateAndScroll()
-            super.attributedText = att
+            super.attributedText = attributedText
+        }
+    }
+    
+    override open var font: UIFont! {
+        get {
+            return sublabel.font
+        }
+        
+        set {
+            if sublabel.font == newValue {
+                return
+            }
+            sublabel.font = newValue
+            super.font = newValue
+            
+            updateAndScroll()
+        }
+    }
+    
+    override open var textColor: UIColor! {
+        get {
+            return sublabel.textColor
+        }
+        
+        set {
+            sublabel.textColor = newValue
+            s
