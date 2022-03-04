@@ -1458,4 +1458,26 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         }
     }
     
-    override open var shadowOffs
+    override open var shadowOffset: CGSize {
+        get {
+            return sublabel.shadowOffset
+        }
+        
+        set {
+            sublabel.shadowOffset = newValue
+            super.shadowOffset = newValue
+        }
+    }
+    
+    override open var highlightedTextColor: UIColor? {
+        get {
+            return sublabel.highlightedTextColor
+        }
+        
+        set {
+            sublabel.highlightedTextColor = newValue
+            super.highlightedTextColor = newValue
+        }
+    }
+    
+    override open var isHighlighted
