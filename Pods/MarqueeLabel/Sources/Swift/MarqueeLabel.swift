@@ -1526,4 +1526,25 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     
     override open var minimumScaleFactor: CGFloat {
         get {
-            r
+            return super.minimumScaleFactor
+        }
+        
+        set {
+            super.minimumScaleFactor = 0.0
+        }
+    }
+    
+    override open var baselineAdjustment: UIBaselineAdjustment {
+        get {
+            return sublabel.baselineAdjustment
+        }
+        
+        set {
+            sublabel.baselineAdjustment = newValue
+            super.baselineAdjustment = newValue
+        }
+    }
+    
+    override open var intrinsicContentSize: CGSize {
+        var content = sublabel.intrinsicContentSize
+       
