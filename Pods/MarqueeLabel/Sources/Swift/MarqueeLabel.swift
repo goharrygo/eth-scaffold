@@ -1480,4 +1480,28 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
         }
     }
     
-    override open var isHighlighted
+    override open var isHighlighted: Bool {
+        get {
+            return sublabel.isHighlighted
+        }
+        
+        set {
+            sublabel.isHighlighted = newValue
+            super.isHighlighted = newValue
+        }
+    }
+    
+    override open var isEnabled: Bool {
+        get {
+            return sublabel.isEnabled
+        }
+        
+        set {
+            sublabel.isEnabled = newValue
+            super.isEnabled = newValue
+        }
+    }
+    
+    override open var numberOfLines: Int {
+        get {
+            return super.numberOfLin
