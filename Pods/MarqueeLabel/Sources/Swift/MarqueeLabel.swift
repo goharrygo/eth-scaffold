@@ -1619,4 +1619,10 @@ public protocol MarqueeStep {
  */
 public struct ScrollStep: MarqueeStep {
     /**
-     An enum 
+     An enum that provides the possible positions defined by a ScrollStep
+     - `home`: The starting, default position of the label
+     - `away`: The calculated position that results in the entirety of the label scrolling past.
+     - `partial(CGFloat)`: A fractional value, specified by the associated CGFloat value, between the `home` and `away` positions (must be between 0.0 and 1.0).
+     
+     The `away` position depends on the MarqueeLabel `type` value.
+     - For `left`, `leftRight`, `right`, and `rightLeft` types, the
