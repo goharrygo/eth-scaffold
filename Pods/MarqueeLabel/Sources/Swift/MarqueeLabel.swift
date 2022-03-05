@@ -1569,4 +1569,28 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     
     override open var contentMode: UIViewContentMode {
         get {
-            return sublabel.content
+            return sublabel.contentMode
+        }
+        
+        set {
+            super.contentMode = contentMode
+            sublabel.contentMode = newValue
+        }
+    }
+    
+    open override var isAccessibilityElement: Bool {
+        didSet {
+            sublabel.isAccessibilityElement = self.isAccessibilityElement
+        }
+    }
+
+    //
+    // MARK: - Support
+    //
+    
+    fileprivate func offsetCGPoint(_ point: CGPoint, offset: CGFloat) -> CGPoint {
+        return CGPoint(x: point.x + offset, y: point.y)
+    }
+    
+    //
+    // MARK: - Dein
