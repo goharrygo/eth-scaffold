@@ -1593,4 +1593,30 @@ open class MarqueeLabel: UILabel, CAAnimationDelegate {
     }
     
     //
-    // MARK: - Dein
+    // MARK: - Deinit
+    //
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+}
+
+
+//
+// MARK: - Support
+//
+public protocol MarqueeStep {
+    var timeStep: CGFloat { get }
+    var timingFunction: UIViewAnimationCurve { get }
+    var edgeFades: EdgeFade { get }
+}
+
+
+/**
+ `ScrollStep` types define the label position at a specified time delta since the last `ScrollStep` step, as well as
+ the animation curve to that position and edge fade state at the position
+ */
+public struct ScrollStep: MarqueeStep {
+    /**
+     An enum 
