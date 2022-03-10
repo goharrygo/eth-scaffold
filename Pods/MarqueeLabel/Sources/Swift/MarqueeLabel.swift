@@ -1625,4 +1625,11 @@ public struct ScrollStep: MarqueeStep {
      - `partial(CGFloat)`: A fractional value, specified by the associated CGFloat value, between the `home` and `away` positions (must be between 0.0 and 1.0).
      
      The `away` position depends on the MarqueeLabel `type` value.
-     - For `left`, `leftRight`, `right`, and `rightLeft` types, the
+     - For `left`, `leftRight`, `right`, and `rightLeft` types, the `away` position means the trailing edge of the label
+        is visible. For `leftRight` and `rightLeft` default types, the scroll animation reverses direction after reaching
+        this point and returns to the `home` position.
+     - For `continuous` and `continuousReverse` types, the `away` position is the location such that if the scroll is completed
+        at this point (i.e. the animation is removed), there will be no visible change in the label appearance.
+     */
+    public enum Position {
+        case ho
