@@ -1632,4 +1632,23 @@ public struct ScrollStep: MarqueeStep {
         at this point (i.e. the animation is removed), there will be no visible change in the label appearance.
      */
     public enum Position {
-        case ho
+        case home
+        case away
+        case partial(CGFloat)
+    }
+    
+    /**
+     The desired time between this step and the previous `ScrollStep` in a sequence.
+    */
+    public let timeStep: CGFloat
+    
+    /**
+     The animation curve to utilize between the previous `ScrollStep` in a sequence and this step.
+     
+     - Note: The animation curve value for the first `ScrollStep` in a sequence has no effect.
+     */
+    public let timingFunction: UIViewAnimationCurve
+    
+    /**
+     The position of the label for this scroll step.
+     - SeeAlso: 
