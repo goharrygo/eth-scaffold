@@ -1651,4 +1651,17 @@ public struct ScrollStep: MarqueeStep {
     
     /**
      The position of the label for this scroll step.
-     - SeeAlso: 
+     - SeeAlso: Position
+     */
+    public let position: Position
+    
+    /**
+     The option set defining the edge fade state for this scroll step.
+     
+     Possible options include `.leading` and `.trailing`, corresponding to the leading edge of the label scrolling (i.e. 
+     the direction of scroll) and trailing edge of the label.
+    */
+    public let edgeFades: EdgeFade
+    
+    public init(timeStep: CGFloat, timingFunction: UIViewAnimationCurve = .linear, position: Position, edgeFades: EdgeFade) {
+        
