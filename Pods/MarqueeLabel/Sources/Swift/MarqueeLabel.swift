@@ -1677,4 +1677,16 @@ public struct ScrollStep: MarqueeStep {
  a sequence. `FadeStep` steps are defined by the time delta to the preceding or subsequent `ScrollStep` step and the timing
  function to their edge fade state.
  
- - Note: A `FadeStep` cannot be the first step in a sequence. A `Fad
+ - Note: A `FadeStep` cannot be the first step in a sequence. A `FadeStep` defined as such will be ignored.
+ */
+public struct FadeStep: MarqueeStep {
+    /**
+     The desired time between this `FadeStep` and the preceding or subsequent `ScrollStep` in a sequence.
+     
+     `FadeSteps` with a negative `timeStep` value will be associated _only_ with an immediately-subsequent `ScrollStep` step
+     in the sequence.
+     
+     `FadeSteps` with a positive `timeStep` value will be associated _only_ with an immediately-prior `ScrollStep` step in the
+     sequence.
+     
+     - Note: A `F
