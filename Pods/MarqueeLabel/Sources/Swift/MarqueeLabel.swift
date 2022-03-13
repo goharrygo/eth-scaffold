@@ -1664,4 +1664,17 @@ public struct ScrollStep: MarqueeStep {
     public let edgeFades: EdgeFade
     
     public init(timeStep: CGFloat, timingFunction: UIViewAnimationCurve = .linear, position: Position, edgeFades: EdgeFade) {
-        
+        self.timeStep = timeStep
+        self.position = position
+        self.edgeFades = edgeFades
+        self.timingFunction = timingFunction
+    }
+}
+
+
+/**
+ `FadeStep` types allow additional edge fade state definitions, around the states defined by the `ScrollStep` steps of
+ a sequence. `FadeStep` steps are defined by the time delta to the preceding or subsequent `ScrollStep` step and the timing
+ function to their edge fade state.
+ 
+ - Note: A `FadeStep` cannot be the first step in a sequence. A `Fad
