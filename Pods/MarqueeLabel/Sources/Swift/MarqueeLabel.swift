@@ -1689,4 +1689,18 @@ public struct FadeStep: MarqueeStep {
      `FadeSteps` with a positive `timeStep` value will be associated _only_ with an immediately-prior `ScrollStep` step in the
      sequence.
      
-     - Note: A `F
+     - Note: A `FadeStep` with a `timeStep` value of 0.0 will have no effect, and is the same as defining the fade state with
+     a `ScrollStep`.
+     */
+    public let timeStep: CGFloat
+    
+    /**
+     The animation curve to utilize between the previous fade state in a sequence and this step.
+     */
+    public let timingFunction: UIViewAnimationCurve
+    
+    /**
+     The option set defining the edge fade state for this fade step.
+     
+     Possible options include `.leading` and `.trailing`, corresponding to the leading edge of the label scrolling (i.e.
+     t
