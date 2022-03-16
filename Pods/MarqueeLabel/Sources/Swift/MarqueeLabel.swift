@@ -1762,4 +1762,16 @@ fileprivate extension CAMediaTimingFunction {
         // Finds the animation duration percentage that corresponds with the given animation "position" percentage.
         // Utilizes Newton's Method to solve for the parametric Bezier curve that is used by CAMediaAnimation.
         
-        let controlPoints = self.cont
+        let controlPoints = self.controlPoints()
+        let epsilon: CGFloat = 1.0 / (100.0 * CGFloat(duration))
+        
+        // Find the t value that gives the position percentage we want
+        let t_found = solveTforY(positionPercentage, epsilon: epsilon, controlPoints: controlPoints)
+        
+        // With that t, find the corresponding animation percentage
+        let durationPercentage = XforCurveAt(t_found, controlPoints: controlPoints)
+        
+        return durationPercentage
+    }
+    
+    func solveTforY(_ y_0: CGFloat, epsilon: CGF
