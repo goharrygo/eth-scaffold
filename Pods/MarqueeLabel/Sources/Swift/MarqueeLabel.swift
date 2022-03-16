@@ -1747,4 +1747,19 @@ fileprivate extension UIResponder {
             if nextResponder is UIViewController {
                 return nextResponder as? UIViewController
             } else if nextResponder is UIView {
-                return nextResponder.traverseResp
+                return nextResponder.traverseResponderChainForFirstViewController()
+            } else {
+                return nil
+            }
+        }
+        return nil
+    }
+}
+
+fileprivate extension CAMediaTimingFunction {
+    
+    func durationPercentageForPositionPercentage(_ positionPercentage: CGFloat, duration: CGFloat) -> CGFloat {
+        // Finds the animation duration percentage that corresponds with the given animation "position" percentage.
+        // Utilizes Newton's Method to solve for the parametric Bezier curve that is used by CAMediaAnimation.
+        
+        let controlPoints = self.cont
