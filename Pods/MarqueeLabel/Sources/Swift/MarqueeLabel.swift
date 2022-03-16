@@ -1774,4 +1774,17 @@ fileprivate extension CAMediaTimingFunction {
         return durationPercentage
     }
     
-    func solveTforY(_ y_0: CGFloat, epsilon: CGF
+    func solveTforY(_ y_0: CGFloat, epsilon: CGFloat, controlPoints: [CGPoint]) -> CGFloat {
+        // Use Newton's Method: http://en.wikipedia.org/wiki/Newton's_method
+        // For first guess, use t = y (i.e. if curve were linear)
+        var t0 = y_0
+        var t1 = y_0
+        var f0, df0: CGFloat
+        
+        for _ in 0..<15 {
+            // Base this iteration of t1 calculated from last iteration
+            t0 = t1
+            // Calculate f(t0)
+            f0 = YforCurveAt(t0, controlPoints:controlPoints) - y_0
+            // Check if this is close (enough)
+            if (fabs(f
