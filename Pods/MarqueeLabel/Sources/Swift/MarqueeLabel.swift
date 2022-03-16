@@ -1737,4 +1737,14 @@ fileprivate extension UIResponder {
     // Thanks to Phil M
     // http://stackoverflow.com/questions/1340434/get-to-uiviewcontroller-from-uiview-on-iphone
     
-    fun
+    func firstAvailableViewController() -> UIViewController? {
+        // convenience function for casting and to "mask" the recursive function
+        return self.traverseResponderChainForFirstViewController()
+    }
+    
+    func traverseResponderChainForFirstViewController() -> UIViewController? {
+        if let nextResponder = self.next {
+            if nextResponder is UIViewController {
+                return nextResponder as? UIViewController
+            } else if nextResponder is UIView {
+                return nextResponder.traverseResp
