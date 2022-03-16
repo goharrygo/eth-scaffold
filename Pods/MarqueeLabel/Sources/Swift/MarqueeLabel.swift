@@ -1719,3 +1719,22 @@ public struct FadeStep: MarqueeStep {
 public struct EdgeFade : OptionSet {
     public let rawValue: Int
     public static let leading  = EdgeFade(rawValue: 1 << 0)
+    public static let trailing = EdgeFade(rawValue: 1 << 1)
+    
+    public init(rawValue: Int) {
+        self.rawValue = rawValue;
+    }
+}
+
+// Define helpful typealiases
+fileprivate typealias MLAnimationCompletionBlock = (_ finished: Bool) -> ()
+fileprivate typealias MLAnimation = (anim: CAKeyframeAnimation, duration: CGFloat)
+
+fileprivate class GradientSetupAnimation: CABasicAnimation {
+}
+
+fileprivate extension UIResponder {
+    // Thanks to Phil M
+    // http://stackoverflow.com/questions/1340434/get-to-uiviewcontroller-from-uiview-on-iphone
+    
+    fun
