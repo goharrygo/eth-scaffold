@@ -1703,4 +1703,19 @@ public struct FadeStep: MarqueeStep {
      The option set defining the edge fade state for this fade step.
      
      Possible options include `.leading` and `.trailing`, corresponding to the leading edge of the label scrolling (i.e.
-     t
+     the direction of scroll) and trailing edge of the label.
+     
+     As an Option Set type, both edge fade states may be defined using an array literal: `[.leading, .trailing]`.
+     */
+    public let edgeFades: EdgeFade
+    
+    public init(timeStep: CGFloat, timingFunction: UIViewAnimationCurve = .linear, edgeFades: EdgeFade) {
+        self.timeStep = timeStep
+        self.timingFunction = timingFunction
+        self.edgeFades = edgeFades
+    }
+}
+
+public struct EdgeFade : OptionSet {
+    public let rawValue: Int
+    public static let leading  = EdgeFade(rawValue: 1 << 0)
