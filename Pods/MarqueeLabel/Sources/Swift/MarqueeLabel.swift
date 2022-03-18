@@ -1802,4 +1802,19 @@ fileprivate extension CAMediaTimingFunction {
         }
         
         // Give up - shouldn't ever get here...I hope
-        print("MarqueeLabel: Failed to find t f
+        print("MarqueeLabel: Failed to find t for Y input!")
+        return t0
+    }
+    
+    func YforCurveAt(_ t: CGFloat, controlPoints:[CGPoint]) -> CGFloat {
+        let P0 = controlPoints[0]
+        let P1 = controlPoints[1]
+        let P2 = controlPoints[2]
+        let P3 = controlPoints[3]
+        
+        // Per http://en.wikipedia.org/wiki/Bezier_curve#Cubic_B.C3.A9zier_curves
+        let y0 = (pow((1.0 - t),3.0) * P0.y)
+        let y1 = (3.0 * pow(1.0 - t, 2.0) * t * P1.y)
+        let y2 = (3.0 * (1.0 - t) * pow(t, 2.0) * P2.y)
+        let y3 = (pow(t, 3.0) * P3.y)
+ 
