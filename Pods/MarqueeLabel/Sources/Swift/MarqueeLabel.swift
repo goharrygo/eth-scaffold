@@ -1787,4 +1787,19 @@ fileprivate extension CAMediaTimingFunction {
             // Calculate f(t0)
             f0 = YforCurveAt(t0, controlPoints:controlPoints) - y_0
             // Check if this is close (enough)
-            if (fabs(f
+            if (fabs(f0) < epsilon) {
+                // Done!
+                return t0
+            }
+            // Else continue Newton's Method
+            df0 = derivativeCurveYValueAt(t0, controlPoints:controlPoints)
+            // Check if derivative is small or zero ( http://en.wikipedia.org/wiki/Newton's_method#Failure_analysis )
+            if (fabs(df0) < 1e-6) {
+                break
+            }
+            // Else recalculate t1
+            t1 = t0 - f0/df0
+        }
+        
+        // Give up - shouldn't ever get here...I hope
+        print("MarqueeLabel: Failed to find t f
