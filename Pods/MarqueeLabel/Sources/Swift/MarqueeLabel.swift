@@ -1817,4 +1817,24 @@ fileprivate extension CAMediaTimingFunction {
         let y1 = (3.0 * pow(1.0 - t, 2.0) * t * P1.y)
         let y2 = (3.0 * (1.0 - t) * pow(t, 2.0) * P2.y)
         let y3 = (pow(t, 3.0) * P3.y)
- 
+        
+        return y0 + y1 + y2 + y3
+    }
+    
+    func XforCurveAt(_ t: CGFloat, controlPoints: [CGPoint]) -> CGFloat {
+        let P0 = controlPoints[0]
+        let P1 = controlPoints[1]
+        let P2 = controlPoints[2]
+        let P3 = controlPoints[3]
+        
+        // Per http://en.wikipedia.org/wiki/Bezier_curve#Cubic_B.C3.A9zier_curves
+        
+        let x0 = (pow((1.0 - t),3.0) * P0.x)
+        let x1 = (3.0 * pow(1.0 - t, 2.0) * t * P1.x)
+        let x2 = (3.0 * (1.0 - t) * pow(t, 2.0) * P2.x)
+        let x3 = (pow(t, 3.0) * P3.x)
+        
+        return x0 + x1 + x2 + x3
+    }
+    
+    func derivati
