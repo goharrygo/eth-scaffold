@@ -1837,4 +1837,20 @@ fileprivate extension CAMediaTimingFunction {
         return x0 + x1 + x2 + x3
     }
     
-    func derivati
+    func derivativeCurveYValueAt(_ t: CGFloat, controlPoints: [CGPoint]) -> CGFloat {
+        let P0 = controlPoints[0]
+        let P1 = controlPoints[1]
+        let P2 = controlPoints[2]
+        let P3 = controlPoints[3]
+        
+        let dy0 = (P0.y + 3.0 * P1.y + 3.0 * P2.y - P3.y) * -3.0
+        let dy1 = t * (6.0 * P0.y + 6.0 * P2.y)
+        let dy2 = (-3.0 * P0.y + 3.0 * P1.y)
+
+        return dy0 * pow(t, 2.0) + dy1 + dy2
+    }
+    
+    func controlPoints() -> [CGPoint] {
+        // Create point array to point to
+        var point: [Float] = [0.0, 0.0]
+       
