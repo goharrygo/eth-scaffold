@@ -18,4 +18,26 @@
 
 import UIKit
 
-public e
+public enum BannerHaptic {
+    case light
+    case medium
+    case heavy
+    case none
+}
+
+open class BannerHapticGenerator: NSObject {
+
+    /**
+        Generates a haptic based on the given haptic
+        -parameter haptic: The haptic strength to generate when a banner is shown
+     */
+    open class func generate(_ haptic: BannerHaptic) {
+        
+        var style: UIImpactFeedbackStyle!
+        
+        switch haptic {
+        case .light:
+            style = .light
+        case .medium:
+            style = .medium
+        case .he
