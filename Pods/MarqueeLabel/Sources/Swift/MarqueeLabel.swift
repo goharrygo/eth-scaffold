@@ -1853,4 +1853,13 @@ fileprivate extension CAMediaTimingFunction {
     func controlPoints() -> [CGPoint] {
         // Create point array to point to
         var point: [Float] = [0.0, 0.0]
-       
+        var pointArray = [CGPoint]()
+        for i in 0...3 {
+            self.getControlPoint(at: i, values: &point)
+            pointArray.append(CGPoint(x: CGFloat(point[0]), y: CGFloat(point[1])))
+        }
+        
+        return pointArray
+    }
+}
+
