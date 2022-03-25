@@ -40,4 +40,16 @@ open class BannerHapticGenerator: NSObject {
             style = .light
         case .medium:
             style = .medium
-        case .he
+        case .heavy:
+            style = .heavy
+        case .none:
+            return
+        }
+        
+        if #available(iOS 10.0, *) {
+            let feedbackGenerator = UIImpactFeedbackGenerator(style: style)
+            feedbackGenerator.prepare()
+            feedbackGenerator.impactOccurred()
+        }
+    }
+}
