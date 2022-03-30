@@ -73,4 +73,19 @@ class BannerPositionFrame: NSObject {
      if the bannerPosition is .bottom
      */
     private func endFrame(for bannerPosition: BannerPosition,
-                            bannerWidth: 
+                            bannerWidth: CGFloat,
+                            bannerHeight: CGFloat,
+                            maxY: CGFloat) -> CGRect {
+        switch bannerPosition {
+        case .bottom:
+            return CGRect(x: 0,
+                          y: maxY - bannerHeight,
+                          width: bannerWidth,
+                          height: bannerHeight)
+        case .top:
+            return CGRect(x: 0,
+                          y: 0,
+                          width: startFrame.width,
+                          height: startFrame.height)
+            
+        }
