@@ -65,4 +65,12 @@ class BannerPositionFrame: NSObject {
     }
     
     /**
-     Returns the end frame for the notification b
+     Returns the end frame for the notification banner based on the given banner position
+     - parameter bannerPosition: The position the notification banners should slide in from
+     - parameter bannerWidth: The width of the notification banner
+     - parameter bannerHeight: The height of the notification banner
+     - parameter maxY: The maximum `y` position the banner can slide in from. This value is only used
+     if the bannerPosition is .bottom
+     */
+    private func endFrame(for bannerPosition: BannerPosition,
+                            bannerWidth: 
