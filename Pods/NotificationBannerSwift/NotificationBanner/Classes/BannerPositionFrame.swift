@@ -26,4 +26,16 @@ public enum BannerPosition {
 class BannerPositionFrame: NSObject {
     
     private(set) var startFrame: CGRect!
-    private(set) var endFrame: CG
+    private(set) var endFrame: CGRect!
+
+    init(bannerPosition: BannerPosition,
+         bannerWidth: CGFloat,
+         bannerHeight: CGFloat,
+         maxY: CGFloat) {
+        super.init()
+        self.startFrame = startFrame(for: bannerPosition, bannerWidth: bannerWidth, bannerHeight: bannerHeight, maxY: maxY)
+        self.endFrame = endFrame(for: bannerPosition, bannerWidth: bannerWidth, bannerHeight: bannerHeight, maxY: maxY)
+    }
+    
+    /**
+        Returns the start frame for the notification banner based on the given banner position
