@@ -89,3 +89,6 @@ class BannerPositionFrame: NSObject {
                           height: startFrame.height)
             
         }
+    }
+
+}
