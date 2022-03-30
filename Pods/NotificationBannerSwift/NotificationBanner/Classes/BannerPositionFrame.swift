@@ -47,4 +47,22 @@ class BannerPositionFrame: NSObject {
      */
     private func startFrame(for bannerPosition: BannerPosition,
                             bannerWidth: CGFloat,
-                            bannerHei
+                            bannerHeight: CGFloat,
+                            maxY: CGFloat) -> CGRect {
+        switch bannerPosition {
+        case .bottom:
+            return CGRect(x: 0,
+                          y: maxY,
+                          width: bannerWidth,
+                          height: bannerHeight)
+        case .top:
+            return CGRect(x: 0,
+                          y: -bannerHeight,
+                          width: bannerWidth,
+                          height: bannerHeight)
+
+        }
+    }
+    
+    /**
+     Returns the end frame for the notification b
