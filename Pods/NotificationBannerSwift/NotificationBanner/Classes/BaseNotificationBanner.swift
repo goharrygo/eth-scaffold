@@ -367,3 +367,89 @@ public class BaseNotificationBanner: UIView {
             isSuspended = false
             isDisplaying = true
         }
+    }
+    
+    /**
+        Changes the frame of the notification banner when the orientation of the device changes
+    */
+    @objc private dynamic func onOrientationChanged() {
+        updateSpacerViewHeight()
+        
+        let newY = (bannerPosition == .top) ? (frame.origin.y) : (appWindow.frame.height - bannerHeight)
+        frame = CGRect(x: frame.origin.x,
+                       y: newY,
+                       width: appWindow.frame.width,
+                       height: bannerHeight)
+    
+        bannerPositionFrame = BannerPositionFrame(bannerPosition: bannerPosition,
+                                                  bannerWidth: appWindow.frame.width,
+                                                  bannerHeight: bannerHeight,
+                                                  maxY: maximumYPosition())
+    }
+    
+    /**
+        Called when a notification banner is tapped
+    */
+    @objc private dynamic func onTapGestureRecognizer() {
+        if dismissOnTap {
+            dismiss()
+        }
+        
+        onTap?()
+    }
+    
+    /**
+        Called when a notification banner is swiped up
+    */
+    @objc private dynamic func onSwipeUpGestureRecognizer() {
+        if dismissOnSwipeUp {
+            dismiss()
+        }
+        
+        onSwipeUp?()
+    }
+    
+    
+    /**
+        Determines wether or not the status bar should be shown when displaying a banner underneath
+        the navigation bar
+     */
+    private func statusBarShouldBeShown() -> Bool {
+        
+        for banner in bannerQueue.banners {
+            if (banner.parentViewController == nil && banner.bannerPosition == .top) {
+                return false
+            }
+        }
+        
+        return true
+    }
+    
+    /** 
+        Calculates the maximum `y` position that a notification banner can slide in from
+    */
+ 
+    private func maximumYPosition() -> CGFloat {
+        if let parentViewController = parentViewController {
+            return parentViewController.view.frame.height
+        } else {
+            return appWindow.frame.height
+        }
+    }
+
+    /**
+         Determines wether or not we should adjust the banner for the iPhoneX
+     */
+    
+    internal func shouldAdjustForIphoneX() -> Bool {
+        return NotificationBannerUtilities.isiPhoneX()
+            && UIApplication.shared.statusBarOrientation.isPortrait
+            && (self.parentViewController?.navigationController?.isNavigationBarHidden ?? true)
+    }
+    /**
+        Updates the scrolling marquee label duration
+    */
+    internal func updateMarqueeLabelsDurations() {
+        titleLabel?.speed = .duration(CGFloat(duration - 3))
+    }
+}
