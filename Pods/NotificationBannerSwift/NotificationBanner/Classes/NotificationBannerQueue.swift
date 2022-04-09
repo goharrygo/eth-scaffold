@@ -26,4 +26,17 @@ public enum QueuePosition {
 open class NotificationBannerQueue: NSObject {
     
     /// The default instance of the NotificationBannerQueue
-    public static let `default` = Notifi
+    public static let `default` = NotificationBannerQueue()
+    
+    /// The notification banners currently placed on the queue
+    private(set) var banners: [BaseNotificationBanner] = []
+    
+    /// The current number of notification banners on the queue
+    public var numberOfBanners: Int {
+        return banners.count
+    }
+    
+    /**
+        Adds a banner to the queue
+        -parameter banner: The notification banner to add to the queue
+        -parameter queuePosition: The position to show the notification banner. If the position is .front, 
