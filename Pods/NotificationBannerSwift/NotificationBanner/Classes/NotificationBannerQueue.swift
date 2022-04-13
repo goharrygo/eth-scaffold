@@ -54,4 +54,23 @@ open class NotificationBannerQueue: NSObject {
         } else {
             banner.show(placeOnQueue: false, bannerPosition: banner.bannerPosition)
             
-            if le
+            if let firstBanner = banners.first {
+                firstBanner.suspend()
+            }
+            
+            banners.insert(banner, at: 0)
+        }
+        
+    }
+    
+    /**
+        Shows the next notificaiton banner on the queue if one exists
+        -parameter callback: The closure to execute after a banner is shown or when the queue is empty
+    */
+    func showNext(callback: ((_ isEmpty: Bool) -> Void)) {
+
+        if !banners.isEmpty {
+          banners.removeFirst()
+        }
+        guard let banner = banners.first else {
+            c
