@@ -73,4 +73,23 @@ open class NotificationBannerQueue: NSObject {
           banners.removeFirst()
         }
         guard let banner = banners.first else {
-            c
+            callback(true)
+            return
+        }
+        
+        if banner.isSuspended {
+            banner.resume()
+        } else {
+            banner.show(placeOnQueue: false)
+        }
+        
+        callback(false)
+    }
+    
+    /**
+        Removes all notification banners from the queue
+    */
+    public func removeAll() {
+        banners.removeAll()
+    }
+}
