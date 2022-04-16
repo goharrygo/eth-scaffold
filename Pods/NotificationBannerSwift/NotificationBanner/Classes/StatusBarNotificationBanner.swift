@@ -21,3 +21,24 @@ import UIKit
 #if CARTHAGE_CONFIG
     import MarqueeLabelSwift
 #else
+    import MarqueeLabel
+#endif
+
+public class StatusBarNotificationBanner: BaseNotificationBanner {
+    
+    public override var bannerHeight: CGFloat {
+        get {
+            if let customBannerHeight = customBannerHeight {
+                return customBannerHeight
+            } else if shouldAdjustForIphoneX() {
+                return 50.0
+            } else {
+                return 20.0
+            }
+        } set {
+            customBannerHeight = newValue
+        }
+    }
+    
+    override init(style: BannerStyle, colors: BannerColorsProtocol? = nil) {
+        super.
