@@ -54,4 +54,20 @@ public class StatusBarNotificationBanner: BaseNotificationBanner {
         titleLabel!.snp.makeConstraints { (make) in
             make.top.equalToSuperview()
             make.left.equalToSuperview().offset(5)
-            make.right.equalToS
+            make.right.equalToSuperview().offset(-5)
+            make.bottom.equalToSuperview()
+        }
+
+        updateMarqueeLabelsDurations()
+    }
+    
+    public convenience init(title: String,
+                            style: BannerStyle = .info,
+                            colors: BannerColorsProtocol? = nil) {
+        self.init(style: style, colors: colors)
+        titleLabel!.text = title
+    }
+    
+    public convenience init(attributedTitle: NSAttributedString,
+                            style: BannerStyle = .info,
+                            colors
