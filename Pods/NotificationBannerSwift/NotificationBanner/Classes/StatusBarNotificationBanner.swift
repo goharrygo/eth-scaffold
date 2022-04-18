@@ -41,4 +41,17 @@ public class StatusBarNotificationBanner: BaseNotificationBanner {
     }
     
     override init(style: BannerStyle, colors: BannerColorsProtocol? = nil) {
-        super.
+        super.init(style: style, colors: colors)
+
+        titleLabel = MarqueeLabel()
+        titleLabel?.animationDelay = 2
+        titleLabel?.type = .leftRight
+        titleLabel!.font = UIFont.systemFont(ofSize: 12.5, weight: UIFont.Weight.bold)
+        titleLabel!.textAlignment = .center
+        titleLabel!.textColor = .white
+        contentView.addSubview(titleLabel!)
+        
+        titleLabel!.snp.makeConstraints { (make) in
+            make.top.equalToSuperview()
+            make.left.equalToSuperview().offset(5)
+            make.right.equalToS
