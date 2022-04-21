@@ -70,4 +70,13 @@ public class StatusBarNotificationBanner: BaseNotificationBanner {
     
     public convenience init(attributedTitle: NSAttributedString,
                             style: BannerStyle = .info,
-                            colors
+                            colors: BannerColorsProtocol? = nil) {
+        self.init(style: style, colors: colors)
+        titleLabel!.attributedText = attributedTitle
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+
+}
