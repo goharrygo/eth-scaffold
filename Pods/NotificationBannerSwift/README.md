@@ -276,3 +276,5 @@ I'd love to know anything that you think NotificationBanner is missing. Open an 
 Dalton Hinterscher, daltonhint4@gmail.com
 
 ## License
+
+NotificationBanner is available under the MIT license. See the LICENSE file for more info.
