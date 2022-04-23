@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "320AD47B0C6BA014D301395D3BFC8FB6"
-               BuildableName = "MarqueeLabel.framework"
-               BlueprintName = "MarqueeLabel"
+               BlueprintIdentifier = "FB9DC7F36C53422E6D39BCFB448312D1"
+               BuildableName = "Pods_Stocks.framework"
+               BlueprintName = "Pods-Stocks"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -46,9 +46,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "320AD47B0C6BA014D301395D3BFC8FB6"
-            BuildableName = "MarqueeLabel.framework"
-            BlueprintName = "MarqueeLabel"
+            BlueprintIdentifier = "FB9DC7F36C53422E6D39BCFB448312D1"
+            BuildableName = "Pods_Stocks.framework"
+            BlueprintName = "Pods-Stocks"
             ReferencedContainer = "container:Pods.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
