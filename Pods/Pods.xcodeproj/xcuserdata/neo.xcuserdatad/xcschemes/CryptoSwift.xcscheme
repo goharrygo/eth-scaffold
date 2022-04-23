@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "0940"
@@ -14,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "88E9EC28B8B46C3631E6B242B50F4442"
-               BuildableName = "Alamofire.framework"
-               BlueprintName = "Alamofire"
+               BlueprintIdentifier = "2B028F713360D9B13ED4B59673121C55"
+               BuildableName = "CryptoSwift.framework"
+               BlueprintName = "CryptoSwift"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +46,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "88E9EC28B8B46C3631E6B242B50F4442"
-            BuildableName = "Alamofire.framework"
-            BlueprintName = "Alamofire"
+            BlueprintIdentifier = "2B028F713360D9B13ED4B59673121C55"
+            BuildableName = "CryptoSwift.framework"
+            BlueprintName = "CryptoSwift"
             ReferencedContainer = "container:Pods.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
