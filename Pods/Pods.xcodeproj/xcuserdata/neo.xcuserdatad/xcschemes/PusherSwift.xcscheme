@@ -12,4 +12,16 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES"
             buildForAnalyzing = "YES">
-            <BuildableRefere
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "41554B32D5071B2B7D1FA27009DB287A"
+               BuildableName = "PusherSwift.framework"
+               BlueprintName = "PusherSwift"
+               ReferencedContainer = "container:Pods.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.
