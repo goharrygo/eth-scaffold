@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "0940"
@@ -14,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CA7080FB39308808F45F7480E243C308"
-               BuildableName = "Starscream.framework"
-               BlueprintName = "Starscream"
+               BlueprintIdentifier = "B6B753409F6FFD234C0C71C073833225"
+               BuildableName = "TaskQueue.framework"
+               BlueprintName = "TaskQueue"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +46,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CA7080FB39308808F45F7480E243C308"
-            BuildableName = "Starscream.framework"
-            BlueprintName = "Starscream"
+            BlueprintIdentifier = "B6B753409F6FFD234C0C71C073833225"
+            BuildableName = "TaskQueue.framework"
+            BlueprintName = "TaskQueue"
             ReferencedContainer = "container:Pods.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
