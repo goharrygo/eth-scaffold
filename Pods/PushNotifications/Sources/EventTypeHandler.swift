@@ -12,4 +12,12 @@ struct EventTypeHandler {
         let hasData = EventTypeHandler.hasData(userInfo)
 
         guard
-            let publishId = Publish
+            let publishId = PublishId(userInfo: userInfo).id,
+            let deviceId = Device.getDeviceId()
+        else { return nil }
+
+        switch applicationState {
+        case .active:
+            eventType = DeliveryEventType(publishId: publishId, deviceId: deviceId, timestampSecs: timestampSecs, appInBackground: false, hasDisplayableContent: hasDisplayableContent, hasData: hasData)
+        case .background:
+            eventType = DeliveryEventType(publishId: publishId, deviceId: deviceId, timestampSecs: timestampSecs, appInBackground: true, hasDisplayableCon
