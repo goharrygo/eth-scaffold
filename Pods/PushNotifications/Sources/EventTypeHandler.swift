@@ -20,4 +20,19 @@ struct EventTypeHandler {
         case .active:
             eventType = DeliveryEventType(publishId: publishId, deviceId: deviceId, timestampSecs: timestampSecs, appInBackground: false, hasDisplayableContent: hasDisplayableContent, hasData: hasData)
         case .background:
-            eventType = DeliveryEventType(publishId: publishId, deviceId: deviceId, timestampSecs: timestampSecs, appInBackground: true, hasDisplayableCon
+            eventType = DeliveryEventType(publishId: publishId, deviceId: deviceId, timestampSecs: timestampSecs, appInBackground: true, hasDisplayableContent: hasDisplayableContent, hasData: hasData)
+        case .inactive:
+            eventType = OpenEventType(publishId: publishId, deviceId: deviceId, timestampSecs: timestampSecs)
+        }
+
+        return eventType
+    }
+    #elseif os(OSX)
+    static func getNotificationEventType(userInfo: [AnyHashable: Any]) -> OpenEventType? {
+        let timestampSecs = UInt(Date().timeIntervalSince1970)
+        guard
+            let publishId = PublishId(userInfo: userInfo).id,
+            let deviceId = Device.getDeviceId()
+        else { return nil }
+
+ 
