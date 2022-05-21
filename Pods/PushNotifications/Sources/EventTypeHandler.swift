@@ -35,4 +35,25 @@ struct EventTypeHandler {
             let deviceId = Device.getDeviceId()
         else { return nil }
 
- 
+        return OpenEventType(publishId: publishId, deviceId: deviceId, timestampSecs: timestampSecs)
+    }
+    #endif
+
+    static func hasDisplayableContent(_ userInfo: [AnyHashable: Any]) -> Bool {
+        guard let aps = userInfo["aps"] as? [String: Any] else {
+            return false
+        }
+
+        return aps["alert"] != nil
+    }
+
+    // Example APNs payload:
+    //
+    //  aps: {
+    //    alert: {
+    //      title: 'Hello',
+    //      body: 'Hello, world!'
+    //    },
+    //    "content-available" : 1
+    //  },
+    //  data:
