@@ -56,4 +56,20 @@ struct EventTypeHandler {
     //    },
     //    "content-available" : 1
     //  },
-    //  data:
+    //  data: {
+    //    pusher: {
+    //      publishId: 'pubid-33f3f68e-b0c5-438f-b50f-fae93f6c48df'
+    //    }
+    //  }
+    //
+    static func hasData(_ userInfo: [AnyHashable: Any]) -> Bool {
+        guard let data = userInfo["data"] as? [String: Any] else {
+            return false
+        }
+
+        // `data` will always contain at least `pusher` object.
+        // Returns `true` if there is any additional information provided.
+        return data.count > 1
+    }
+
+    static func getRemoteNotificationType(_ userInfo: [AnyHashable: Any]) -> RemoteNotif
