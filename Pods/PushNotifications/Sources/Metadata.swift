@@ -42,4 +42,8 @@ extension Metadata: PropertyListReadable {
 
     static func load() -> [String: Any]? {
         let userDefaults = UserDefaults(suiteName: Constants.UserDefaults.suiteName)
-        let metadata = userDefaults?.object(forKey
+        let metadata = userDefaults?.object(forKey: Constants.UserDefaults.metadata) as? [String: String]
+
+        return metadata
+    }
+}
