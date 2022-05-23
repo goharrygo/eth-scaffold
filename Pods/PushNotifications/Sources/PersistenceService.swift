@@ -59,3 +59,12 @@ struct PersistenceService: InterestPersistable {
     func getServerConfirmedInterestsHash() -> String {
         return service.value(forKey: Constants.PersistanceService.hashKey) as? String ?? ""
     }
+
+    private func interestExists(interest: String) -> Bool {
+        return service.object(forKey: self.prefixInterest(interest)) != nil
+    }
+
+    private func prefixInterest(_ interest: String) -> String {
+        return "\(prefix):\(interest)"
+    }
+}
