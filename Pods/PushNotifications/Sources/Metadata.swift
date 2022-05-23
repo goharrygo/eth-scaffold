@@ -28,4 +28,18 @@ extension Metadata: PropertyListReadable {
         #if os(iOS)
             let metadata = Metadata(sdkVersion: sdkVersion, iosVersion: systemVersion, macosVersion: nil)
         #elseif os(OSX)
-            let metadata = 
+            let metadata = Metadata(sdkVersion: sdkVersion, iosVersion: nil, macosVersion: systemVersion)
+        #endif
+        metadata.save()
+
+        return metadata
+    }
+
+    func save() {
+        let userDefaults = UserDefaults(suiteName: Constants.UserDefaults.suiteName)
+        userDefaults?.set(self.propertyListRepresentation(), forKey: Constants.UserDefaults.metadata)
+    }
+
+    static func load() -> [String: Any]? {
+        let userDefaults = UserDefaults(suiteName: Constants.UserDefaults.suiteName)
+        let metadata = userDefaults?.object(forKey
