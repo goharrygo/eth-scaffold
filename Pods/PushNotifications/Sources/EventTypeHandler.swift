@@ -72,4 +72,14 @@ struct EventTypeHandler {
         return data.count > 1
     }
 
-    static func getRemoteNotificationType(_ userInfo: [AnyHashable: Any]) -> RemoteNotif
+    static func getRemoteNotificationType(_ userInfo: [AnyHashable: Any]) -> RemoteNotificationType {
+        guard
+            let data = userInfo["data"] as? [String: Any],
+            let pusher = data["pusher"] as? [String: Any]
+        else {
+            return .ShouldProcess
+        }
+
+        return pusher["userShouldIgnore"] != nil ? .ShouldIgnore : .ShouldProcess
+    }
+}
