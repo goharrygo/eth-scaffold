@@ -14,4 +14,23 @@ import Foundation
     private let networkService: PushNotificationsNetworkable
 
     // The object that acts as the delegate of push notifications.
-    public weak var de
+    public weak var delegate: InterestsChangedDelegate?
+
+    //! Returns a shared singleton PushNotifications object.
+    /// - Tag: shared
+    @objc public static let shared = PushNotifications()
+
+    public override init() {
+        self.networkService = NetworkService(session: self.session)
+
+        if !Device.idAlreadyPresent() {
+            preIISOperationQueue.suspend()
+        }
+    }
+
+    /**
+     Start PushNotifications service.
+
+     - Parameter instanceId: PushNotifications instance id.
+
+     - Precondition: `instanceId` sh
