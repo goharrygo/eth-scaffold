@@ -33,4 +33,13 @@ import Foundation
 
      - Parameter instanceId: PushNotifications instance id.
 
-     - Precondition: `instanceId` sh
+     - Precondition: `instanceId` should not be nil.
+     */
+    /// - Tag: start
+    @objc public func start(instanceId: String) {
+        // Detect from where the function is being called
+        let wasCalledFromCorrectLocation = Thread.callStackSymbols.contains { stack in
+            return stack.contains("didFinishLaunchingWith") || stack.contains("applicationDidFinishLaunching")
+        }
+        if !wasCalledFromCorrectLocation {
+            print("[Push Notifications] - Warning: You should call `pushNotifications.start` from the `AppDelegate.didFi
