@@ -42,4 +42,22 @@ import Foundation
             return stack.contains("didFinishLaunchingWith") || stack.contains("applicationDidFinishLaunching")
         }
         if !wasCalledFromCorrectLocation {
-            print("[Push Notifications] - Warning: You should call `pushNotifications.start` from the `AppDelegate.didFi
+            print("[Push Notifications] - Warning: You should call `pushNotifications.start` from the `AppDelegate.didFinishLaunchingWith`")
+        }
+
+        do {
+            try Instance.persist(instanceId)
+        } catch PusherAlreadyRegisteredError.instanceId(let errorMessage) {
+            print("[Push Notifications] - \(errorMessage)")
+        } catch {
+            print("[Push Notifications] - Unexpected error: \(error).")
+        }
+
+        self.syncMetadata()
+        self.syncInterests()
+    }
+
+    /**
+     Register to receive remote notifications via Apple Push Notification service.
+
+     Convenience method is using `.alert`, `.sound`, and `.
