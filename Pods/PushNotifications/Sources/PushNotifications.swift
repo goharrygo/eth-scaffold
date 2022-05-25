@@ -60,4 +60,16 @@ import Foundation
     /**
      Register to receive remote notifications via Apple Push Notification service.
 
-     Convenience method is using `.alert`, `.sound`, and `.
+     Convenience method is using `.alert`, `.sound`, and `.badge` as default authorization options.
+
+     - SeeAlso:  `registerForRemoteNotifications(options:)`
+     */
+    /// - Tag: register
+    @objc public func registerForRemoteNotifications() {
+        self.registerForPushNotifications(options: [.alert, .sound, .badge])
+    }
+    #if os(iOS)
+    /**
+     Register to receive remote notifications via Apple Push Notification service.
+
+     - Parameter options: The authorization options your app is requesting. You may combine the available constants to request authorization fo
