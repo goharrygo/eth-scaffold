@@ -80,4 +80,16 @@ import Foundation
     }
     #elseif os(OSX)
     /**
-     Register to receive remote notificatio
+     Register to receive remote notifications via Apple Push Notification service.
+
+     - Parameter options: A bit mask specifying the types of notifications the app accepts. See [NSApplication.RemoteNotificationType](https://developer.apple.com/documentation/appkit/nsapplication.remotenotificationtype) for valid bit-mask values.
+     */
+    @objc public func registerForRemoteNotifications(options: NSApplication.RemoteNotificationType) {
+        self.registerForPushNotifications(options: options)
+    }
+    #endif
+
+    /**
+     Register device token with PushNotifications service.
+
+     - Parameter deviceToke
