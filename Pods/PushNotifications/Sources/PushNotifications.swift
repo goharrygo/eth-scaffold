@@ -92,4 +92,13 @@ import Foundation
     /**
      Register device token with PushNotifications service.
 
-     - Parameter deviceToke
+     - Parameter deviceToken: A token that identifies the device to APNs.
+     - Parameter completion: The block to execute when the register device token operation is complete.
+
+     - Precondition: `deviceToken` should not be nil.
+     */
+    /// - Tag: registerDeviceToken
+    @objc public func registerDeviceToken(_ deviceToken: Data, completion: @escaping () -> Void = {}) {
+        guard
+            let instanceId = Instance.getInstanceId(),
+            let url = URL(string: "https://\(instanceId).pushnotifications.pusher.com/devi
