@@ -72,4 +72,12 @@ import Foundation
     /**
      Register to receive remote notifications via Apple Push Notification service.
 
-     - Parameter options: The authorization options your app is requesting. You may combine the available constants to request authorization fo
+     - Parameter options: The authorization options your app is requesting. You may combine the available constants to request authorization for multiple items. Request only the authorization options that you plan to use. For a list of possible values, see [UNAuthorizationOptions](https://developer.apple.com/documentation/usernotifications/unauthorizationoptions).
+     */
+    /// - Tag: registerOptions
+    @objc public func registerForRemoteNotifications(options: UNAuthorizationOptions) {
+        self.registerForPushNotifications(options: options)
+    }
+    #elseif os(OSX)
+    /**
+     Register to receive remote notificatio
