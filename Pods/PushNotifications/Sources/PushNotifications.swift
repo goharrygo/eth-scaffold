@@ -110,4 +110,20 @@ import Foundation
         if Device.idAlreadyPresent() {
             // If we have the device id that means that the token has already been registered.
             // Therefore we don't need to call `networkService.register` again.
-            print("[Push Notifications] - Warning: Avoid multiple calls of `re
+            print("[Push Notifications] - Warning: Avoid multiple calls of `registerDeviceToken`")
+            return
+        }
+
+        networkService.register(url: url, deviceToken: deviceToken, instanceId: instanceId) { [weak self] (device) in
+            guard
+                let device = device,
+                let strongSelf = self
+            else {
+                return
+            }
+
+            strongSelf.persistenceStorageOperationQueue.async {
+                if Device.idAlreadyPresent() {
+                    print("[Push Notifications] - Warning: Avoid multiple calls of `registerDeviceToken`")
+                } else {
+                    
