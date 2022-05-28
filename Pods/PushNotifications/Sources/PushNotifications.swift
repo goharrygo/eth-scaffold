@@ -176,4 +176,21 @@ import Foundation
                         let deviceId = Device.getDeviceId(),
                         let instanceId = Instance.getInstanceId(),
                         let url = URL(string: "https://\(instanceId).pushnotifications.pusher.com/device_api/v1/instances/\(instanceId)/devices/apns/\(deviceId)/interests/\(interest)")
-               
+                    else {
+                        return
+                    }
+
+                    let networkService: PushNotificationsNetworkable = NetworkService(session: self.session)
+                    networkService.subscribe(url: url, completion: { _ in
+                        completion()
+                    })
+                }
+            } else {
+                self.preIISOperationQueue.async {
+                    persistenceService.persist(interest: interest)
+                    completion()
+                }
+            }
+
+            if interestAdded {
+      
