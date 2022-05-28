@@ -153,4 +153,17 @@ import Foundation
      Subscribe to an interest.
 
      - Parameter interest: Interest that you want to subscribe to.
-     - Parameter completion: The block to execute when subscription to the interest is comple
+     - Parameter completion: The block to execute when subscription to the interest is complete.
+
+     - Precondition: `interest` should not be nil.
+
+     - Throws: An error of type `InvalidInterestError`
+     */
+    /// - Tag: subscribe
+    @objc public func subscribe(interest: String, completion: @escaping () -> Void = {}) throws {
+        guard self.validateInterestName(interest) else {
+            throw InvalidInterestError.invalidName(interest)
+        }
+
+        self.persistenceStorageOperationQueue.async {
+            let persistenceService: InterestPersistable = PersistenceService(service: UserDefaults(suiteName: Constants.
