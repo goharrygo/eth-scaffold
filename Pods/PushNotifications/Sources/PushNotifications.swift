@@ -126,4 +126,13 @@ import Foundation
                 if Device.idAlreadyPresent() {
                     print("[Push Notifications] - Warning: Avoid multiple calls of `registerDeviceToken`")
                 } else {
-                    
+                    Device.persist(device.id)
+
+                    let initialInterestSet = device.initialInterestSet ?? []
+                    let persistenceService: InterestPersistable = PersistenceService(service: UserDefaults(suiteName: "PushNotifications")!)
+                    if initialInterestSet.count > 0 {
+                        persistenceService.persist(interests: initialInterestSet)
+                    }
+
+                    strongSelf.preIISOperationQueue.async {
+                        let interests = persistenceService.getSubscriptions() ?? 
