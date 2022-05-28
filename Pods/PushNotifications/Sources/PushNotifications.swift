@@ -101,4 +101,13 @@ import Foundation
     @objc public func registerDeviceToken(_ deviceToken: Data, completion: @escaping () -> Void = {}) {
         guard
             let instanceId = Instance.getInstanceId(),
-            let url = URL(string: "https://\(instanceId).pushnotifications.pusher.com/devi
+            let url = URL(string: "https://\(instanceId).pushnotifications.pusher.com/device_api/v1/instances/\(instanceId)/devices/apns")
+        else {
+            print("[Push Notifications] - Something went wrong. Please check your instance id: \(String(describing: Instance.getInstanceId()))")
+            return
+        }
+
+        if Device.idAlreadyPresent() {
+            // If we have the device id that means that the token has already been registered.
+            // Therefore we don't need to call `networkService.register` again.
+            print("[Push Notifications] - Warning: Avoid multiple calls of `re
