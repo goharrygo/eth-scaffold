@@ -166,4 +166,14 @@ import Foundation
         }
 
         self.persistenceStorageOperationQueue.async {
-            let persistenceService: InterestPersistable = PersistenceService(service: UserDefaults(suiteName: Constants.
+            let persistenceService: InterestPersistable = PersistenceService(service: UserDefaults(suiteName: Constants.UserDefaults.suiteName)!)
+
+            let interestAdded = persistenceService.persist(interest: interest)
+
+            if Device.idAlreadyPresent() {
+                if interestAdded {
+                    guard
+                        let deviceId = Device.getDeviceId(),
+                        let instanceId = Instance.getInstanceId(),
+                        let url = URL(string: "https://\(instanceId).pushnotifications.pusher.com/device_api/v1/instances/\(instanceId)/devices/apns/\(deviceId)/interests/\(interest)")
+               
