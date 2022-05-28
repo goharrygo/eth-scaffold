@@ -135,4 +135,22 @@ import Foundation
                     }
 
                     strongSelf.preIISOperationQueue.async {
-                        let interests = persistenceService.getSubscriptions() ?? 
+                        let interests = persistenceService.getSubscriptions() ?? []
+                        if !initialInterestSet.containsSameElements(as: interests) {
+                            strongSelf.syncInterests()
+                        }
+
+                        completion()
+                    }
+
+                    strongSelf.preIISOperationQueue.resume()
+                }
+            }
+        }
+    }
+
+    /**
+     Subscribe to an interest.
+
+     - Parameter interest: Interest that you want to subscribe to.
+     - Parameter completion: The block to execute when subscription to the interest is comple
