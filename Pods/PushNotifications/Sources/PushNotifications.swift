@@ -193,4 +193,20 @@ import Foundation
             }
 
             if interestAdded {
-      
+                self.interestsSetDidChange()
+            }
+        }
+    }
+
+    /**
+     Set subscriptions.
+
+     - Parameter interests: Interests that you want to subscribe to.
+     - Parameter completion: The block to execute when subscription to interests is complete.
+
+     - Precondition: `interests` should not be nil.
+
+     - Throws: An error of type `MultipleInvalidInterestsError`
+     */
+    /// - Tag: setSubscriptions
+    @objc public func setSubscriptions(interests: [String], completion: @escaping () -> Void = {}) thr
