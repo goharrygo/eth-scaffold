@@ -278,4 +278,25 @@ import Foundation
 
                     let networkService: PushNotificationsNetworkable = NetworkService(session: self.session)
                     networkService.unsubscribe(url: url, completion: { _ in
-        
+                        completion()
+                    })
+                }
+            } else {
+                self.preIISOperationQueue.async {
+                    persistenceService.remove(interest: interest)
+                    completion()
+                }
+            }
+
+            if interestRemoved {
+                self.interestsSetDidChange()
+            }
+        }
+    }
+
+    /**
+     Unsubscribe from all interests.
+
+     - Parameter completion: The block to execute when all subscriptions to the interests are successfully cancelled.
+     */
+ 
