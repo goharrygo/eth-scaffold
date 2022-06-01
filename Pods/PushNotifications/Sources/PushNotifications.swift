@@ -209,4 +209,15 @@ import Foundation
      - Throws: An error of type `MultipleInvalidInterestsError`
      */
     /// - Tag: setSubscriptions
-    @objc public func setSubscriptions(interests: [String], completion: @escaping () -> Void = {}) thr
+    @objc public func setSubscriptions(interests: [String], completion: @escaping () -> Void = {}) throws {
+        if let invalidInterests = self.validateInterestNames(interests), invalidInterests.count > 0 {
+            throw MultipleInvalidInterestsError.invalidNames(invalidInterests)
+        }
+
+        self.persistenceStorageOperationQueue.async {
+            let persistenceService: InterestPersistable = PersistenceService(service: UserDefaults(suiteName: Constants.UserDefaults.suiteName)!)
+
+            let interestsChanged = persistenceService.persist(interests: interests)
+
+            if Device.idAlreadyPresent() {
+    
