@@ -220,4 +220,14 @@ import Foundation
             let interestsChanged = persistenceService.persist(interests: interests)
 
             if Device.idAlreadyPresent() {
-    
+                if interestsChanged {
+                    guard
+                        let deviceId = Device.getDeviceId(),
+                        let instanceId = Instance.getInstanceId(),
+                        let url = URL(string: "https://\(instanceId).pushnotifications.pusher.com/device_api/v1/instances/\(instanceId)/devices/apns/\(deviceId)/interests")
+                    else {
+                        return
+                    }
+
+                    let networkService: PushNotificationsNetworkable = NetworkService(session: self.session)
+  
