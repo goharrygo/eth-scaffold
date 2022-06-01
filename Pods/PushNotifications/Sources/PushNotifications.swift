@@ -260,4 +260,15 @@ import Foundation
     /// - Tag: unsubscribe
     @objc public func unsubscribe(interest: String, completion: @escaping () -> Void = {}) throws {
         guard self.validateInterestName(interest) else {
-   
+            throw InvalidInterestError.invalidName(interest)
+        }
+
+        self.persistenceStorageOperationQueue.async {
+            let persistenceService: InterestPersistable = PersistenceService(service: UserDefaults(suiteName: Constants.UserDefaults.suiteName)!)
+
+            let interestRemoved = persistenceService.remove(interest: interest)
+
+            if Device.idAlreadyPresent() {
+                if interestRemoved {
+                    guard
+                        let deviceId = Device.getDevic
