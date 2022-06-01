@@ -230,4 +230,19 @@ import Foundation
                     }
 
                     let networkService: PushNotificationsNetworkable = NetworkService(session: self.session)
-  
+                    networkService.setSubscriptions(url: url, interests: interests, completion: { _ in
+                        completion()
+                    })
+                }
+            } else {
+                self.preIISOperationQueue.async {
+                    persistenceService.persist(interests: interests)
+                    completion()
+                }
+            }
+
+            if interestsChanged {
+                self.interestsSetDidChange()
+            }
+        }
+ 
