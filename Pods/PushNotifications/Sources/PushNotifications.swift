@@ -245,4 +245,19 @@ import Foundation
                 self.interestsSetDidChange()
             }
         }
- 
+    }
+
+    /**
+     Unsubscribe from an interest.
+
+     - Parameter interest: Interest that you want to unsubscribe to.
+     - Parameter completion: The block to execute when subscription to the interest is successfully cancelled.
+
+     - Precondition: `interest` should not be nil.
+
+     - Throws: An error of type `InvalidInterestError`
+     */
+    /// - Tag: unsubscribe
+    @objc public func unsubscribe(interest: String, completion: @escaping () -> Void = {}) throws {
+        guard self.validateInterestName(interest) else {
+   
