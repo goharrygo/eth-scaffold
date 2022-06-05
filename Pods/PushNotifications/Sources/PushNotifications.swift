@@ -299,4 +299,18 @@ import Foundation
 
      - Parameter completion: The block to execute when all subscriptions to the interests are successfully cancelled.
      */
- 
+    /// - Tag: unsubscribeAll
+    @objc public func unsubscribeAll(completion: @escaping () -> Void = {}) throws {
+        try self.setSubscriptions(interests: [], completion: completion)
+    }
+
+    /**
+     Get a list of all interests.
+
+     - returns: Array of interests
+     */
+    /// - Tag: getInterests
+    @objc public func getInterests() -> [String]? {
+        let persistenceService: InterestPersistable = PersistenceService(service: UserDefaults(suiteName: Constants.UserDefaults.suiteName)!)
+
+        return persistenceService.getSubscrip
