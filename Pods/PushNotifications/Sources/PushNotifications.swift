@@ -397,4 +397,10 @@ import Foundation
             return
         }
 
-        let networkService: PushNotificationsNet
+        let networkService: PushNotificationsNetworkable = NetworkService(session: self.session)
+        let persistenceService: InterestPersistable = PersistenceService(service: UserDefaults(suiteName: Constants.UserDefaults.suiteName)!)
+        let interestsHash = interests.calculateMD5Hash()
+        if interestsHash != persistenceService.getServerConfirmedInterestsHash() {
+            networkService.setSubscriptions(url: url, interests: interests, completion: { _ in
+                persistenceService.persistServerConfirmedInterestsHash(interestsHash)
+   
