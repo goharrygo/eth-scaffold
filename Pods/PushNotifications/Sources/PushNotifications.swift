@@ -345,4 +345,17 @@ import Foundation
                 return .ShouldProcess
             }
         #elseif os(OSX)
-            guard let eventType = EventTypeHandler.getNotificationEventType(userInfo: u
+            guard let eventType = EventTypeHandler.getNotificationEventType(userInfo: userInfo) else {
+                return .ShouldProcess
+            }
+        #endif
+
+        guard
+            let instanceId = Instance.getInstanceId(),
+            let url = URL(string: "https://\(instanceId).pushnotifications.pusher.com/reporting_api/v2/instances/\(instanceId)/events")
+        else {
+            return EventTypeHandler.getRemoteNotificationType(userInfo)
+        }
+
+        let networkService: PushNotificationsNetworkable = NetworkService(session: self.session)
+        network
