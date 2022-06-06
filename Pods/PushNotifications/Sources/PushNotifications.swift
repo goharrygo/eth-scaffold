@@ -358,4 +358,16 @@ import Foundation
         }
 
         let networkService: PushNotificationsNetworkable = NetworkService(session: self.session)
-        network
+        networkService.track(url: url, eventType: eventType, completion: { _ in })
+
+        return EventTypeHandler.getRemoteNotificationType(userInfo)
+    }
+
+    private func validateInterestName(_ interest: String) -> Bool {
+        let interestNameRegex = "^[a-zA-Z0-9_\\-=@,.;]{1,164}$"
+        let interestNamePredicate = NSPredicate(format: "SELF MATCHES %@", interestNameRegex)
+        return interestNamePredicate.evaluate(with: interest)
+    }
+
+    private func validateInterestNames(_ interests: [String]) -> [String]? {
+        return interests.filter { !self
