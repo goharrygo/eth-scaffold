@@ -370,4 +370,17 @@ import Foundation
     }
 
     private func validateInterestNames(_ interests: [String]) -> [String]? {
-        return interests.filter { !self
+        return interests.filter { !self.validateInterestName($0) }
+    }
+
+    private func syncMetadata() {
+        guard
+            let deviceId = Device.getDeviceId(),
+            let instanceId = Instance.getInstanceId(),
+            let url = URL(string: "https://\(instanceId).pushnotifications.pusher.com/device_api/v1/instances/\(instanceId)/devices/apns/\(deviceId)/metadata")
+        else {
+            return
+        }
+
+        let networkService: PushNotificationsNetworkable = NetworkService(session: self.session)
+        networkService.syncMetadata(url: url, completion: { _ in }
