@@ -313,4 +313,26 @@ import Foundation
     @objc public func getInterests() -> [String]? {
         let persistenceService: InterestPersistable = PersistenceService(service: UserDefaults(suiteName: Constants.UserDefaults.suiteName)!)
 
-        return persistenceService.getSubscrip
+        return persistenceService.getSubscriptions()
+    }
+
+    @objc public func interestsSetDidChange() {
+        guard
+            let delegate = delegate,
+            let interests = self.getInterests()
+        else {
+            return
+        }
+
+        return delegate.interestsSetDidChange(interests: interests)
+    }
+
+    /**
+     Handle Remote Notification.
+
+     - Parameter userInfo: Remote Notification payload.
+     */
+    /// - Tag: handleNotification
+    @discardableResult
+    @objc public func handleNotification(userInfo: [AnyHashable: Any]) -> RemoteNotificationType {
+ 
