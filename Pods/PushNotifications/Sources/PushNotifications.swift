@@ -383,4 +383,18 @@ import Foundation
         }
 
         let networkService: PushNotificationsNetworkable = NetworkService(session: self.session)
-        networkService.syncMetadata(url: url, completion: { _ in }
+        networkService.syncMetadata(url: url, completion: { _ in })
+    }
+
+    private func syncInterests() {
+        // Sync saved interests when app starts, if necessary.
+        guard
+            let interests = self.getInterests(),
+            let deviceId = Device.getDeviceId(),
+            let instanceId = Instance.getInstanceId(),
+            let url = URL(string: "https://\(instanceId).pushnotifications.pusher.com/device_api/v1/instances/\(instanceId)/devices/apns/\(deviceId)/interests")
+        else {
+            return
+        }
+
+        let networkService: PushNotificationsNet
