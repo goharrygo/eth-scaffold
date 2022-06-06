@@ -335,4 +335,14 @@ import Foundation
     /// - Tag: handleNotification
     @discardableResult
     @objc public func handleNotification(userInfo: [AnyHashable: Any]) -> RemoteNotificationType {
- 
+        guard FeatureFlags.DeliveryTrackingEnabled else {
+            return .ShouldProcess
+        }
+
+        #if os(iOS)
+            let applicationState = UIApplication.shared.applicationState
+            guard let eventType = EventTypeHandler.getNotificationEventType(userInfo: userInfo, applicationState: applicationState) else {
+                return .ShouldProcess
+            }
+        #elseif os(OSX)
+            guard let eventType = EventTypeHandler.getNotificationEventType(userInfo: u
