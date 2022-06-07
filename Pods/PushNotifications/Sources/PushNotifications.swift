@@ -403,4 +403,22 @@ import Foundation
         if interestsHash != persistenceService.getServerConfirmedInterestsHash() {
             networkService.setSubscriptions(url: url, interests: interests, completion: { _ in
                 persistenceService.persistServerConfirmedInterestsHash(interestsHash)
-   
+            })
+        }
+    }
+
+    #if os(iOS)
+    private func registerForPushNotifications(options: UNAuthorizationOptions) {
+        UNUserNotificationCenter.current().requestAuthorization(options: options) { (granted, error) in
+            if granted {
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
+            if let error = error {
+                print("[Push Notifications] - \(error.localizedDescription)")
+            }
+        }
+    }
+    #elseif os(OSX)
+    private 
