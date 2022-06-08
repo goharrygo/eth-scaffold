@@ -25,4 +25,13 @@ struct DeliveryEventType: ReportEventType {
     let hasDisplayableContent: Bool
     let hasData: Bool
 
-    init(event: String = Constants.ReportEventType.delivery, publishId: String, deviceId: String, timestampSecs: UInt, appInBackground: Bool, has
+    init(event: String = Constants.ReportEventType.delivery, publishId: String, deviceId: String, timestampSecs: UInt, appInBackground: Bool, hasDisplayableContent: Bool, hasData: Bool) {
+        self.event = event
+        self.publishId = publishId
+        self.deviceId = deviceId
+        self.timestampSecs = timestampSecs
+        self.appInBackground = appInBackground
+        self.hasDisplayableContent = hasDisplayableContent
+        self.hasData = hasData
+    }
+}
