@@ -438,4 +438,5 @@ import Foundation
      - Parameter interests: The new list of interests.
      */
     /// - Tag: interestsSetDidChange
-    fu
+    func interestsSetDidChange(interests: [String])
+}
