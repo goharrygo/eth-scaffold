@@ -8,4 +8,9 @@ protocol PushNotificationsNetworkable {
     func subscribe(url: URL, completion: @escaping CompletionHandler<String>)
     func setSubscriptions(url: URL, interests: [String], completion: @escaping CompletionHandler<String>)
 
-    func unsubscribe(url: URL, completion: @escaping CompletionHandler<String
+    func unsubscribe(url: URL, completion: @escaping CompletionHandler<String>)
+
+    func track(url: URL, eventType: ReportEventType, completion: @escaping CompletionHandler<String>)
+
+    func syncMetadata(url: URL, completion: @escaping CompletionHandler<String>)
+}
