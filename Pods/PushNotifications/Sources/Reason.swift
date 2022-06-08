@@ -1,3 +1,5 @@
 import Foundation
 
-s
+struct Reason: Decodable {
+    var description: String
+}
