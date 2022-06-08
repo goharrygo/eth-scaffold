@@ -421,4 +421,21 @@ import Foundation
         }
     }
     #elseif os(OSX)
-    private 
+    private func registerForPushNotifications(options: NSApplication.RemoteNotificationType) {
+        NSApplication.shared.registerForRemoteNotifications(matching: options)
+    }
+    #endif
+}
+
+/**
+ InterestsChangedDelegate protocol.
+ Method `interestsSetDidChange(interests:)` will be called when interests set changes.
+ */
+@objc public protocol InterestsChangedDelegate: class {
+    /**
+     Tells the delegate that the interests list has changed.
+
+     - Parameter interests: The new list of interests.
+     */
+    /// - Tag: interestsSetDidChange
+    fu
