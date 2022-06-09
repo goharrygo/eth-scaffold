@@ -629,3 +629,422 @@ let chan = pusher.subscribeToPresenceChannel("presence-channel")
     Pusher *pusher = [[Pusher alloc] initWithAppKey:@"YOUR_APP_KEY"];
     pusher.connection.delegate = [[DummyDelegate alloc] init];
     PusherChannel *chan = [pusher subscribeToPresenceChannelWithChannelName:@"presence-channel"];
+```
+
+Note that both private and presence channels require the user to be authenticated in order to subscribe to the channel. This authentication can either happen inside the library, if you configured your Pusher object with your app's secret, or an authentication request is made to an authentication endpoint that you provide, again when instantiaing your Pusher object.
+
+We recommend that you use an authentication endpoint over including your app's secret in your app in the vast majority of use cases. If you are completely certain that there's no risk to you including your app's secret in your app, for example if your app is just for internal use at your company, then it can make things easier than setting up an authentication endpoint.
+
+
+### Subscribing with self-provided auth values
+
+It is possible to subscribe to channels that require authentication by providing the auth information at the point of calling `subscribe` or `subscribeToPresenceChannel`. This is done as shown below:
+
+#### Swift
+
+```swift
+let pusherAuth = PusherAuth(auth: yourAuthString, channelData: yourOptionalChannelDataString)
+let chan = self.pusher.subscribe(channelName, auth: pusherAuth)
+```
+
+This PusherAuth object can be initialised with just an auth (String) value if the subscription is to a private channel, or both an `auth (String)` and `channelData (String)` pair of values if the subscription is to a presence channel.
+
+These `auth` and `channelData` values are the values that you received if the json object created by a call to pusher.authenticate(...) in one of our various server libraries.
+
+Keep in mind that in order to generate a valid auth value for a subscription the `socketId` (i.e. the unique identifier for a web socket connection to the Pusher servers) must be present when the auth value is generated. As such, the likely flow for using this is something like this would involve checking for when the connection state becomes `connected` before trying to subscribe to any channels requiring authentication.
+
+
+## Binding to events
+
+Events can be bound to at 2 levels; globally and per channel. When binding to an event you can choose to save the return value, which is a unique identifier for the event handler that gets created. The only reason to save this is if you're going to want to unbind from the event at a later point in time. There is an example of this below.
+
+### Global events
+
+You can attach behaviour to these events regardless of the channel the event is broadcast to. The following is an example of an app that binds to new comments from any channel (that you are subscribed to):
+
+#### Swift
+```swift
+let pusher = Pusher(key: "YOUR_APP_KEY")
+pusher.subscribe("my-channel")
+
+pusher.bind(callback: { (data: Any?) -> Void in
+    if let data = data as? [String : AnyObject] {
+        if let commenter = data["commenter"] as? String, message = data["message"] as? String {
+            print("\(commenter) wrote \(message)")
+        }
+    }
+})
+```
+
+#### Objective-C
+```objc
+Pusher *pusher = [[Pusher alloc] initWithAppKey:@"YOUR_APP_KEY"];
+PusherChannel *chan = [pusher subscribeWithChannelName:@"my-channel"];
+
+[pusher bind: ^void (NSDictionary *data) {
+    NSString *commenter = data[@"commenter"];
+    NSString *message = data[@"message"];
+
+    NSLog(@"%@ wrote %@", commenter, message);
+}];
+```
+
+### Per-channel events
+
+These are bound to a specific channel, and mean that you can reuse event names in different parts of your client application. The following might be an example of a stock tracking app where several channels are opened for different companies:
+
+#### Swift
+```swift
+let pusher = Pusher(key: "YOUR_APP_KEY")
+let myChannel = pusher.subscribe("my-channel")
+
+myChannel.bind(eventName: "new-price", callback: { (data: Any?) -> Void in
+    if let data = data as? [String : AnyObject] {
+        if let price = data["price"] as? String, company = data["company"] as? String {
+            print("\(company) is now priced at \(price)")
+        }
+    }
+})
+```
+
+#### Objective-C
+```objc
+Pusher *pusher = [[Pusher alloc] initWithAppKey:@"YOUR_APP_KEY"];
+PusherChannel *chan = [pusher subscribeWithChannelName:@"my-channel"];
+
+[chan bindWithEventName:@"new-price" callback:^void (NSDictionary *data) {
+    NSString *price = data[@"price"];
+    NSString *company = data[@"company"];
+
+    NSLog(@"%@ is now priced at %@", company, price);
+}];
+```
+
+### Receiving errors
+
+Errors are sent to the client for which they are relevant with an event name of `pusher:error`. These can be received and handled using code as follows. Obviously the specifics of how to handle them are left up to the developer but this displays the general pattern.
+
+#### Swift
+```swift
+pusher.bind({ (message: Any?) in
+    if let message = message as? [String: AnyObject], eventName = message["event"] as? String where eventName == "pusher:error" {
+        if let data = message["data"] as? [String: AnyObject], errorMessage = data["message"] as? String {
+            print("Error message: \(errorMessage)")
+        }
+    }
+})
+```
+
+#### Objective-C
+```objc
+[pusher bind:^void (NSDictionary *data) {
+    NSString *eventName = data[@"event"];
+
+    if ([eventName isEqualToString:@"pusher:error"]) {
+        NSString *errorMessage = data[@"data"][@"message"];
+        NSLog(@"Error message: %@", errorMessage);
+    }
+}];
+```
+
+
+The sort of errors you might get are:
+
+```bash
+# if attempting to subscribe to an already subscribed-to channel
+
+"{\"event\":\"pusher:error\",\"data\":{\"code\":null,\"message\":\"Existing subscription to channel presence-channel\"}}"
+
+# if the auth signature generated by your auth mechanism is invalid
+
+"{\"event\":\"pusher:error\",\"data\":{\"code\":null,\"message\":\"Invalid signature: Expected HMAC SHA256 hex digest of 200557.5043858:presence-channel:{\\\"user_id\\\":\\\"200557.5043858\\\"}, but got 8372e1649cf5a45a2de3cd97fe11d85de80b214243e3a9e9f5cee502fa03f880\"}}"
+```
+
+You can see that the general form they take is:
+
+```bash
+{
+  "event": "pusher:error",
+  "data": {
+    "code": null,
+    "message": "Error message here"
+  }
+}
+```
+
+
+### Unbind event handlers
+
+You can remove previously-bound handlers from an object by using the `unbind` function. For example,
+
+#### Swift
+```swift
+let pusher = Pusher(key: "YOUR_APP_KEY")
+let myChannel = pusher.subscribe("my-channel")
+
+let eventHandlerId = myChannel.bind(eventName: "new-price", callback: { (data: Any?) -> Void in
+  ...
+})
+
+myChannel.unbind(eventName: "new-price", callbackId: eventHandlerId)
+```
+
+#### Objective-C
+```objc
+Pusher *pusher = [[Pusher alloc] initWithAppKey:@"YOUR_APP_KEY"];
+PusherChannel *chan = [pusher subscribeWithChannelName:@"my-channel"];
+
+NSString *callbackId = [chan bindWithEventName:@"new-price" callback:^void (NSDictionary *data) {
+    ...
+}];
+
+[chan unbindWithEventName:@"new-price" callbackId:callbackId];
+```
+
+You can unbind from events at both the global and per channel level. For both objects you also have the option of calling `unbindAll`, which, as you can guess, will unbind all eventHandlers on the object.
+
+
+## Push notifications
+
+Pusher also supports push notifications. Instances of your application can register for push notifications and subscribe to "interests". Your server can then publish to those interests, which will be delivered to your application as push notifications. See [our guide to setting up APNs push notifications](https://pusher.com/docs/push_notifications/ios) for a friendly introduction.
+
+### Initializing the Pusher object
+
+You should set up your app for push notifications in your `AppDelegate`. The setup varies slightly depending on whether you're using Swift or Objective-C, and whether you're using iOS or macOS (OS X):
+
+#### Swift on iOS
+```swift
+import PusherSwift
+import UserNotifications
+
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    let pusher = Pusher(key: "YOUR_APP_KEY")
+    ...
+```
+
+#### Objective-C on iOS
+```objc
+#import "AppDelegate.h"
+@import UserNotifications;
+
+@interface AppDelegate ()
+
+@end
+
+@implementation AppDelegate
+...
+```
+
+#### Swift on macOS
+
+```swift
+import Cocoa
+import PusherSwift
+
+@NSApplicationMain
+class AppDelegate: NSObject, NSApplicationDelegate, PusherDelegate {
+    let pusher = Pusher(key: "YOUR_APP_KEY")
+    // ...
+```
+
+### Registering with APNs
+
+For your app to receive push notifications, it must first register with APNs. You should do this when the application finishes launching. Your app should register for all types of notification, like so:
+
+#### Swift on iOS
+```swift
+func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+    let center = UNUserNotificationCenter.current()
+    center.requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
+        // Enable or disable features based on authorization.
+    }
+    application.registerForRemoteNotifications()
+
+    return true
+}
+```
+
+#### Objective-C on iOS
+```objc
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    self.pusher = [[Pusher alloc] initWithKey:@"YOUR_APP_KEY"];
+
+    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    [center requestAuthorizationWithOptions:(UNAuthorizationOptionBadge | UNAuthorizationOptionAlert | UNAuthorizationOptionSound) completionHandler:^(BOOL granted, NSError * _Nullable error) {
+        // Enable or disable features based on authorization.
+    }];
+
+    [application registerForRemoteNotifications];
+    return YES;
+}
+```
+
+#### Swift on macOS
+
+```swift
+func applicationDidFinishLaunching(_ aNotification: Notification) {
+    NSApp.registerForRemoteNotifications(matching: [NSRemoteNotificationType.alert, NSRemoteNotificationType.sound, NSRemoteNotificationType.badge])
+}
+```
+
+### Receiving your APNs device token and registering with Pusher
+
+Next, APNs will respond with a device token identifying your app instance. Your app should then register with Pusher, passing along its device token.
+
+Your app can now subscribe to interests. The following registers and subscribes the app to the interest "donuts":
+
+#### Swift on iOS
+```swift
+func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+    pusher.nativePusher.register(deviceToken: deviceToken)
+    pusher.nativePusher.subscribe(interestName: "donuts")
+}
+```
+
+#### Objective-C on iOS
+```objc
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    NSLog(@"Registered for remote notifications; received device token");
+    [[[self pusher] nativePusher] registerWithDeviceToken:deviceToken];
+    [[[self pusher] nativePusher] subscribeWithInterestName:@"donuts"];
+}
+```
+
+#### Swift on macOS
+```swift
+func application(_ application: NSApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+    self.pusher.nativePusher.register(deviceToken: deviceToken)
+    self.pusher.nativePusher.subscribe(interestName: "donuts")
+}
+```
+
+
+### Receiving push notifications
+
+When your server publishes a notification to the interest "donuts", it will get passed to your app. This happens as a call in your `AppDelegate` which you should listen to:
+
+#### Swift on iOS
+```swift
+func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    print(userInfo)
+}
+```
+
+#### Objective-C on iOS
+```objc
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    NSLog(@"Received remote notification: %@", userInfo);
+}
+```
+
+#### Swift on macOS
+```swift
+func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String: Any]) {
+    print("Received remote notification: \(userInfo.debugDescription)" )
+}
+```
+
+
+### Unsubscribing from interests
+
+If at a later point you wish to unsubscribe from an interest, this works in the same way:
+
+#### Swift
+```swift
+pusher.nativePusher.unsubscribe(interestName: "donuts")
+```
+
+#### Objective-C
+```objc
+[[[self pusher] nativePusher] unsubscribeWithInterestName:@"donuts"];
+```
+
+For a complete example of a working app, see the [Example/](https://github.com/pusher/pusher-websocket-swift/tree/push-notifications/Example) directory in this repository. Specifically for push notifications code, see the [Example/AppDelegate.swift](https://github.com/pusher/pusher-websocket-swift/blob/master/iOS%20Example%20Swift/iOS%20Example%20Swift/AppDelegate.swift) file.
+
+
+### Pusher delegate
+
+You can also implement some of the `PusherDelegate` functions to get access to events that occur in relation to push notifications interactions. These are the functions that you can optionally implement when conforming to the `PusherDelegate` protocol:
+
+```swift
+@objc optional func registeredForPushNotifications(clientId: String)
+@objc optional func failedToRegisterForPushNotifications(response: URLResponse, responseBody: String?)
+@objc optional func subscribedToInterest(name: String)
+@objc optional func unsubscribedFromInterest(name: String)
+```
+
+Again, the names of the functions largely give away what their purpose is but just for completeness:
+
+- `registeredForPushNotifications` - use this if you want to know when a client has successfully registered with the Pusher Push Notifications service, or if you want access to the `clientId` that is returned upon successful registration
+- `failedToRegisterForPushNotifications` - use this if you want to know when a client has failed to register with the Pusher Push Notifications service
+- `subscribedToInterest` - use this if you want keep track of interests that are successfully subscribed to
+- `unsubscribedFromInterest` - use this if you want keep track of interests that are successfully unsubscribed from
+
+Setting up a delegate looks like this:
+
+#### Swift
+```swift
+class ViewController: UIViewController, PusherDelegate {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let pusher = Pusher(key: "APP_KEY")
+        pusher.delegate = self
+        // ...
+    }
+}
+```
+
+#### Objective-C
+```objc
+@implementation ViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    self.client = [[Pusher alloc] initWithAppKey:@"YOUR_APP_KEY"];
+
+    self.client.delegate = self;
+    // ...
+}
+```
+
+The process is identical to that of setting up the `PusherDelegate` to receive notifications of connection-based events.
+
+
+## Testing
+
+There are a set of tests for the library that can be run using the standard method (Command-U in Xcode).
+
+The tests also get run on [Travis-CI](https://travis-ci.org/pusher/pusher-websocket-swift). See [.travis.yml](https://github.com/pusher/pusher-websocket-swift/blob/master/.travis.yml) for details on how the Travis tests are run.
+
+
+## Extensions
+
+* [RxPusherSwift](https://github.com/jondwillis/RxPusherSwift)
+
+
+## Communication
+
+- If you have found a bug, please open an issue.
+- If you have a feature request, please open an issue.
+- If you want to contribute, please submit a pull request (preferrably with some tests 🙂 ).
+
+
+## Credits
+
+PusherSwift is owned and maintained by [Pusher](https://pusher.com). It was originally created by [Hamilton Chapman](https://github.com/hamchapman).
+
+It uses code from the following repositories:
+
+* [CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift)
+* [Reachability.swift](https://github.com/ashleymills/Reachability.swift)
+* [Starscream](https://github.com/daltoniam/Starscream)
+
+The individual licenses for these libraries are included in the corresponding Swift files.
+
+
+## License
+
+PusherSwift is released under the MIT license. See [LICENSE](https://github.com/pusher/pusher-websocket-swift/blob/master/LICENSE.md) for details.
