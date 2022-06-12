@@ -153,3 +153,36 @@ public extension AuthMethod {
         }
     }
 }
+
+@objcMembers
+@objc public class OCAuthMethod: NSObject {
+    var type: Int
+    var secret: String? = nil
+    var authEndpoint: String? = nil
+    var authRequestBuilder: AuthRequestBuilderProtocol? = nil
+    var authorizer: Authorizer? = nil
+
+    public init(type: Int) {
+        self.type = type
+    }
+
+    public init(authEndpoint: String) {
+        self.type = 0
+        self.authEndpoint = authEndpoint
+    }
+
+    public init(authRequestBuilder: AuthRequestBuilderProtocol) {
+        self.type = 1
+        self.authRequestBuilder = authRequestBuilder
+    }
+
+    public init(secret: String) {
+        self.type = 2
+        self.secret = secret
+    }
+
+    public init(authorizer: Authorizer) {
+        self.type = 3
+        self.authorizer = authorizer
+    }
+}
