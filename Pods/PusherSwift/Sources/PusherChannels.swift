@@ -29,4 +29,16 @@ import Foundation
         if let channel = self.channels[name] {
             return channel
         } else {
-            var ne
+            var newChannel: PusherChannel
+            if PusherChannelType.isPresenceChannel(name: name) {
+                newChannel = PusherPresenceChannel(
+                    name: name,
+                    connection: connection,
+                    auth: auth,
+                    onMemberAdded: onMemberAdded,
+                    onMemberRemoved: onMemberRemoved
+                )
+            } else {
+                newChannel = PusherChannel(name: name, connection: connection, auth: auth)
+            }
+         
