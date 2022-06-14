@@ -41,4 +41,17 @@ import Foundation
             } else {
                 newChannel = PusherChannel(name: name, connection: connection, auth: auth)
             }
-         
+            self.channels[name] = newChannel
+            return newChannel
+        }
+    }
+
+    /**
+        Create a new PresencPusherChannel, which is returned, and add it to the PusherChannels
+        list of channels
+
+        - parameter channelName:     The name of the channel to create
+        - parameter connection:      The connection associated with the channel being created
+        - parameter auth:            A PusherAuth value if subscription is being made to an
+                                     authenticated channel without using the default auth methods
+        - param
