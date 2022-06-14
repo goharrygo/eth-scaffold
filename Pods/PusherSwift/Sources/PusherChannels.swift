@@ -14,4 +14,19 @@ import Foundation
                                      authenticated channel without using the default auth methods
         - parameter onMemberAdded:   A function that will be called with information about the
                                      member who has just joined the presence channel
-        - parameter onMemberRemoved: A function that will be called with infor
+        - parameter onMemberRemoved: A function that will be called with information about the
+                                     member who has just left the presence channel
+
+        - returns: A new PusherChannel instance
+    */
+    internal func add(
+        name: String,
+        connection: PusherConnection,
+        auth: PusherAuth? = nil,
+        onMemberAdded: ((PusherPresenceChannelMember) -> ())? = nil,
+        onMemberRemoved: ((PusherPresenceChannelMember) -> ())? = nil
+    ) -> PusherChannel {
+        if let channel = self.channels[name] {
+            return channel
+        } else {
+            var ne
