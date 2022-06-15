@@ -54,4 +54,14 @@ import Foundation
         - parameter connection:      The connection associated with the channel being created
         - parameter auth:            A PusherAuth value if subscription is being made to an
                                      authenticated channel without using the default auth methods
-        - param
+        - parameter onMemberAdded:   A function that will be called with information about the
+                                     member who has just joined the presence channel
+        - parameter onMemberRemoved: A function that will be called with information about the
+                                     member who has just left the presence channel
+
+        - returns: A new PusherPresenceChannel instance
+    */
+    internal func addPresence(
+        channelName: String,
+        connection: PusherConnection,
+        auth: PusherA
