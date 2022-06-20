@@ -64,4 +64,15 @@ import Foundation
     internal func addPresence(
         channelName: String,
         connection: PusherConnection,
-        auth: PusherA
+        auth: PusherAuth? = nil,
+        onMemberAdded: ((PusherPresenceChannelMember) -> ())? = nil,
+        onMemberRemoved: ((PusherPresenceChannelMember) -> ())? = nil
+    ) -> PusherPresenceChannel {
+        if let channel = self.channels[channelName] as? PusherPresenceChannel {
+            return channel
+        } else {
+            let newChannel = PusherPresenceChannel(
+                name: channelName,
+                connection: connection,
+                auth: auth,
+                onMe
