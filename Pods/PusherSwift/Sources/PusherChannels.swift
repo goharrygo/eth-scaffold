@@ -75,4 +75,22 @@ import Foundation
                 name: channelName,
                 connection: connection,
                 auth: auth,
-                onMe
+                onMemberAdded: onMemberAdded,
+                onMemberRemoved: onMemberRemoved
+            )
+            self.channels[channelName] = newChannel
+            return newChannel
+        }
+    }
+
+    /**
+        Remove the PusherChannel with the given channelName from the channels list
+
+        - parameter name: The name of the channel to remove
+    */
+    internal func remove(name: String) {
+        self.channels.removeValue(forKey: name)
+    }
+
+    /**
+        Return the PusherChannel with the given channelName from the chann
