@@ -93,4 +93,19 @@ import Foundation
     }
 
     /**
-        Return the PusherChannel with the given channelName from the chann
+        Return the PusherChannel with the given channelName from the channels list, if it exists
+
+        - parameter name: The name of the channel to return
+
+        - returns: A PusherChannel instance, if a channel with the given name existed, otherwise nil
+    */
+    public func find(name: String) -> PusherChannel? {
+        return self.channels[name]
+    }
+
+    /**
+        Return the PusherPresenceChannel with the given channelName from the channels list, if it exists
+
+        - parameter name: The name of the presence channel to return
+
+        - returns: A PusherPresenceChannel inst
