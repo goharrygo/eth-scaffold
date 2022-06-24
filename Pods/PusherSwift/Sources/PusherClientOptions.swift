@@ -12,4 +12,22 @@ public enum PusherHost {
     }
 }
 
-public enum AuthM
+public enum AuthMethod {
+    case endpoint(authEndpoint: String)
+    case authRequestBuilder(authRequestBuilder: AuthRequestBuilderProtocol)
+    case authorizer(authorizer: Authorizer)
+    case inline(secret: String)
+    case noMethod
+}
+
+@objcMembers
+@objc public class PusherClientOptions: NSObject {
+    public var authMethod: AuthMethod
+    public let attemptToReturnJSONObject: Bool
+    public let autoReconnect: Bool
+    public let host: String
+    public let port: Int
+    public let encrypted: Bool
+    public let activityTimeout: TimeInterval?
+
+    @nonobjc
