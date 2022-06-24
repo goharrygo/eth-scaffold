@@ -30,4 +30,18 @@ public enum AuthMethod {
     public let encrypted: Bool
     public let activityTimeout: TimeInterval?
 
-    @nonobjc
+    @nonobjc public init(
+        authMethod: AuthMethod = .noMethod,
+        attemptToReturnJSONObject: Bool = true,
+        autoReconnect: Bool = true,
+        host: PusherHost = .host("ws.pusherapp.com"),
+        port: Int? = nil,
+        encrypted: Bool = true,
+        activityTimeout: TimeInterval? = nil
+    ) {
+        self.authMethod = authMethod
+        self.attemptToReturnJSONObject = attemptToReturnJSONObject
+        self.autoReconnect = autoReconnect
+        self.host = host.stringValue
+        self.port = port ?? (encrypted ? 443 : 80)
+        self.encrypted = en
