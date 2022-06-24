@@ -108,4 +108,10 @@ import Foundation
 
         - parameter name: The name of the presence channel to return
 
-        - returns: A PusherPresenceChannel inst
+        - returns: A PusherPresenceChannel instance, if a channel with the given name existed,
+                   otherwise nil
+    */
+    public func findPresence(name: String) -> PusherPresenceChannel? {
+        return self.channels[name] as? PusherPresenceChannel
+    }
+}
