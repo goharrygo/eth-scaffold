@@ -44,4 +44,7 @@ public enum AuthMethod {
         self.autoReconnect = autoReconnect
         self.host = host.stringValue
         self.port = port ?? (encrypted ? 443 : 80)
-        self.encrypted = en
+        self.encrypted = encrypted
+        self.activityTimeout = activityTimeout
+    }
+}
