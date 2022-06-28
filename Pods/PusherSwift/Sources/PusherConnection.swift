@@ -948,3 +948,31 @@ public typealias PusherEventJSON = [String: AnyObject]
 }
 
 @objc public class PusherAuth: NSObject {
+    public let auth: String
+    public let channelData: String?
+
+    public init(auth: String, channelData: String? = nil) {
+        self.auth = auth
+        self.channelData = channelData
+    }
+}
+
+@objc public enum ConnectionState: Int {
+    case connecting
+    case connected
+    case disconnecting
+    case disconnected
+    case reconnecting
+
+    static let connectionStates = [
+        connecting: "connecting",
+        connected: "connected",
+        disconnecting: "disconnecting",
+        disconnected: "disconnected",
+        reconnecting: "reconnecting",
+    ]
+
+    public func stringValue() -> String {
+        return ConnectionState.connectionStates[self]!
+    }
+}
