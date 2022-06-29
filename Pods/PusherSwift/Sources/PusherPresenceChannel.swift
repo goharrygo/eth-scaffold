@@ -44,4 +44,16 @@ public typealias PusherUserInfoObject = [String : AnyObject]
         - parameter memberJSON: A dictionary representing the member that has joined
                                 the presence channel
     */
-    internal func
+    internal func addMember(memberJSON: [String : AnyObject]) {
+        let member: PusherPresenceChannelMember
+
+        if let userId = memberJSON["user_id"] as? String {
+            if let userInfo = memberJSON["user_info"] as? PusherUserInfoObject {
+                member = PusherPresenceChannelMember(userId: userId, userInfo: userInfo as AnyObject?)
+
+            } else {
+                member = PusherPresenceChannelMember(userId: userId)
+            }
+        } else {
+            if let userInfo = memberJSON["user_info"] as? PusherUserInfoObject {
+                member = Pus
