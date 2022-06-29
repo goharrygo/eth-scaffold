@@ -18,4 +18,16 @@ public typealias PusherUserInfoObject = [String : AnyObject]
         - parameter auth:            A PusherAuth value if subscription is being made to an
                                      authenticated channel without using the default auth methods
         - parameter onMemberAdded:   A function that will be called with information about the
-                 
+                                     member who has just joined the presence channel
+        - parameter onMemberRemoved: A function that will be called with information about the
+                                     member who has just left the presence channel
+
+        - returns: A new PusherPresenceChannel instance
+    */
+    init(
+        name: String,
+        connection: PusherConnection,
+        auth: PusherAuth? = nil,
+        onMemberAdded: ((PusherPresenceChannelMember) -> ())? = nil,
+        onMemberRemoved: ((PusherPresenceChannelMember) -> ())? = nil
+  
