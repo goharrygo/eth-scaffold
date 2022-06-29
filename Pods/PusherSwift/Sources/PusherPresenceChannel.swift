@@ -30,4 +30,18 @@ public typealias PusherUserInfoObject = [String : AnyObject]
         auth: PusherAuth? = nil,
         onMemberAdded: ((PusherPresenceChannelMember) -> ())? = nil,
         onMemberRemoved: ((PusherPresenceChannelMember) -> ())? = nil
-  
+    ) {
+        self.members = []
+        self.onMemberAdded = onMemberAdded
+        self.onMemberRemoved = onMemberRemoved
+        super.init(name: name, connection: connection, auth: auth)
+    }
+
+    /**
+        Add information about the member that has just joined to the members object
+        for the presence channel and call onMemberAdded function, if provided
+
+        - parameter memberJSON: A dictionary representing the member that has joined
+                                the presence channel
+    */
+    internal func
