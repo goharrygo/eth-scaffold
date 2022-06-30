@@ -56,4 +56,17 @@ public typealias PusherUserInfoObject = [String : AnyObject]
             }
         } else {
             if let userInfo = memberJSON["user_info"] as? PusherUserInfoObject {
-                member = Pus
+                member = PusherPresenceChannelMember(userId: String.init(describing: memberJSON["user_id"]!), userInfo: userInfo as AnyObject?)
+            } else {
+                member = PusherPresenceChannelMember(userId: String.init(describing: memberJSON["user_id"]!))
+            }
+        }
+        members.append(member)
+        self.onMemberAdded?(member)
+    }
+
+    /**
+        Add information about the members that are already subscribed to the presence channel to
+        the members object of the presence channel
+
+        - parameter 
