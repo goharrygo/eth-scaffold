@@ -69,4 +69,14 @@ public typealias PusherUserInfoObject = [String : AnyObject]
         Add information about the members that are already subscribed to the presence channel to
         the members object of the presence channel
 
-        - parameter 
+        - parameter memberHash: A dictionary representing the members that were already
+                                subscribed to the presence channel
+    */
+    internal func addExistingMembers(memberHash: [String : AnyObject]) {
+        for (userId, userInfo) in memberHash {
+            let member: PusherPresenceChannelMember
+            if let userInfo = userInfo as? PusherUserInfoObject {
+                member = PusherPresenceChannelMember(userId: userId, userInfo: userInfo as AnyObject?)
+            } else {
+                member = PusherPresenceChannelMember(userId: userId)
+         
