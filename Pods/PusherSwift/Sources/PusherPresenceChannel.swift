@@ -95,4 +95,20 @@ public typealias PusherUserInfoObject = [String : AnyObject]
         let id: String
 
         if let userId = memberJSON["user_id"] as? String {
-  
+            id = userId
+        } else {
+            id = String.init(describing: memberJSON["user_id"]!)
+        }
+
+        if let index = self.members.index(where: { $0.userId == id }) {
+            let member = self.members[index]
+            self.members.remove(at: index)
+            self.onMemberRemoved?(member)
+        }
+    }
+
+    /**
+        Set the value of myId to the value of the user_id returned as part of the authorization
+        of the subscription to the channel
+
+        - parameter channelData:
