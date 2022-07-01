@@ -79,4 +79,20 @@ public typealias PusherUserInfoObject = [String : AnyObject]
                 member = PusherPresenceChannelMember(userId: userId, userInfo: userInfo as AnyObject?)
             } else {
                 member = PusherPresenceChannelMember(userId: userId)
-         
+            }
+            self.members.append(member)
+        }
+    }
+
+    /**
+        Remove information about the member that has just left from the members object
+        for the presence channel and call onMemberRemoved function, if provided
+
+        - parameter memberJSON: A dictionary representing the member that has left the
+                                presence channel
+    */
+    internal func removeMember(memberJSON: [String : AnyObject]) {
+        let id: String
+
+        if let userId = memberJSON["user_id"] as? String {
+  
