@@ -123,4 +123,15 @@ public typealias PusherUserInfoObject = [String : AnyObject]
     /**
         Parse a string to extract the channel data object from it
 
-        - parameter channelData: The channel data string received as part of authorizat
+        - parameter channelData: The channel data string received as part of authorization
+
+        - returns: A dictionary of channel data
+    */
+    fileprivate func parse(channelData: String) -> [String: AnyObject]? {
+        let data = (channelData as NSString).data(using: String.Encoding.utf8.rawValue, allowLossyConversion: false)
+
+        do {
+            if let jsonData = data, let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: AnyObject] {
+                return jsonObject
+            } else {
+                print("Unable to parse strin
