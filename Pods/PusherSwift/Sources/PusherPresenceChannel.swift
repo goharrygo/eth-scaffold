@@ -134,4 +134,21 @@ public typealias PusherUserInfoObject = [String : AnyObject]
             if let jsonData = data, let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: AnyObject] {
                 return jsonObject
             } else {
-                print("Unable to parse strin
+                print("Unable to parse string: \(channelData)")
+            }
+        } catch let error as NSError {
+            print(error.localizedDescription)
+        }
+        return nil
+    }
+
+
+    /**
+        Returns the PusherPresenceChannelMember object for the given user id
+
+        - parameter userId: The user id of the PusherPresenceChannelMember for whom you want
+                            the PusherPresenceChannelMember object
+
+        - returns: The PusherPresenceChannelMember object for the given user id
+    */
+    open func findMember(userId: String) -> PusherPres
