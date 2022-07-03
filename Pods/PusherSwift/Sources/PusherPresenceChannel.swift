@@ -111,4 +111,16 @@ public typealias PusherUserInfoObject = [String : AnyObject]
         Set the value of myId to the value of the user_id returned as part of the authorization
         of the subscription to the channel
 
-        - parameter channelData:
+        - parameter channelData: The channel data obtained from authorization of the subscription
+                                 to the channel
+    */
+    internal func setMyUserId(channelData: String) {
+        if let channelDataObject = parse(channelData: channelData), let userId = channelDataObject["user_id"] {
+            self.myId = String.init(describing: userId)
+        }
+    }
+
+    /**
+        Parse a string to extract the channel data object from it
+
+        - parameter channelData: The channel data string received as part of authorizat
