@@ -151,4 +151,25 @@ public typealias PusherUserInfoObject = [String : AnyObject]
 
         - returns: The PusherPresenceChannelMember object for the given user id
     */
-    open func findMember(userId: String) -> PusherPres
+    open func findMember(userId: String) -> PusherPresenceChannelMember? {
+        return self.members.filter({ $0.userId == userId }).first
+    }
+
+    /**
+        Returns the connected user's PusherPresenceChannelMember object
+
+        - returns: The connected user's PusherPresenceChannelMember object
+    */
+    open func me() -> PusherPresenceChannelMember? {
+        if let id = self.myId {
+            return findMember(userId: id)
+        } else {
+            return nil
+        }
+    }
+}
+
+@objcMembers
+@objc public class PusherPresenceChannelMember: NSObject {
+    public let userId: String
+    publ
