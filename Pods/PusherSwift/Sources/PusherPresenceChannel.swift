@@ -172,4 +172,10 @@ public typealias PusherUserInfoObject = [String : AnyObject]
 @objcMembers
 @objc public class PusherPresenceChannelMember: NSObject {
     public let userId: String
-    publ
+    public let userInfo: Any?
+
+    public init(userId: String, userInfo: Any? = nil) {
+        self.userId = userId
+        self.userInfo = userInfo
+    }
+}
