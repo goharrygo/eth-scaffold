@@ -31,4 +31,17 @@ let CLIENT_NAME = "pusher-websocket-swift"
 
         - returns: A new Pusher client instance
     */
-    public init(key: String, options: PusherClie
+    public init(key: String, options: PusherClientOptions = PusherClientOptions(), nativePusher: NativePusher? = nil) {
+        self.key = key
+        let urlString = constructUrl(key: key, options: options)
+        let ws = WebSocket(url: URL(string: urlString)!)
+        connection = PusherConnection(key: key, socket: ws, url: urlString, options: options)
+        connection.createGlobalChannel()
+        self.nativePusher = nativePusher ?? NativePusher()
+        self.nativePusher.setPusherAppKey(pusherAppKey: key)
+    }
+#endif
+
+#if os(tvOS)
+    /**
+        Initializes the Pus
