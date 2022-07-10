@@ -55,4 +55,17 @@ let CLIENT_NAME = "pusher-websocket-swift"
         self.key = key
         let urlString = constructUrl(key: key, options: options)
         let ws = WebSocket(url: URL(string: urlString)!)
-        connection = PusherConnection(key: key, socket: ws, url: ur
+        connection = PusherConnection(key: key, socket: ws, url: urlString, options: options)
+        connection.createGlobalChannel()
+    }
+#endif
+
+
+    /**
+        Subscribes the client to a new channel
+
+        - parameter channelName:     The name of the channel to subscribe to
+        - parameter auth:            A PusherAuth value if subscription is being made to an
+                                     authenticated channel without using the default auth methods
+        - parameter onMemberAdded:   A function that will be called with information about the
+                           
