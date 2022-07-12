@@ -68,4 +68,16 @@ let CLIENT_NAME = "pusher-websocket-swift"
         - parameter auth:            A PusherAuth value if subscription is being made to an
                                      authenticated channel without using the default auth methods
         - parameter onMemberAdded:   A function that will be called with information about the
-                           
+                                     member who has just joined the presence channel
+        - parameter onMemberRemoved: A function that will be called with information about the
+                                     member who has just left the presence channel
+
+        - returns: A new PusherChannel instance
+    */
+    open func subscribe(
+        _ channelName: String,
+        auth: PusherAuth? = nil,
+        onMemberAdded: ((PusherPresenceChannelMember) -> ())? = nil,
+        onMemberRemoved: ((PusherPresenceChannelMember) -> ())? = nil
+    ) -> PusherChannel {
+        return self.connec
