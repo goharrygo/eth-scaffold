@@ -101,4 +101,16 @@ let CLIENT_NAME = "pusher-websocket-swift"
         - parameter onMemberRemoved: A function that will be called with information about the
                                      member who has just left the presence channel
 
-    
+        - returns: A new PusherPresenceChannel instance
+    */
+    open func subscribeToPresenceChannel(
+        channelName: String,
+        auth: PusherAuth? = nil,
+        onMemberAdded: ((PusherPresenceChannelMember) -> ())? = nil,
+        onMemberRemoved: ((PusherPresenceChannelMember) -> ())? = nil
+    ) -> PusherPresenceChannel {
+        return self.connection.subscribeToPresenceChannel(
+            channelName: channelName,
+            auth: auth,
+            onMemberAdded: onMemberAdded,
+            onMemb
