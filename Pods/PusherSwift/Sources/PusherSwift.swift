@@ -80,4 +80,18 @@ let CLIENT_NAME = "pusher-websocket-swift"
         onMemberAdded: ((PusherPresenceChannelMember) -> ())? = nil,
         onMemberRemoved: ((PusherPresenceChannelMember) -> ())? = nil
     ) -> PusherChannel {
-        return self.connec
+        return self.connection.subscribe(
+            channelName: channelName,
+            auth: auth,
+            onMemberAdded: onMemberAdded,
+            onMemberRemoved: onMemberRemoved
+        )
+    }
+
+    /**
+        Subscribes the client to a new presence channel. Use this instead of the subscribe
+        function when you want a presence channel object to be returned instead of just a
+        generic channel object (which you can then cast)
+
+        - parameter channelName:     The name of the channel to subscribe to
+        - parameter auth:            A PusherAuth value 
