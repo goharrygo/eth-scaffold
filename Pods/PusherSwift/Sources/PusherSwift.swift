@@ -94,4 +94,11 @@ let CLIENT_NAME = "pusher-websocket-swift"
         generic channel object (which you can then cast)
 
         - parameter channelName:     The name of the channel to subscribe to
-        - parameter auth:            A PusherAuth value 
+        - parameter auth:            A PusherAuth value if subscription is being made to an
+                                     authenticated channel without using the default auth methods
+        - parameter onMemberAdded:   A function that will be called with information about the
+                                     member who has just joined the presence channel
+        - parameter onMemberRemoved: A function that will be called with information about the
+                                     member who has just left the presence channel
+
+    
