@@ -150,4 +150,30 @@ let CLIENT_NAME = "pusher-websocket-swift"
         - parameter callbackId: The unique callbackId string used to identify which callback to unbind
     */
     open func unbind(callbackId: String) {
-        self.connection.removeCall
+        self.connection.removeCallbackFromGlobalChannel(callbackId: callbackId)
+    }
+
+    /**
+        Unbinds the client from all global callbacks
+    */
+    open func unbindAll() {
+        self.connection.removeAllCallbacksFromGlobalChannel()
+    }
+
+    /**
+        Disconnects the client's connection
+    */
+    open func disconnect() {
+        self.connection.disconnect()
+    }
+
+    /**
+        Initiates a connection attempt using the client's existing connection details
+    */
+    open func connect() {
+        self.connection.connect()
+    }
+}
+
+/**
+    Creates a valid URL that can 
