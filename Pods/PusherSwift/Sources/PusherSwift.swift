@@ -136,4 +136,18 @@ let CLIENT_NAME = "pusher-websocket-swift"
     /**
         Binds the client's global channel to all events
 
-        - parameter callback: The function t
+        - parameter callback: The function to call when a new event is received
+
+        - returns: A unique string that can be used to unbind the callback from the client
+    */
+    @discardableResult open func bind(_ callback: @escaping (Any?) -> Void) -> String {
+        return self.connection.addCallbackToGlobalChannel(callback)
+    }
+
+    /**
+        Unbinds the client from its global channel
+
+        - parameter callbackId: The unique callbackId string used to identify which callback to unbind
+    */
+    open func unbind(callbackId: String) {
+        self.connection.removeCall
