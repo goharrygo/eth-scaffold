@@ -176,4 +176,19 @@ let CLIENT_NAME = "pusher-websocket-swift"
 }
 
 /**
-    Creates a valid URL that can 
+    Creates a valid URL that can be used in a connection attempt
+
+    - parameter key:     The app key to be inserted into the URL
+    - parameter options: The collection of options needed to correctly construct the URL
+
+    - returns: The constructed URL ready to use in a connection attempt
+*/
+func constructUrl(key: String, options: PusherClientOptions) -> String {
+    var url = ""
+
+    if options.encrypted {
+        url = "wss://\(options.host):\(options.port)/app/\(key)"
+    } else {
+        url = "ws://\(options.host):\(options.port)/app/\(key)"
+    }
+    return "\
