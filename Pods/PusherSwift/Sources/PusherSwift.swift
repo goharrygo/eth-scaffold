@@ -191,4 +191,5 @@ func constructUrl(key: String, options: PusherClientOptions) -> String {
     } else {
         url = "ws://\(options.host):\(options.port)/app/\(key)"
     }
-    return "\
+    return "\(url)?client=\(CLIENT_NAME)&version=\(VERSION)&protocol=\(PROTOCOL)"
+}
