@@ -20,4 +20,30 @@ Ash
 
 ### CocoaPods:
 
-If you're adding **Reachability.swift** u
+If you're adding **Reachability.swift** using CocoaPods, note that the framework name has changed from `ReachabilitySwift` to `Reachability` (for consistency with Carthage)
+
+### Previously:
+
+```swift
+enum NetworkStatus {
+    case notReachable, reachableViaWiFi, reachableViaWWAN
+}
+var currentReachabilityStatus: NetworkStatus
+```
+
+### Now:
+
+```swift
+enum Connection {
+    case none, wifi, cellular
+}
+var connection: Connection
+```
+
+### Other changes:
+
+- `isReachableViaWWAN` has been renamed to `isReachableViaCellular`
+
+- `reachableOnWWAN` has been renamed to `allowsCellularConnection`
+
+- `reachability.currentReac
