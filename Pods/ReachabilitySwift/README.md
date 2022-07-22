@@ -46,4 +46,17 @@ var connection: Connection
 
 - `reachableOnWWAN` has been renamed to `allowsCellularConnection`
 
-- `reachability.currentReac
+- `reachability.currentReachabilityString` has been deprecated. Use `"\(reachability.connection)"` instead.
+
+- `isReachable` has been deprecated. Use `connection != .none` instead.
+
+- `isReachableViaWWAN` has been deprecated. Use `connection == .cellular` instead.
+
+- The notification for reachability changes has been renamed from `ReachabilityChangedNotification` to `Notification.Name.reachabilityChanged`
+
+- All closure callbacks and notification are fired on the main queue (including when `startNotifier()` is called)
+
+
+## Got a problem?
+
+Please read 
