@@ -59,4 +59,22 @@ var connection: Connection
 
 ## Got a problem?
 
-Please read 
+Please read https://github.com/ashleymills/Reachability.swift/wiki/Raising-an-issue before raising an issue.
+
+## Installation
+### Manual
+Just drop the **Reachability.swift** file into your project. That's it!
+
+### CocoaPods
+[CocoaPods][] is a dependency manager for Cocoa projects. To install Reachability.swift with CocoaPods:
+
+ 1. Make sure CocoaPods is [installed][CocoaPods Installation].
+
+ 2. Update your Podfile to include the following:
+
+    ``` ruby
+    use_frameworks!
+    pod 'ReachabilitySwift'
+    ```
+
+ 3. Run `pod install`.
