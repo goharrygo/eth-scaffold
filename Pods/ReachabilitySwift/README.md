@@ -95,4 +95,18 @@ To install Reachability.swift with Carthage:
   $ brew install carthage
   ```
 
-2. Add `github "ashleymil
+2. Add `github "ashleymills/Reachability.swift"` to your Cartfile.
+
+3. Run `carthage update`.
+
+4. Drag `ReachabilitySwift.framework` from the `Carthage/Build/iOS/` directory to the `Linked Frameworks and Libraries` section of your Xcode project’s `General` settings.
+
+5. Add `$(SRCROOT)/Carthage/Build/iOS/ReachabilitySwiift.framework` to `Input Files` of Run Script Phase for Carthage.
+
+6. In your code import Reachability likse so:
+`import Reachability`
+
+
+[Carthage]: https://github.com/Carthage/Carthage
+[Homebrew]: http://brew.sh
+[Photo Flipper]: https://itunes.apple.com/app/a
