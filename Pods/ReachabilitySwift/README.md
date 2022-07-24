@@ -78,3 +78,21 @@ Just drop the **Reachability.swift** file into your project. That's it!
     ```
 
  3. Run `pod install`.
+
+[CocoaPods]: https://cocoapods.org
+[CocoaPods Installation]: https://guides.cocoapods.org/using/getting-started.html#getting-started
+ 
+ 4. In your code import Reachability like so:
+   `import Reachability`
+
+### Carthage
+[Carthage][] is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks.
+To install Reachability.swift with Carthage:
+
+1. Install Carthage via [Homebrew][]
+  ```bash
+  $ brew update
+  $ brew install carthage
+  ```
+
+2. Add `github "ashleymil
