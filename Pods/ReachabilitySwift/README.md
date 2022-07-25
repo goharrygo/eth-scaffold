@@ -109,4 +109,28 @@ To install Reachability.swift with Carthage:
 
 [Carthage]: https://github.com/Carthage/Carthage
 [Homebrew]: http://brew.sh
-[Photo Flipper]: https://itunes.apple.com/app/a
+[Photo Flipper]: https://itunes.apple.com/app/apple-store/id749627884?pt=215893&ct=GitHubReachability&mt=8
+
+## Example - closures
+
+NOTE: All closures are run on the **main queue**.
+
+```swift
+//declare this property where it won't go out of scope relative to your listener
+let reachability = Reachability()!
+
+reachability.whenReachable = { reachability in
+    if reachability.connection == .wifi {
+        print("Reachable via WiFi")
+    } else {
+        print("Reachable via Cellular")
+    }
+}
+reachability.whenUnreachable = { _ in
+    print("Not reachable")
+}
+
+do {
+    try reachability.startNotifier()
+} catch {
+    pri
