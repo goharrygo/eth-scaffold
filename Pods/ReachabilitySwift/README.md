@@ -155,4 +155,32 @@ let reachability = Reachability()!
 
      NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .reachabilityChanged, object: reachability)
     do{
-      try
+      try reachability.startNotifier()
+    }catch{
+      print("could not start reachability notifier")
+    }
+```
+
+and
+
+```swift
+func reachabilityChanged(note: Notification) {
+
+  let reachability = note.object as! Reachability
+
+  switch reachability.connection {
+  case .wifi:
+      print("Reachable via WiFi")
+  case .cellular:
+      print("Reachable via Cellular")
+  case .none:
+    print("Network not reachable")
+  }
+}
+```
+
+and for stopping notifications
+
+```swift
+reachability.stopNotifier()
+NotificationCenter.default.removeOb
