@@ -133,4 +133,26 @@ reachability.whenUnreachable = { _ in
 do {
     try reachability.startNotifier()
 } catch {
-    pri
+    print("Unable to start notifier")
+}
+```
+
+and for stopping notifications
+
+```swift
+reachability.stopNotifier()
+```
+
+## Example - notifications
+
+NOTE: All notifications are delviered on the **main queue**.
+
+```swift
+//declare this property where it won't go out of scope relative to your listener
+let reachability = Reachability()!
+
+//declare this inside of viewWillAppear
+
+     NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .reachabilityChanged, object: reachability)
+    do{
+      try
