@@ -21,4 +21,22 @@ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
 INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EV
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+*/
+
+import SystemConfiguration
+import Foundation
+
+public enum ReachabilityError: Error {
+    case FailedToCreateWithAddress(sockaddr_in)
+    case FailedToCreateWithHostname(String)
+    case UnableToSetCallback
+    case UnableToSetDispatchQueue
+}
+
+@available(*, unavailable, renamed: "Notification.Name.reachabilityChanged")
+public let ReachabilityChangedNotification = NSNotification.Name("ReachabilityChangedNotification")
+
+extension Notification.Name {
+    public static let re
