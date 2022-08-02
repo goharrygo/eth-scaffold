@@ -70,4 +70,19 @@ public class Reachability {
     public enum Connection: CustomStringConvertible {
         case none, wifi, cellular
         public var description: String {
-          
+            switch self {
+            case .cellular: return "Cellular"
+            case .wifi: return "WiFi"
+            case .none: return "No Connection"
+            }
+        }
+    }
+
+    public var whenReachable: NetworkReachable?
+    public var whenUnreachable: NetworkUnreachable?
+    
+    @available(*, deprecated: 4.0, renamed: "allowsCellularConnection")
+    public let reachableOnWWAN: Bool = true
+
+    /// Set to `false` to force Reachability.connection to .none when on cellular connection (default value `true`)
+    public var allowsCellularConnection: Bool
