@@ -55,4 +55,19 @@ public class Reachability {
     public typealias NetworkReachable = (Reachability) -> ()
     public typealias NetworkUnreachable = (Reachability) -> ()
 
-    @available(*, 
+    @available(*, unavailable, renamed: "Conection")
+    public enum NetworkStatus: CustomStringConvertible {
+        case notReachable, reachableViaWiFi, reachableViaWWAN
+        public var description: String {
+            switch self {
+            case .reachableViaWWAN: return "Cellular"
+            case .reachableViaWiFi: return "WiFi"
+            case .notReachable: return "No Connection"
+            }
+        }
+    }
+
+    public enum Connection: CustomStringConvertible {
+        case none, wifi, cellular
+        public var description: String {
+          
