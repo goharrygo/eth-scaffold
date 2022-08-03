@@ -86,3 +86,20 @@ public class Reachability {
 
     /// Set to `false` to force Reachability.connection to .none when on cellular connection (default value `true`)
     public var allowsCellularConnection: Bool
+
+    // The notification center on which "reachability changed" events are being posted
+    public var notificationCenter: NotificationCenter = NotificationCenter.default
+
+    @available(*, deprecated: 4.0, renamed: "connection.description")
+    public var currentReachabilityString: String {
+        return "\(connection)"
+    }
+
+    @available(*, unavailable, renamed: "connection")
+    public var currentReachabilityStatus: Connection {
+        return connection
+    }
+    
+    public var connection: Connection {
+        
+        guard isReachableFlagS
