@@ -102,4 +102,22 @@ public class Reachability {
     
     public var connection: Connection {
         
-        guard isReachableFlagS
+        guard isReachableFlagSet else { return .none }
+
+        // If we're reachable, but not on an iOS device (i.e. simulator), we must be on WiFi
+        guard isRunningOnDevice else { return .wifi }
+
+        var connection = Connection.none
+        
+        if !isConnectionRequiredFlagSet {
+            connection = .wifi
+        }
+        
+        if isConnectionOnTrafficOrDemandFlagSet {
+            if !isInterventionRequiredFlagSet {
+                connection = .wifi
+            }
+        }
+        
+        if isOnWWANFlagSet {
+            if !al
