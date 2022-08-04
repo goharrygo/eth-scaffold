@@ -120,4 +120,25 @@ public class Reachability {
         }
         
         if isOnWWANFlagSet {
-            if !al
+            if !allowsCellularConnection {
+                connection = .none
+            } else {
+                connection = .cellular
+            }
+        }
+        
+        return connection
+    }
+    
+    fileprivate var previousFlags: SCNetworkReachabilityFlags?
+    
+    fileprivate var isRunningOnDevice: Bool = {
+        #if (arch(i386) || arch(x86_64)) && os(iOS)
+            return false
+        #else
+            return true
+        #endif
+    }()
+    
+    fileprivate var notifierRunning = false
+    fileprivate let reachabilityR
