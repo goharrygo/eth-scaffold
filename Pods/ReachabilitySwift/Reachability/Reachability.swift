@@ -141,4 +141,22 @@ public class Reachability {
     }()
     
     fileprivate var notifierRunning = false
-    fileprivate let reachabilityR
+    fileprivate let reachabilityRef: SCNetworkReachability
+    
+    fileprivate let reachabilitySerialQueue = DispatchQueue(label: "uk.co.ashleymills.reachability")
+    
+    required public init(reachabilityRef: SCNetworkReachability) {
+        allowsCellularConnection = true
+        self.reachabilityRef = reachabilityRef
+    }
+    
+    public convenience init?(hostname: String) {
+        
+        guard let ref = SCNetworkReachabilityCreateWithName(nil, hostname) else { return nil }
+        
+        self.init(reachabilityRef: ref)
+    }
+    
+    public convenience init?() {
+        
+        var zer
