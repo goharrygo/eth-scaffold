@@ -180,4 +180,16 @@ public extension Reachability {
         
         guard !notifierRunning else { return }
         
-        var context = SCNetworkReachabilityCon
+        var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
+        context.info = UnsafeMutableRawPointer(Unmanaged<Reachability>.passUnretained(self).toOpaque())        
+        if !SCNetworkReachabilitySetCallback(reachabilityRef, callback, &context) {
+            stopNotifier()
+            throw ReachabilityError.UnableToSetCallback
+        }
+        
+        if !SCNetworkReachabilitySetDispatchQueue(reachabilityRef, reachabilitySerialQueue) {
+            stopNotifier()
+            throw ReachabilityError.UnableToSetDispatchQueue
+        }
+        
+   
