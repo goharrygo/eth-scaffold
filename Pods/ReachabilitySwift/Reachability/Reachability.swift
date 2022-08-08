@@ -192,4 +192,22 @@ public extension Reachability {
             throw ReachabilityError.UnableToSetDispatchQueue
         }
         
+        // Perform an initial check
+        reachabilitySerialQueue.async {
+            self.reachabilityChanged()
+        }
+        
+        notifierRunning = true
+    }
+    
+    func stopNotifier() {
+        defer { notifierRunning = false }
+        
+        SCNetworkReachabilitySetCallback(reachabilityRef, nil, nil)
+        SCNetworkReachabilitySetDispatchQueue(reachabilityRef, nil)
+    }
+    
+    // MARK: - *** Connection test methods ***
+    @available(*, deprecated: 4.0, message: "Please use `connection != .none`")
+    var isReachable: Bool {
    
