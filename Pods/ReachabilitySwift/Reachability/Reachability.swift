@@ -210,4 +210,21 @@ public extension Reachability {
     // MARK: - *** Connection test methods ***
     @available(*, deprecated: 4.0, message: "Please use `connection != .none`")
     var isReachable: Bool {
-   
+        
+        guard isReachableFlagSet else { return false }
+        
+        if isConnectionRequiredAndTransientFlagSet {
+            return false
+        }
+        
+        if isRunningOnDevice {
+            if isOnWWANFlagSet && !reachableOnWWAN {
+                // We don't want to connect when on cellular connection
+                return false
+            }
+        }
+        
+        return true
+    }
+    
+    @available(*, deprecated: 4.0, message: "Please use `connection == .cellular`")
