@@ -228,3 +228,15 @@ public extension Reachability {
     }
     
     @available(*, deprecated: 4.0, message: "Please use `connection == .cellular`")
+    var isReachableViaWWAN: Bool {
+        // Check we're not on the simulator, we're REACHABLE and check we're on WWAN
+        return isRunningOnDevice && isReachableFlagSet && isOnWWANFlagSet
+    }
+
+    @available(*, deprecated: 4.0, message: "Please use `connection == .wifi`")
+    var isReachableViaWiFi: Bool {
+        
+        // Check we're reachable
+        guard isReachableFlagSet else { return false }
+        
+        // If reachable we're reachable, but not on an iOS device (i.e. simulato
