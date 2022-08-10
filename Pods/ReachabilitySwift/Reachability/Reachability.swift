@@ -253,4 +253,22 @@ public extension Reachability {
         let c = isConnectionRequiredFlagSet ? "c" : "-"
         let t = isTransientConnectionFlagSet ? "t" : "-"
         let i = isInterventionRequiredFlagSet ? "i" : "-"
-        let C = isConnectionOnTraff
+        let C = isConnectionOnTrafficFlagSet ? "C" : "-"
+        let D = isConnectionOnDemandFlagSet ? "D" : "-"
+        let l = isLocalAddressFlagSet ? "l" : "-"
+        let d = isDirectFlagSet ? "d" : "-"
+        
+        return "\(W)\(R) \(c)\(t)\(i)\(C)\(D)\(l)\(d)"
+    }
+}
+
+fileprivate extension Reachability {
+    
+    func reachabilityChanged() {
+        guard previousFlags != flags else { return }
+        
+        let block = connection != .none ? whenReachable : whenUnreachable
+        
+        DispatchQueue.main.async {
+            block?(self)
+            self.notificationCenter.po
