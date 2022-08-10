@@ -271,4 +271,25 @@ fileprivate extension Reachability {
         
         DispatchQueue.main.async {
             block?(self)
-            self.notificationCenter.po
+            self.notificationCenter.post(name: .reachabilityChanged, object:self)
+        }
+        
+        previousFlags = flags
+    }
+    
+    var isOnWWANFlagSet: Bool {
+        #if os(iOS)
+            return flags.contains(.isWWAN)
+        #else
+            return false
+        #endif
+    }
+    var isReachableFlagSet: Bool {
+        return flags.contains(.reachable)
+    }
+    var isConnectionRequiredFlagSet: Bool {
+        return flags.contains(.connectionRequired)
+    }
+    var isInterventionRequiredFlagSet: Bool {
+        return flags.contains(.interventionRequired)
+    }
