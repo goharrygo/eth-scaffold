@@ -239,4 +239,18 @@ public extension Reachability {
         // Check we're reachable
         guard isReachableFlagSet else { return false }
         
-        // If reachable we're reachable, but not on an iOS device (i.e. simulato
+        // If reachable we're reachable, but not on an iOS device (i.e. simulator), we must be on WiFi
+        guard isRunningOnDevice else { return true }
+        
+        // Check we're NOT on WWAN
+        return !isOnWWANFlagSet
+    }
+    
+    var description: String {
+        
+        let W = isRunningOnDevice ? (isOnWWANFlagSet ? "W" : "-") : "X"
+        let R = isReachableFlagSet ? "R" : "-"
+        let c = isConnectionRequiredFlagSet ? "c" : "-"
+        let t = isTransientConnectionFlagSet ? "t" : "-"
+        let i = isInterventionRequiredFlagSet ? "i" : "-"
+        let C = isConnectionOnTraff
