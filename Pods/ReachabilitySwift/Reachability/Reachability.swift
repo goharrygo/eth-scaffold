@@ -293,3 +293,19 @@ fileprivate extension Reachability {
     var isInterventionRequiredFlagSet: Bool {
         return flags.contains(.interventionRequired)
     }
+    var isConnectionOnTrafficFlagSet: Bool {
+        return flags.contains(.connectionOnTraffic)
+    }
+    var isConnectionOnDemandFlagSet: Bool {
+        return flags.contains(.connectionOnDemand)
+    }
+    var isConnectionOnTrafficOrDemandFlagSet: Bool {
+        return !flags.intersection([.connectionOnTraffic, .connectionOnDemand]).isEmpty
+    }
+    var isTransientConnectionFlagSet: Bool {
+        return flags.contains(.transientConnection)
+    }
+    var isLocalAddressFlagSet: Bool {
+        return flags.contains(.isLocalAddress)
+    }
+    var isDirectF
