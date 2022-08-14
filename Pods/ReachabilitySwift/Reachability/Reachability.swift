@@ -308,4 +308,19 @@ fileprivate extension Reachability {
     var isLocalAddressFlagSet: Bool {
         return flags.contains(.isLocalAddress)
     }
-    var isDirectF
+    var isDirectFlagSet: Bool {
+        return flags.contains(.isDirect)
+    }
+    var isConnectionRequiredAndTransientFlagSet: Bool {
+        return flags.intersection([.connectionRequired, .transientConnection]) == [.connectionRequired, .transientConnection]
+    }
+    
+    var flags: SCNetworkReachabilityFlags {
+        var flags = SCNetworkReachabilityFlags()
+        if SCNetworkReachabilityGetFlags(reachabilityRef, &flags) {
+            return flags
+        } else {
+            return SCNetworkReachabilityFlags()
+        }
+    }
+}
