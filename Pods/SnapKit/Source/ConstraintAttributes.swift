@@ -18,4 +18,28 @@
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 //  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 //  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALI
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
+
+#if os(iOS) || os(tvOS)
+    import UIKit
+#else
+    import AppKit
+#endif
+
+
+internal struct ConstraintAttributes : OptionSet {
+    
+    internal init(rawValue: UInt) {
+        self.rawValue = rawValue
+    }
+    internal init(_ rawValue: UInt) {
+        self.init(rawValue: rawValue)
+    }
+    internal init(nilLiteral: ()) {
+        self.rawValue = 0
+    }
+    
+    internal private(set) var rawValue: UInt
+    internal static var allZeros: ConstraintAttributes { return self.init(0) }
+    internal static func convertFromNilLiteral() ->
