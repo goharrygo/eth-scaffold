@@ -53,3 +53,10 @@ internal struct ConstraintAttributes : OptionSet {
     
     internal static var none: ConstraintAttributes { return self.init(0) }
     internal static var left: ConstraintAttributes { return self.init(1) }
+    internal static var top: ConstraintAttributes {  return self.init(2) }
+    internal static var right: ConstraintAttributes { return self.init(4) }
+    internal static var bottom: ConstraintAttributes { return self.init(8) }
+    internal static var leading: ConstraintAttributes { return self.init(16) }
+    internal static var trailing: ConstraintAttributes { return self.init(32) }
+    internal static var width: ConstraintAttributes { return self.init(64) }
+    internal static var 
