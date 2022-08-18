@@ -59,4 +59,13 @@ internal struct ConstraintAttributes : OptionSet {
     internal static var leading: ConstraintAttributes { return self.init(16) }
     internal static var trailing: ConstraintAttributes { return self.init(32) }
     internal static var width: ConstraintAttributes { return self.init(64) }
-    internal static var 
+    internal static var height: ConstraintAttributes { return self.init(128) }
+    internal static var centerX: ConstraintAttributes { return self.init(256) }
+    internal static var centerY: ConstraintAttributes { return self.init(512) }
+    internal static var lastBaseline: ConstraintAttributes { return self.init(1024) }
+    
+    @available(iOS 8.0, OSX 10.11, *)
+    internal static var firstBaseline: ConstraintAttributes { return self.init(2048) }
+    
+    @available(iOS 8.0, *)
+    internal static var leftMargin: ConstraintAttributes { return 
