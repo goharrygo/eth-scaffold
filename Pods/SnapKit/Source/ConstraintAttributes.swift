@@ -42,4 +42,14 @@ internal struct ConstraintAttributes : OptionSet {
     
     internal private(set) var rawValue: UInt
     internal static var allZeros: ConstraintAttributes { return self.init(0) }
-    internal static func convertFromNilLiteral() ->
+    internal static func convertFromNilLiteral() -> ConstraintAttributes { return self.init(0) }
+    internal var boolValue: Bool { return self.rawValue != 0 }
+    
+    internal func toRaw() -> UInt { return self.rawValue }
+    internal static func fromRaw(_ raw: UInt) -> ConstraintAttributes? { return self.init(raw) }
+    internal static func fromMask(_ raw: UInt) -> ConstraintAttributes { return self.init(raw) }
+    
+    // normal
+    
+    internal static var none: ConstraintAttributes { return self.init(0) }
+    internal static var left: ConstraintAttributes { return self.init(1) }
