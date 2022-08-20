@@ -95,4 +95,18 @@ internal struct ConstraintAttributes : OptionSet {
     
     internal static var edges: ConstraintAttributes { return self.init(15) }
     internal static var size: ConstraintAttributes { return self.init(192) }
-    internal static var center: ConstraintAttribu
+    internal static var center: ConstraintAttributes { return self.init(768) }
+    
+    @available(iOS 8.0, *)
+    internal static var margins: ConstraintAttributes { return self.init(61440) }
+    
+    @available(iOS 8.0, *)
+    internal static var centerWithinMargins: ConstraintAttributes { return self.init(786432) }
+    
+    internal var layoutAttributes:[LayoutAttribute] {
+        var attrs = [LayoutAttribute]()
+        if (self.contains(ConstraintAttributes.left)) {
+            attrs.append(.left)
+        }
+        if (self.contains(ConstraintAttributes.top)) {
+            attrs.appen
