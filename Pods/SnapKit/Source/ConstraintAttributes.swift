@@ -68,4 +68,19 @@ internal struct ConstraintAttributes : OptionSet {
     internal static var firstBaseline: ConstraintAttributes { return self.init(2048) }
     
     @available(iOS 8.0, *)
-    internal static var leftMargin: ConstraintAttributes { return 
+    internal static var leftMargin: ConstraintAttributes { return self.init(4096) }
+    
+    @available(iOS 8.0, *)
+    internal static var rightMargin: ConstraintAttributes { return self.init(8192) }
+    
+    @available(iOS 8.0, *)
+    internal static var topMargin: ConstraintAttributes { return self.init(16384) }
+    
+    @available(iOS 8.0, *)
+    internal static var bottomMargin: ConstraintAttributes { return self.init(32768) }
+    
+    @available(iOS 8.0, *)
+    internal static var leadingMargin: ConstraintAttributes { return self.init(65536) }
+    
+    @available(iOS 8.0, *)
+    internal static va
