@@ -109,4 +109,19 @@ internal struct ConstraintAttributes : OptionSet {
             attrs.append(.left)
         }
         if (self.contains(ConstraintAttributes.top)) {
-            attrs.appen
+            attrs.append(.top)
+        }
+        if (self.contains(ConstraintAttributes.right)) {
+            attrs.append(.right)
+        }
+        if (self.contains(ConstraintAttributes.bottom)) {
+            attrs.append(.bottom)
+        }
+        if (self.contains(ConstraintAttributes.leading)) {
+            attrs.append(.leading)
+        }
+        if (self.contains(ConstraintAttributes.trailing)) {
+            attrs.append(.trailing)
+        }
+        if (self.contains(ConstraintAttributes.width)) {
+            attrs.append(.width)
