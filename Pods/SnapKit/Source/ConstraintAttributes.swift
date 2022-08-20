@@ -83,4 +83,16 @@ internal struct ConstraintAttributes : OptionSet {
     internal static var leadingMargin: ConstraintAttributes { return self.init(65536) }
     
     @available(iOS 8.0, *)
-    internal static va
+    internal static var trailingMargin: ConstraintAttributes { return self.init(131072) }
+    
+    @available(iOS 8.0, *)
+    internal static var centerXWithinMargins: ConstraintAttributes { return self.init(262144) }
+    
+    @available(iOS 8.0, *)
+    internal static var centerYWithinMargins: ConstraintAttributes { return self.init(524288) }
+    
+    // aggregates
+    
+    internal static var edges: ConstraintAttributes { return self.init(15) }
+    internal static var size: ConstraintAttributes { return self.init(192) }
+    internal static var center: ConstraintAttribu
