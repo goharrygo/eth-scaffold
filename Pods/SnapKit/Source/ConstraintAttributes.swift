@@ -125,3 +125,19 @@ internal struct ConstraintAttributes : OptionSet {
         }
         if (self.contains(ConstraintAttributes.width)) {
             attrs.append(.width)
+        }
+        if (self.contains(ConstraintAttributes.height)) {
+            attrs.append(.height)
+        }
+        if (self.contains(ConstraintAttributes.centerX)) {
+            attrs.append(.centerX)
+        }
+        if (self.contains(ConstraintAttributes.centerY)) {
+            attrs.append(.centerY)
+        }
+        if (self.contains(ConstraintAttributes.lastBaseline)) {
+            attrs.append(.lastBaseline)
+        }
+        
+        #if os(iOS) || os(tvOS)
+      
