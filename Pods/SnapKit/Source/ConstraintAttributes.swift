@@ -186,4 +186,5 @@ internal func -=(left: inout ConstraintAttributes, right: ConstraintAttributes) 
 }
 
 internal func ==(left: ConstraintAttributes, right: ConstraintAttributes) -> Bool {
-    return left.rawValue == right.raw
+    return left.rawValue == right.rawValue
+}
