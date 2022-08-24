@@ -165,4 +165,25 @@ internal struct ConstraintAttributes : OptionSet {
                 attrs.append(.centerXWithinMargins)
             }
             if (self.contains(ConstraintAttributes.centerYWithinMargins)) {
-                attrs.ap
+                attrs.append(.centerYWithinMargins)
+            }
+        #endif
+        
+        return attrs
+    }
+}
+
+internal func + (left: ConstraintAttributes, right: ConstraintAttributes) -> ConstraintAttributes {
+    return left.union(right)
+}
+
+internal func +=(left: inout ConstraintAttributes, right: ConstraintAttributes) {
+    left.formUnion(right)
+}
+
+internal func -=(left: inout ConstraintAttributes, right: ConstraintAttributes) {
+    left.subtract(right)
+}
+
+internal func ==(left: ConstraintAttributes, right: ConstraintAttributes) -> Bool {
+    return left.rawValue == right.raw
