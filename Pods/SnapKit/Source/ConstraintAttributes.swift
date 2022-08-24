@@ -140,4 +140,16 @@ internal struct ConstraintAttributes : OptionSet {
         }
         
         #if os(iOS) || os(tvOS)
-      
+            if (self.contains(ConstraintAttributes.firstBaseline)) {
+                attrs.append(.firstBaseline)
+            }
+            if (self.contains(ConstraintAttributes.leftMargin)) {
+                attrs.append(.leftMargin)
+            }
+            if (self.contains(ConstraintAttributes.rightMargin)) {
+                attrs.append(.rightMargin)
+            }
+            if (self.contains(ConstraintAttributes.topMargin)) {
+                attrs.append(.topMargin)
+            }
+            if (self.contains(ConstraintAttributes.bot
