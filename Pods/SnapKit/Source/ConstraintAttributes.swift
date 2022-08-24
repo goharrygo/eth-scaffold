@@ -152,4 +152,17 @@ internal struct ConstraintAttributes : OptionSet {
             if (self.contains(ConstraintAttributes.topMargin)) {
                 attrs.append(.topMargin)
             }
-            if (self.contains(ConstraintAttributes.bot
+            if (self.contains(ConstraintAttributes.bottomMargin)) {
+                attrs.append(.bottomMargin)
+            }
+            if (self.contains(ConstraintAttributes.leadingMargin)) {
+                attrs.append(.leadingMargin)
+            }
+            if (self.contains(ConstraintAttributes.trailingMargin)) {
+                attrs.append(.trailingMargin)
+            }
+            if (self.contains(ConstraintAttributes.centerXWithinMargins)) {
+                attrs.append(.centerXWithinMargins)
+            }
+            if (self.contains(ConstraintAttributes.centerYWithinMargins)) {
+                attrs.ap
