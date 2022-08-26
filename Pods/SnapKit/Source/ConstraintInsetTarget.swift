@@ -21,4 +21,34 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if os(iOS) ||
+#if os(iOS) || os(tvOS)
+    import UIKit
+#else
+    import AppKit
+#endif
+
+
+public protocol ConstraintInsetTarget: ConstraintConstantTarget {
+}
+
+extension Int: ConstraintInsetTarget {
+}
+
+extension UInt: ConstraintInsetTarget {
+}
+
+extension Float: ConstraintInsetTarget {
+}
+
+extension Double: ConstraintInsetTarget {
+}
+
+extension CGFloat: ConstraintInsetTarget {
+}
+
+extension ConstraintInsets: ConstraintInsetTarget {
+}
+
+extension ConstraintInsetTarget {
+
+    internal var constraintInsetTargetV
