@@ -31,4 +31,24 @@
 public final class ConstraintItem {
     
     internal weak var target: AnyObject?
-    internal let attributes: Constrain
+    internal let attributes: ConstraintAttributes
+    
+    internal init(target: AnyObject?, attributes: ConstraintAttributes) {
+        self.target = target
+        self.attributes = attributes
+    }
+    
+    internal var layoutConstraintItem: LayoutConstraintItem? {
+        return self.target as? LayoutConstraintItem
+    }
+    
+}
+
+public func ==(lhs: ConstraintItem, rhs: ConstraintItem) -> Bool {
+    // pointer equality
+    guard lhs !== rhs else {
+        return true
+    }
+    
+    // must both have valid targets and identical attributes
+    guard let targ
