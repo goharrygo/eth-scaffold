@@ -51,4 +51,11 @@ public func ==(lhs: ConstraintItem, rhs: ConstraintItem) -> Bool {
     }
     
     // must both have valid targets and identical attributes
-    guard let targ
+    guard let target1 = lhs.target,
+          let target2 = rhs.target,
+          target1 === target2 && lhs.attributes == rhs.attributes else {
+            return false
+    }
+    
+    return true
+}
