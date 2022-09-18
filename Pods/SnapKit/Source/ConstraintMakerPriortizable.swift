@@ -60,4 +60,9 @@ public class ConstraintMakerPriortizable: ConstraintMakerFinalizable {
         return self.priority(.medium)
     }
     
-    @available(*, deprecated:3.0, mes
+    @available(*, deprecated:3.0, message:"Use priority(.low) instead.")
+    @discardableResult
+    public func priorityLow() -> ConstraintMakerFinalizable {
+        return self.priority(.low)
+    }
+}
