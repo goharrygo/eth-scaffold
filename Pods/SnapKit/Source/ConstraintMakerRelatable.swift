@@ -35,3 +35,13 @@ public class ConstraintMakerRelatable {
     internal init(_ description: ConstraintDescription) {
         self.description = description
     }
+    
+    internal func relatedTo(_ other: ConstraintRelatableTarget, relation: ConstraintRelation, file: String, line: UInt) -> ConstraintMakerEditable {
+        let related: ConstraintItem
+        let constant: ConstraintConstantTarget
+        
+        if let other = other as? ConstraintItem {
+            guard other.attributes == ConstraintAttributes.none ||
+                  other.attributes.layoutAttributes.count <= 1 ||
+                  other.attributes.layoutAttributes == self.description.attributes.layoutAttributes ||
+                  othe
