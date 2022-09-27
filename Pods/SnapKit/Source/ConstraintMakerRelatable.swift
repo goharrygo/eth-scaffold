@@ -64,4 +64,14 @@ public class ConstraintMakerRelatable {
             fatalError("Invalid constraint. (\(file), \(line))")
         }
         
-        let ed
+        let editable = ConstraintMakerEditable(self.description)
+        editable.description.sourceLocation = (file, line)
+        editable.description.relation = relation
+        editable.description.related = related
+        editable.description.constant = constant
+        return editable
+    }
+    
+    @discardableResult
+    public func equalTo(_ other: ConstraintRelatableTarget, _ file: String = #file, _ line: UInt = #line) -> ConstraintMakerEditable {
+        return self.relatedTo(other, relation: .equal, file: file, line: line
