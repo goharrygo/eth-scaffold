@@ -86,4 +86,13 @@ public class ConstraintMakerRelatable {
     }
     
     @discardableResult
-    public func lessThanOrEqualTo(_ other: ConstraintRelatableTarget, _ file: String = #file
+    public func lessThanOrEqualTo(_ other: ConstraintRelatableTarget, _ file: String = #file, _ line: UInt = #line) -> ConstraintMakerEditable {
+        return self.relatedTo(other, relation: .lessThanOrEqual, file: file, line: line)
+    }
+    
+    @discardableResult
+    public func lessThanOrEqualToSuperview(_ file: String = #file, _ line: UInt = #line) -> ConstraintMakerEditable {
+        guard let other = self.description.item.superview else {
+            fatalError("Expected superview but found nil when attempting make constraint `lessThanOrEqualToSuperview`.")
+        }
+        return self.relatedTo(other, relation: .lessThanOr
