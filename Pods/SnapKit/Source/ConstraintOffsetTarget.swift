@@ -56,4 +56,14 @@ extension ConstraintOffsetTarget {
             offset = CGFloat(amount)
         } else if let amount = self as? CGFloat {
             offset = CGFloat(amount)
-        } else if let amoun
+        } else if let amount = self as? Int {
+            offset = CGFloat(amount)
+        } else if let amount = self as? UInt {
+            offset = CGFloat(amount)
+        } else {
+            offset = 0.0
+        }
+        return offset
+    }
+    
+}
