@@ -57,4 +57,21 @@ public struct ConstraintPriority : ExpressibleByFloatLiteral, Equatable, Stridea
         
     }
     
-    public static
+    public static var low: ConstraintPriority {
+        return 250.0
+    }
+    
+    public static func ==(lhs: ConstraintPriority, rhs: ConstraintPriority) -> Bool {
+        return lhs.value == rhs.value
+    }
+
+    // MARK: Strideable
+
+    public func advanced(by n: FloatLiteralType) -> ConstraintPriority {
+        return ConstraintPriority(floatLiteral: value + n)
+    }
+
+    public func distance(to other: ConstraintPriority) -> FloatLiteralType {
+        return other.value - value
+    }
+}
