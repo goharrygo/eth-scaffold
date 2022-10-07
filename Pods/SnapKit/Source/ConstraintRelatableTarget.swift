@@ -1,3 +1,4 @@
+
 //
 //  SnapKit
 //
@@ -28,48 +29,39 @@
 #endif
 
 
-public protocol ConstraintPriorityTarget {
-    
-    var constraintPriorityTargetValue: Float { get }
-    
+public protocol ConstraintRelatableTarget {
 }
 
-extension Int: ConstraintPriorityTarget {
-    
-    public var constraintPriorityTargetValue: Float {
-        return Float(self)
-    }
-    
+extension Int: ConstraintRelatableTarget {
 }
 
-extension UInt: ConstraintPriorityTarget {
-    
-    public var constraintPriorityTargetValue: Float {
-        return Float(self)
-    }
-    
+extension UInt: ConstraintRelatableTarget {
 }
 
-extension Float: ConstraintPriorityTarget {
-    
-    public var constraintPriorityTargetValue: Float {
-        return self
-    }
-    
+extension Float: ConstraintRelatableTarget {
 }
 
-extension Double: ConstraintPriorityTarget {
-    
-    public var constraintPriorityTargetValue: Float {
-        return Float(self)
-    }
-    
+extension Double: ConstraintRelatableTarget {
 }
 
-extension CGFloat: ConstraintPriorityTarget {
-    
-    public var constraintPriorityTargetValue: Float {
-        return Float(self)
-    }
-    
+extension CGFloat: ConstraintRelatableTarget {
+}
+
+extension CGSize: ConstraintRelatableTarget {
+}
+
+extension CGPoint: ConstraintRelatableTarget {
+}
+
+extension ConstraintInsets: ConstraintRelatableTarget {
+}
+
+extension ConstraintItem: ConstraintRelatableTarget {
+}
+
+extension ConstraintView: ConstraintRelatableTarget {
+}
+
+@available(iOS 9.0, OSX 10.11, *)
+extension ConstraintLayoutGuide: ConstraintRelatableTarget {
 }
