@@ -34,4 +34,19 @@ public extension LayoutConstraint {
         
         description += descriptionForObject(self)
         
-        if let firstItem = conditionalOpti
+        if let firstItem = conditionalOptional(from: self.firstItem) {
+            description += " \(descriptionForObject(firstItem))"
+        }
+        
+        if self.firstAttribute != .notAnAttribute {
+            description += ".\(descriptionForAttribute(self.firstAttribute))"
+        }
+        
+        description += " \(descriptionForRelation(self.relation))"
+        
+        if let secondItem = self.secondItem {
+            description += " \(descriptionForObject(secondItem))"
+        }
+        
+        if self.secondAttribute != .notAnAttribute {
+    
