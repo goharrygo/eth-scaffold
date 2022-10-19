@@ -49,4 +49,21 @@ public extension LayoutConstraint {
         }
         
         if self.secondAttribute != .notAnAttribute {
-    
+            description += ".\(descriptionForAttribute(self.secondAttribute))"
+        }
+        
+        if self.multiplier != 1.0 {
+            description += " * \(self.multiplier)"
+        }
+        
+        if self.secondAttribute == .notAnAttribute {
+            description += " \(self.constant)"
+        } else {
+            if self.constant > 0.0 {
+                description += " + \(self.constant)"
+            } else if self.constant < 0.0 {
+                description += " - \(abs(self.constant))"
+            }
+        }
+        
+       
