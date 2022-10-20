@@ -66,4 +66,25 @@ public extension LayoutConstraint {
             }
         }
         
-       
+        if self.priority.rawValue != 1000.0 {
+            description += " ^\(self.priority)"
+        }
+        
+        description += ">"
+        
+        return description
+    }
+    
+}
+
+private func descriptionForRelation(_ relation: LayoutRelation) -> String {
+    switch relation {
+    case .equal:                return "=="
+    case .greaterThanOrEqual:   return ">="
+    case .lessThanOrEqual:      return "<="
+    }
+}
+
+private func descriptionForAttribute(_ attribute: LayoutAttribute) -> String {
+    #if os(iOS) || os(tvOS)
+        
