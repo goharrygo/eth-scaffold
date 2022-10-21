@@ -107,4 +107,16 @@ private func descriptionForAttribute(_ attribute: LayoutAttribute) -> String {
         case .rightMargin:          return "rightMargin"
         case .leadingMargin:        return "leadingMargin"
         case .trailingMargin:       return "trailingMargin"
-        case .centerXW
+        case .centerXWithinMargins: return "centerXWithinMargins"
+        case .centerYWithinMargins: return "centerYWithinMargins"
+        }
+    #else
+        switch attribute {
+        case .notAnAttribute:       return "notAnAttribute"
+        case .top:                  return "top"
+        case .left:                 return "left"
+        case .bottom:               return "bottom"
+        case .right:                return "right"
+        case .leading:              return "leading"
+        case .trailing:             return "trailing"
+        case .width:      
