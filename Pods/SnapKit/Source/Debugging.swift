@@ -87,4 +87,15 @@ private func descriptionForRelation(_ relation: LayoutRelation) -> String {
 
 private func descriptionForAttribute(_ attribute: LayoutAttribute) -> String {
     #if os(iOS) || os(tvOS)
-        
+        switch attribute {
+        case .notAnAttribute:       return "notAnAttribute"
+        case .top:                  return "top"
+        case .left:                 return "left"
+        case .bottom:               return "bottom"
+        case .right:                return "right"
+        case .leading:              return "leading"
+        case .trailing:             return "trailing"
+        case .width:                return "width"
+        case .height:               return "height"
+        case .centerX:              return "centerX"
+  
