@@ -98,4 +98,13 @@ private func descriptionForAttribute(_ attribute: LayoutAttribute) -> String {
         case .width:                return "width"
         case .height:               return "height"
         case .centerX:              return "centerX"
-  
+        case .centerY:              return "centerY"
+        case .lastBaseline:         return "lastBaseline"
+        case .firstBaseline:        return "firstBaseline"
+        case .topMargin:            return "topMargin"
+        case .leftMargin:           return "leftMargin"
+        case .bottomMargin:         return "bottomMargin"
+        case .rightMargin:          return "rightMargin"
+        case .leadingMargin:        return "leadingMargin"
+        case .trailingMargin:       return "trailingMargin"
+        case .centerXW
