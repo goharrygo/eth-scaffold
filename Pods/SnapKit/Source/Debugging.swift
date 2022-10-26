@@ -137,4 +137,18 @@ private func conditionalOptional<T>(from object: T) -> Optional<T> {
     return Optional.some(object)
 }
 
-private func descr
+private func descriptionForObject(_ object: AnyObject) -> String {
+    let pointerDescription = String(format: "%p", UInt(bitPattern: ObjectIdentifier(object)))
+    var desc = ""
+    
+    desc += type(of: object).description()
+    
+    if let object = object as? ConstraintView {
+        desc += ":\(object.snp.label() ?? pointerDescription)"
+    } else if let object = object as? LayoutConstraint {
+        desc += ":\(object.label ?? pointerDescription)"
+    } else {
+        desc += ":\(pointerDescription)"
+    }
+    
+    i
