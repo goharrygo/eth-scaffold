@@ -119,4 +119,22 @@ private func descriptionForAttribute(_ attribute: LayoutAttribute) -> String {
         case .right:                return "right"
         case .leading:              return "leading"
         case .trailing:             return "trailing"
-        case .width:      
+        case .width:                return "width"
+        case .height:               return "height"
+        case .centerX:              return "centerX"
+        case .centerY:              return "centerY"
+        case .lastBaseline:         return "lastBaseline"
+        case .firstBaseline:        return "firstBaseline"
+        }
+    #endif
+}
+
+private func conditionalOptional<T>(from object: Optional<T>) -> Optional<T> {
+    return object
+}
+
+private func conditionalOptional<T>(from object: T) -> Optional<T> {
+    return Optional.some(object)
+}
+
+private func descr
