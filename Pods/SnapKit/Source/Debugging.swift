@@ -151,4 +151,10 @@ private func descriptionForObject(_ object: AnyObject) -> String {
         desc += ":\(pointerDescription)"
     }
     
-    i
+    if let object = object as? LayoutConstraint, let file = object.constraint?.sourceLocation.0, let line = object.constraint?.sourceLocation.1 {
+        desc += "@\((file as NSString).lastPathComponent)#\(line)"
+    }
+    
+    desc += ""
+    return desc
+}
