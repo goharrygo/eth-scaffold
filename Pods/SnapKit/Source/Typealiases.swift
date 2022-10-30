@@ -1,3 +1,4 @@
+
 //
 //  SnapKit
 //
@@ -21,37 +22,16 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+import Foundation
+
 #if os(iOS) || os(tvOS)
     import UIKit
+    typealias LayoutRelation = NSLayoutRelation
+    typealias LayoutAttribute = NSLayoutAttribute
+    typealias LayoutPriority = UILayoutPriority
 #else
     import AppKit
+    typealias LayoutRelation = NSLayoutConstraint.Relation
+    typealias LayoutAttribute = NSLayoutConstraint.Attribute
+    typealias LayoutPriority = NSLayoutConstraint.Priority
 #endif
-
-
-public class LayoutConstraint : NSLayoutConstraint {
-    
-    public var label: String? {
-        get {
-            return self.identifier
-        }
-        set {
-            self.identifier = newValue
-        }
-    }
-    
-    internal weak var constraint: Constraint? = nil
-    
-}
-
-internal func ==(lhs: LayoutConstraint, rhs: LayoutConstraint) -> Bool {
-    guard lhs.firstItem === rhs.firstItem &&
-          lhs.secondItem === rhs.secondItem &&
-          lhs.firstAttribute == rhs.firstAttribute &&
-          lhs.secondAttribute == rhs.secondAttribute &&
-          lhs.relation == rhs.relation &&
-          lhs.priority == rhs.priority &&
-          lhs.multiplier == rhs.multiplier else {
-        return false
-    }
-    return true
-}
