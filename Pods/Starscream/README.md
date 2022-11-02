@@ -20,4 +20,20 @@ First thing is to import the framework. See the Installation instructions on how
 import Starscream
 ```
 
-Once 
+Once imported, you can open a connection to your WebSocket server. Note that `socket` is probably best as a property, so it doesn't get deallocated right after being setup.
+
+```swift
+socket = WebSocket(url: URL(string: "ws://localhost:8080/")!)
+socket.delegate = self
+socket.connect()
+```
+
+After you are connected, there are some delegate methods that we need to implement.
+
+### websocketDidConnect
+
+websocketDidConnect is called as soon as the client connects to the server.
+
+```swift
+func websocketDidConnect(socket: WebSocketClient) {
+    print("websocket is con
