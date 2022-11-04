@@ -36,4 +36,25 @@ websocketDidConnect is called as soon as the client connects to the server.
 
 ```swift
 func websocketDidConnect(socket: WebSocketClient) {
-    print("websocket is con
+    print("websocket is connected")
+}
+```
+
+### websocketDidDisconnect
+
+websocketDidDisconnect is called as soon as the client is disconnected from the server.
+
+```swift
+func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
+	print("websocket is disconnected: \(error?.localizedDescription)")
+}
+```
+
+### websocketDidReceiveMessage
+
+websocketDidReceiveMessage is called when the client gets a text frame from the connection.
+
+```swift
+func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
+	print("got some text: \(text)")
+}
