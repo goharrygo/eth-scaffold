@@ -58,3 +58,19 @@ websocketDidReceiveMessage is called when the client gets a text frame from the 
 func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
 	print("got some text: \(text)")
 }
+```
+
+### websocketDidReceiveData
+
+websocketDidReceiveData is called when the client gets a binary frame from the connection.
+
+```swift
+func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
+	print("got some data: \(data.count)")
+}
+```
+
+### Optional: websocketDidReceivePong *(required protocol: WebSocketPongDelegate)*
+
+websocketDidReceivePong is called when the client gets a pong response from the connection. You need to implement the WebSocketPongDelegate protocol and set an additional delegate, eg: ` socket.pongDelegate = self`
+
