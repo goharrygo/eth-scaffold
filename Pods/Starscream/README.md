@@ -74,3 +74,26 @@ func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
 
 websocketDidReceivePong is called when the client gets a pong response from the connection. You need to implement the WebSocketPongDelegate protocol and set an additional delegate, eg: ` socket.pongDelegate = self`
 
+```swift
+func websocketDidReceivePong(socket: WebSocketClient, data: Data?) {
+	print("Got pong! Maybe some data: \(data?.count)")
+}
+```
+
+Or you can use closures.
+
+```swift
+socket = WebSocket(url: URL(string: "ws://localhost:8080/")!)
+//websocketDidConnect
+socket.onConnect = {
+    print("websocket is connected")
+}
+//websocketDidDisconnect
+socket.onDisconnect = { (error: Error?) in
+    print("websocket is disconnected: \(error?.localizedDescription)")
+}
+//websocketDidReceiveMessage
+socket.onText = { (text: String) in
+    print("got some text: \(text)")
+}
+//webs
