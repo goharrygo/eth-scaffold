@@ -107,4 +107,27 @@ socket.connect()
 One more: you can listen to socket connection and disconnection via notifications. Starscream posts `WebsocketDidConnectNotification` and `WebsocketDidDisconnectNotification`. You can find an `Error` that caused the disconection by accessing `WebsocketDisconnectionErrorKeyName` on notification `userInfo`.
 
 
-## The delegate methods give you a simple way to handle data from the server, but h
+## The delegate methods give you a simple way to handle data from the server, but how do you send data?
+
+### write a binary frame
+
+The writeData method gives you a simple way to send `Data` (binary) data to the server.
+
+```swift
+socket.write(data: data) //write some Data over the socket!
+```
+
+### write a string frame
+
+The writeString method is the same as writeData, but sends text/string.
+
+```swift
+socket.write(string: "Hi Server!") //example on how to write text over the socket!
+```
+
+### write a ping frame
+
+The writePing method is the same as write, but sends a ping control frame.
+
+```swift
+socket.write(pi
