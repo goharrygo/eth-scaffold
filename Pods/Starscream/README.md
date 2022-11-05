@@ -96,4 +96,15 @@ socket.onDisconnect = { (error: Error?) in
 socket.onText = { (text: String) in
     print("got some text: \(text)")
 }
-//webs
+//websocketDidReceiveData
+socket.onData = { (data: Data) in
+    print("got some data: \(data.count)")
+}
+//you could do onPong as well.
+socket.connect()
+```
+
+One more: you can listen to socket connection and disconnection via notifications. Starscream posts `WebsocketDidConnectNotification` and `WebsocketDidDisconnectNotification`. You can find an `Error` that caused the disconection by accessing `WebsocketDisconnectionErrorKeyName` on notification `userInfo`.
+
+
+## The delegate methods give you a simple way to handle data from the server, but h
