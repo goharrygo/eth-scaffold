@@ -130,4 +130,18 @@ socket.write(string: "Hi Server!") //example on how to write text over the socke
 The writePing method is the same as write, but sends a ping control frame.
 
 ```swift
-socket.write(pi
+socket.write(ping: Data()) //example on how to write a ping control frame over the socket!
+```
+
+### write a pong frame
+
+
+the writePong method is the same as writePing, but sends a pong control frame.
+
+```swift
+socket.write(pong: Data()) //example on how to write a pong control frame over the socket!
+```
+
+Starscream will automatically respond to incoming `ping` control frames so you do not need to manually send `pong`s.
+
+However if for some reason you need to control this prosses you can turn off the automatic `ping` response by disabling `respondTo
