@@ -172,4 +172,17 @@ if socket.isConnected {
 
 ### Custom Headers
 
-You can also override the default websoc
+You can also override the default websocket headers with your own custom ones like so:
+
+```swift
+var request = URLRequest(url: URL(string: "ws://localhost:8080/")!)
+request.timeoutInterval = 5
+request.setValue("someother protocols", forHTTPHeaderField: "Sec-WebSocket-Protocol")
+request.setValue("14", forHTTPHeaderField: "Sec-WebSocket-Version")
+request.setValue("Everything is Awesome!", forHTTPHeaderField: "My-Awesome-Header")
+let socket = WebSocket(request: request)
+```
+
+### Custom HTTP Method
+
+Your server may use a different HTTP method when connectin
