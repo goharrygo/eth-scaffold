@@ -208,4 +208,18 @@ socket.connect()
 ### Self Signed SSL
 
 ```swift
-socket = WebSocket(url: URL(string: "ws://lo
+socket = WebSocket(url: URL(string: "ws://localhost:8080/")!, protocols: ["chat","superchat"])
+
+//set this if you want to ignore SSL cert validation, so a self signed SSL certificate can be used.
+socket.disableSSLCertValidation = true
+```
+
+### SSL Pinning
+
+SSL Pinning is also supported in Starscream.
+
+```swift
+socket = WebSocket(url: URL(string: "ws://localhost:8080/")!, protocols: ["chat","superchat"])
+let data = ... //load your certificate from disk
+socket.security = SSLSecurity(certs: [SSLCert(data: data)], usePublicKeys: true)
+//socket.security = SSLSecurity() //uses the .cer files 
