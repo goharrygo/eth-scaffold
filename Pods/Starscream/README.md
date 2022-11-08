@@ -185,4 +185,27 @@ let socket = WebSocket(request: request)
 
 ### Custom HTTP Method
 
-Your server may use a different HTTP method when connectin
+Your server may use a different HTTP method when connecting to the websocket:
+
+```swift
+var request = URLRequest(url: URL(string: "ws://localhost:8080/")!)
+request.httpMethod = "POST"
+request.timeoutInterval = 5
+let socket = WebSocket(request: request)
+```
+
+### Protocols
+
+If you need to specify a protocol, simple add it to the init:
+
+```swift
+//chat and superchat are the example protocols here
+socket = WebSocket(url: URL(string: "ws://localhost:8080/")!, protocols: ["chat","superchat"])
+socket.delegate = self
+socket.connect()
+```
+
+### Self Signed SSL
+
+```swift
+socket = WebSocket(url: URL(string: "ws://lo
