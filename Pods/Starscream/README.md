@@ -231,4 +231,14 @@ You load either a `Data` blob of your certificate or you can use a `SecKeyRef` i
 To use an SSL encrypted connection, you need to tell Starscream about the cipher suites your server supports. 
 
 ```swift
-socket = Web
+socket = WebSocket(url: URL(string: "wss://localhost:8080/")!, protocols: ["chat","superchat"])
+
+// Set enabled cipher suites to AES 256 and AES 128
+socket.enabledSSLCipherSuites = [TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256] 
+```
+
+If you don't know which cipher suites are supported by your server, you can try pointing [SSL Labs](https://www.ssllabs.com/ssltest/) at it and checking the results.
+
+### Compression Extensions
+
+Compression Extensions ([RFC 7692](https://tools.ietf.org/html/rfc7692)
