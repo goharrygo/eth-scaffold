@@ -252,4 +252,9 @@ Compression should be disabled if your application is transmitting already-compr
 
 ### Custom Queue
 
-A custom queue can be specified when delegate meth
+A custom queue can be specified when delegate methods are called. By default `DispatchQueue.main` is used, thus making all delegate methods calls run on the main thread. It is important to note that all WebSocket processing is done on a background thread, only the delegate method calls are changed when modifying the queue. The actual processing is always on a background thread and will not pause your app.
+
+```swift
+socket = WebSocket(url: URL(string: "ws://localhost:8080/")!, protocols: ["chat","superchat"])
+//create a custom queue
+so
