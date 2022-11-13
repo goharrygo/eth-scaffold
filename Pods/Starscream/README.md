@@ -241,4 +241,15 @@ If you don't know which cipher suites are supported by your server, you can try 
 
 ### Compression Extensions
 
-Compression Extensions ([RFC 7692](https://tools.ietf.org/html/rfc7692)
+Compression Extensions ([RFC 7692](https://tools.ietf.org/html/rfc7692)) is supported in Starscream.  Compression is enabled by default, however compression will only be used if it is supported by the server as well.  You may enable or disable compression via the `.enableCompression` property:
+
+```swift
+socket = WebSocket(url: URL(string: "ws://localhost:8080/")!)
+socket.enableCompression = false
+```
+
+Compression should be disabled if your application is transmitting already-compressed, random, or other uncompressable data.
+
+### Custom Queue
+
+A custom queue can be specified when delegate meth
