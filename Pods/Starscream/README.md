@@ -290,4 +290,23 @@ Then run:
 
 Check out the [Carthage](https://github.com/Carthage/Carthage) docs on how to add a install. The `Starscream` framework is already setup with shared schemes.
 
-[Carthage Install](https://github.co
+[Carthage Install](https://github.com/Carthage/Carthage#adding-frameworks-to-an-application)
+
+You can install Carthage with [Homebrew](http://brew.sh/) using the following command:
+
+```bash
+$ brew update
+$ brew install carthage
+```
+
+To integrate Starscream into your Xcode project using Carthage, specify it in your `Cartfile`:
+
+```
+github "daltoniam/Starscream" >= 3.0.2
+```
+
+### Rogue
+
+First see the [installation docs](https://github.com/acmacalister/Rogue) for how to install Rogue.
+
+To install Starscream run the command below in the dir
