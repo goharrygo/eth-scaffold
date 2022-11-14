@@ -272,4 +272,22 @@ Starscream works with iOS 7/OSX 10.9 or above. It is recommended to use iOS 8/10
 
 ### CocoaPods
 
-Chec
+Check out [Get Started](http://cocoapods.org/) tab on [cocoapods.org](http://cocoapods.org/).
+
+To use Starscream in your project add the following 'Podfile' to your project
+
+	source 'https://github.com/CocoaPods/Specs.git'
+	platform :ios, '9.0'
+	use_frameworks!
+
+	pod 'Starscream', '~> 3.0.2'
+
+Then run:
+
+    pod install
+
+### Carthage
+
+Check out the [Carthage](https://github.com/Carthage/Carthage) docs on how to add a install. The `Starscream` framework is already setup with shared schemes.
+
+[Carthage Install](https://github.co
