@@ -321,4 +321,18 @@ Next open the `libs` folder and add the `Starscream.xcodeproj` to your Xcode pro
 
 The [Swift Package Manager](https://swift.org/package-manager/) is a tool for automating the distribution of Swift code and is integrated into the `swift` compiler.
 
-On
+Once you have your Swift package set up, adding Starscream as a dependency is as easy as adding it to the `dependencies` value of your `Package.swift`.
+
+```swift
+dependencies: [
+    .Package(url: "https://github.com/daltoniam/Starscream.git", majorVersion: 3)
+]
+```
+
+### Other
+
+Simply grab the framework (either via git submodule or another package manager).
+
+Add the `Starscream.xcodeproj` to your Xcode project. Once that is complete, in your "Build Phases" add the `Starscream.framework` to your "Link Binary with Libraries" phase.
+
+#
