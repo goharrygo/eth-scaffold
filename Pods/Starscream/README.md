@@ -309,4 +309,16 @@ github "daltoniam/Starscream" >= 3.0.2
 
 First see the [installation docs](https://github.com/acmacalister/Rogue) for how to install Rogue.
 
-To install Starscream run the command below in the dir
+To install Starscream run the command below in the directory you created the rogue file.
+
+```
+rogue add https://github.com/daltoniam/Starscream
+```
+
+Next open the `libs` folder and add the `Starscream.xcodeproj` to your Xcode project. Once that is complete, in your "Build Phases" add the `Starscream.framework` to your "Link Binary with Libraries" phase. Make sure to add the `libs` folder to your `.gitignore` file.
+
+### Swift Package Manager
+
+The [Swift Package Manager](https://swift.org/package-manager/) is a tool for automating the distribution of Swift code and is integrated into the `swift` compiler.
+
+On
