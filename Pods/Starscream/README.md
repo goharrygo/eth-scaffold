@@ -380,4 +380,25 @@ func  websocketHttpUpgrade(socket: WebSocketClient, response: CFHTTPMessage) {
 ```
 
 ## KNOWN ISSUES
-- WatchOS does not have the the CFNetwork String constants to modify the stream's SSL behavior. It will be the default Foundation SSL behavior. This means watchOS CANNOT use `SSLCiphers`,  `disableSSL
+- WatchOS does not have the the CFNetwork String constants to modify the stream's SSL behavior. It will be the default Foundation SSL behavior. This means watchOS CANNOT use `SSLCiphers`,  `disableSSLCertValidation`, or SSL pinning. All these values set on watchOS will do nothing. 
+- Linux does not have the security framework, so it CANNOT use SSL pinning or `SSLCiphers` either. 
+
+
+## TODOs
+
+- [ ] Add Unit Tests - Local WebSocket server that runs against Autobahn
+
+## License
+
+Starscream is licensed under the Apache v2 License.
+
+## Contact
+
+### Dalton Cherry
+* https://github.com/daltoniam
+* http://twitter.com/daltoniam
+* http://daltoniam.com
+
+### Austin Cherry ###
+* https://github.com/acmacalister
+* http://twitter.com/ac
