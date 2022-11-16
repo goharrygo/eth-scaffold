@@ -366,4 +366,18 @@ func websocketDidReceiveData(socket: WebSocketClient, data: Date, response: WebS
 ```
 
 #### websocketHttpUpgrade
-These methods are called when the HTTP upgrade request is sent
+These methods are called when the HTTP upgrade request is sent and when the response returns.
+```swift
+func  websocketHttpUpgrade(socket: WebSocketClient, request: CFHTTPMessage) {
+	print("the http request was sent we can check the raw http if we need to")
+}
+```
+
+```swift
+func  websocketHttpUpgrade(socket: WebSocketClient, response: CFHTTPMessage) {
+	print("the http response has returned.")
+}
+```
+
+## KNOWN ISSUES
+- WatchOS does not have the the CFNetwork String constants to modify the stream's SSL behavior. It will be the default Foundation SSL behavior. This means watchOS CANNOT use `SSLCiphers`,  `disableSSL
