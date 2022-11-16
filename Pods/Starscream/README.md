@@ -351,4 +351,19 @@ In most cases you do not need the extra info and should use the normal delegate.
 
 #### websocketDidReceiveMessage
 ```swift
-func w
+func websocketDidReceiveMessage(socket: WebSocketClient, text: String, response: WebSocket.WSResponse) {
+	print("got some text: \(text)")
+	print("First frame for this message arrived on \(response.firstFrame)")
+}
+```
+
+#### websocketDidReceiveData
+```swift
+func websocketDidReceiveData(socket: WebSocketClient, data: Date, response: WebSocket.WSResponse) {
+	print("got some data it long: \(data.count)")
+	print("A total of \(response.frameCount) frames were used to send this data")
+}
+```
+
+#### websocketHttpUpgrade
+These methods are called when the HTTP upgrade request is sent
