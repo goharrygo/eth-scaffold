@@ -21,4 +21,21 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Compression implementation is implemented in conformance with RFC 7692 Comp
+//  Compression implementation is implemented in conformance with RFC 7692 Compression Extensions
+//  for WebSocket: https://tools.ietf.org/html/rfc7692
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+import Foundation
+import SSCZLib
+
+class Decompressor {
+    private var strm = z_stream()
+    private var buffer = [UInt8](repeating: 0, count: 0x2000)
+    private var inflateInitialized = false
+    private let windowBits:Int
+
+    init?(windowBits:Int) {
+        self.windowBits = windowBits
+        guard initInflate() else { return nil }
+    }
