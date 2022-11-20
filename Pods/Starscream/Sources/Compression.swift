@@ -67,4 +67,22 @@ class Decompressor {
 
         if finish {
             let tail:[UInt8] = [0x00, 0x00, 0xFF, 0xFF]
-            try decompress(bytes: tail, count: tail.count, out: &decompresse
+            try decompress(bytes: tail, count: tail.count, out: &decompressed)
+        }
+
+        return decompressed
+
+    }
+
+    private func decompress(bytes: UnsafePointer<UInt8>, count: Int, out:inout Data) throws {
+        var res:CInt = 0
+        strm.next_in = UnsafeMutablePointer<UInt8>(mutating: bytes)
+        strm.avail_in = CUnsignedInt(count)
+
+        repeat {
+            strm.next_out = UnsafeMutablePointer<UInt8>(&buffer)
+            strm.avail_out = CUnsignedInt(buffer.count)
+
+            res = inflate(&strm, 0)
+
+            let byteCount = buffer.count - Int(str
