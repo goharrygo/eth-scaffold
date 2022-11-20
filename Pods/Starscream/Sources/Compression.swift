@@ -39,3 +39,20 @@ class Decompressor {
         self.windowBits = windowBits
         guard initInflate() else { return nil }
     }
+
+    private func initInflate() -> Bool {
+        if Z_OK == inflateInit2_(&strm, -CInt(windowBits),
+                                 ZLIB_VERSION, CInt(MemoryLayout<z_stream>.size))
+        {
+            inflateInitialized = true
+            return true
+        }
+        return false
+    }
+
+    func reset() throws {
+        teardownInflate()
+        guard initInflate() else { throw WSError(type: .compressionError, message: "Error for decompressor on reset", code: 0) }
+    }
+
+    func decompress(_ data: Da
