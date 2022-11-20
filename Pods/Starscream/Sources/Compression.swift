@@ -55,4 +55,16 @@ class Decompressor {
         guard initInflate() else { throw WSError(type: .compressionError, message: "Error for decompressor on reset", code: 0) }
     }
 
-    func decompress(_ data: Da
+    func decompress(_ data: Data, finish: Bool) throws -> Data {
+        return try data.withUnsafeBytes { (bytes:UnsafePointer<UInt8>) -> Data in
+            return try decompress(bytes: bytes, count: data.count, finish: finish)
+        }
+    }
+
+    func decompress(bytes: UnsafePointer<UInt8>, count: Int, finish: Bool) throws -> Data {
+        var decompressed = Data()
+        try decompress(bytes: bytes, count: count, out: &decompressed)
+
+        if finish {
+            let tail:[UInt8] = [0x00, 0x00, 0xFF, 0xFF]
+            try decompress(bytes: tail, count: tail.count, out: &decompresse
