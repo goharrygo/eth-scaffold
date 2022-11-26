@@ -121,4 +121,21 @@ class Compressor {
     private func initDeflate() -> Bool {
         if Z_OK == deflateInit2_(&strm, Z_DEFAULT_COMPRESSION, Z_DEFLATED,
                                  -CInt(windowBits), 8, Z_DEFAULT_STRATEGY,
-                     
+                                 ZLIB_VERSION, CInt(MemoryLayout<z_stream>.size))
+        {
+            deflateInitialized = true
+            return true
+        }
+        return false
+    }
+
+    func reset() throws {
+        teardownDeflate()
+        guard initDeflate() else { throw WSError(type: .compressionError, message: "Error for compressor on reset", code: 0) }
+    }
+
+    func compress(_ data: Data) throws -> Data {
+        var compressed = Data()
+        var res:CInt = 0
+        data.withUnsafeBytes { (ptr:UnsafePointer<UInt8>) -> Void in
+            strm.next_in = Unsafe
