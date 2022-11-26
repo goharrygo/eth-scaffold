@@ -85,4 +85,21 @@ class Decompressor {
 
             res = inflate(&strm, 0)
 
-            let byteCount = buffer.count - Int(str
+            let byteCount = buffer.count - Int(strm.avail_out)
+            out.append(buffer, count: byteCount)
+        } while res == Z_OK && strm.avail_out == 0
+
+        guard (res == Z_OK && strm.avail_out > 0)
+            || (res == Z_BUF_ERROR && Int(strm.avail_out) == buffer.count)
+            else {
+                throw WSError(type: .compressionError, message: "Error on decompressing", code: 0)
+        }
+    }
+
+    private func teardownInflate() {
+        if inflateInitialized, Z_OK == inflateEnd(&strm) {
+            inflateInitialized = false
+        }
+    }
+
+    deinit {
