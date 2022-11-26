@@ -103,3 +103,22 @@ class Decompressor {
     }
 
     deinit {
+        teardownInflate()
+    }
+}
+
+class Compressor {
+    private var strm = z_stream()
+    private var buffer = [UInt8](repeating: 0, count: 0x2000)
+    private var deflateInitialized = false
+    private let windowBits:Int
+
+    init?(windowBits: Int) {
+        self.windowBits = windowBits
+        guard initDeflate() else { return nil }
+    }
+
+    private func initDeflate() -> Bool {
+        if Z_OK == deflateInit2_(&strm, Z_DEFAULT_COMPRESSION, Z_DEFLATED,
+                                 -CInt(windowBits), 8, Z_DEFAULT_STRATEGY,
+                     
