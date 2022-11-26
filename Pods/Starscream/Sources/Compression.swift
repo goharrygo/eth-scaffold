@@ -138,4 +138,20 @@ class Compressor {
         var compressed = Data()
         var res:CInt = 0
         data.withUnsafeBytes { (ptr:UnsafePointer<UInt8>) -> Void in
-            strm.next_in = Unsafe
+            strm.next_in = UnsafeMutablePointer<UInt8>(mutating: ptr)
+            strm.avail_in = CUnsignedInt(data.count)
+
+            repeat {
+                strm.next_out = UnsafeMutablePointer<UInt8>(&buffer)
+                strm.avail_out = CUnsignedInt(buffer.count)
+
+                res = deflate(&strm, Z_SYNC_FLUSH)
+
+                let byteCount = buffer.count - Int(strm.avail_out)
+                compressed.append(buffer, count: byteCount)
+            }
+            while res == Z_OK && strm.avail_out == 0
+
+        }
+
+        guard res == Z_O
