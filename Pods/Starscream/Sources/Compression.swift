@@ -154,4 +154,24 @@ class Compressor {
 
         }
 
-        guard res == Z_O
+        guard res == Z_OK && strm.avail_out > 0
+            || (res == Z_BUF_ERROR && Int(strm.avail_out) == buffer.count)
+        else {
+            throw WSError(type: .compressionError, message: "Error on compressing", code: 0)
+        }
+
+        compressed.removeLast(4)
+        return compressed
+    }
+
+    private func teardownDeflate() {
+        if deflateInitialized, Z_OK == deflateEnd(&strm) {
+            deflateInitialized = false
+        }
+    }
+
+    deinit {
+        teardownDeflate()
+    }
+}
+
