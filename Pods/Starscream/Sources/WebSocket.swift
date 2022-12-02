@@ -825,3 +825,519 @@ open class WebSocket : NSObject, StreamDelegate, WebSocketClient, WSStreamDelega
                     guard let s = self else { return }
                     s.onConnect?()
                     s.delegate?.websocketDidConnect(socket: s)
+                    s.advancedDelegate?.websocketDidConnect(socket: s)
+                    NotificationCenter.default.post(name: NSNotification.Name(WebsocketDidConnectNotification), object: self)
+                }
+            }
+            //totalSize += 1 //skip the last \n
+            let restSize = bufferLen - totalSize
+            if restSize > 0 {
+                processRawMessagesInBuffer(buffer + totalSize, bufferLen: restSize)
+            }
+            return 0 //success
+        }
+        return -1 // Was unable to find the full TCP header.
+    }
+
+    /**
+     Validates the HTTP is a 101 as per the RFC spec.
+     */
+    private func validateResponse(_ buffer: UnsafePointer<UInt8>, bufferLen: Int) -> Int {
+        guard let str = String(data: Data(bytes: buffer, count: bufferLen), encoding: .utf8) else { return -1 }
+        let splitArr = str.components(separatedBy: "\r\n")
+        var code = -1
+        var i = 0
+        var headers = [String: String]()
+        for str in splitArr {
+            if i == 0 {
+                let responseSplit = str.components(separatedBy: .whitespaces)
+                guard responseSplit.count > 1 else { return -1 }
+                if let c = Int(responseSplit[1]) {
+                    code = c
+                }
+            } else {
+                let responseSplit = str.components(separatedBy: ":")
+                guard responseSplit.count > 1 else { break }
+                let key = responseSplit[0].trimmingCharacters(in: .whitespaces)
+                let val = responseSplit[1].trimmingCharacters(in: .whitespaces)
+                headers[key.lowercased()] = val
+            }
+            i += 1
+        }
+        advancedDelegate?.websocketHttpUpgrade(socket: self, response: str)
+        if code != httpSwitchProtocolCode {
+            return code
+        }
+        
+        if let extensionHeader = headers[headerWSExtensionName.lowercased()] {
+            processExtensionHeader(extensionHeader)
+        }
+        
+        if let acceptKey = headers[headerWSAcceptName.lowercased()] {
+            if acceptKey.count > 0 {
+                if headerSecKey.count > 0 {
+                    let sha = "\(headerSecKey)258EAFA5-E914-47DA-95CA-C5AB0DC85B11".sha1Base64()
+                    if sha != acceptKey as String {
+                        return -1
+                    }
+                }
+                return 0
+            }
+        }
+        return -1
+    }
+
+    /**
+     Parses the extension header, setting up the compression parameters.
+     */
+    func processExtensionHeader(_ extensionHeader: String) {
+        let parts = extensionHeader.components(separatedBy: ";")
+        for p in parts {
+            let part = p.trimmingCharacters(in: .whitespaces)
+            if part == "permessage-deflate" {
+                compressionState.supportsCompression = true
+            } else if part.hasPrefix("server_max_window_bits=") {
+                let valString = part.components(separatedBy: "=")[1]
+                if let val = Int(valString.trimmingCharacters(in: .whitespaces)) {
+                    compressionState.serverMaxWindowBits = val
+                }
+            } else if part.hasPrefix("client_max_window_bits=") {
+                let valString = part.components(separatedBy: "=")[1]
+                if let val = Int(valString.trimmingCharacters(in: .whitespaces)) {
+                    compressionState.clientMaxWindowBits = val
+                }
+            } else if part == "client_no_context_takeover" {
+                compressionState.clientNoContextTakeover = true
+            } else if part == "server_no_context_takeover" {
+                compressionState.serverNoContextTakeover = true
+            }
+        }
+        if compressionState.supportsCompression {
+            compressionState.decompressor = Decompressor(windowBits: compressionState.serverMaxWindowBits)
+            compressionState.compressor = Compressor(windowBits: compressionState.clientMaxWindowBits)
+        }
+    }
+
+    /**
+     Read a 16 bit big endian value from a buffer
+     */
+    private static func readUint16(_ buffer: UnsafePointer<UInt8>, offset: Int) -> UInt16 {
+        return (UInt16(buffer[offset + 0]) << 8) | UInt16(buffer[offset + 1])
+    }
+
+    /**
+     Read a 64 bit big endian value from a buffer
+     */
+    private static func readUint64(_ buffer: UnsafePointer<UInt8>, offset: Int) -> UInt64 {
+        var value = UInt64(0)
+        for i in 0...7 {
+            value = (value << 8) | UInt64(buffer[offset + i])
+        }
+        return value
+    }
+
+    /**
+     Write a 16-bit big endian value to a buffer.
+     */
+    private static func writeUint16(_ buffer: UnsafeMutablePointer<UInt8>, offset: Int, value: UInt16) {
+        buffer[offset + 0] = UInt8(value >> 8)
+        buffer[offset + 1] = UInt8(value & 0xff)
+    }
+
+    /**
+     Write a 64-bit big endian value to a buffer.
+     */
+    private static func writeUint64(_ buffer: UnsafeMutablePointer<UInt8>, offset: Int, value: UInt64) {
+        for i in 0...7 {
+            buffer[offset + i] = UInt8((value >> (8*UInt64(7 - i))) & 0xff)
+        }
+    }
+
+    /**
+     Process one message at the start of `buffer`. Return another buffer (sharing storage) that contains the leftover contents of `buffer` that I didn't process.
+     */
+    private func processOneRawMessage(inBuffer buffer: UnsafeBufferPointer<UInt8>) -> UnsafeBufferPointer<UInt8> {
+        let response = readStack.last
+        guard let baseAddress = buffer.baseAddress else {return emptyBuffer}
+        let bufferLen = buffer.count
+        if response != nil && bufferLen < 2 {
+            fragBuffer = Data(buffer: buffer)
+            return emptyBuffer
+        }
+        if let response = response, response.bytesLeft > 0 {
+            var len = response.bytesLeft
+            var extra = bufferLen - response.bytesLeft
+            if response.bytesLeft > bufferLen {
+                len = bufferLen
+                extra = 0
+            }
+            response.bytesLeft -= len
+            response.buffer?.append(Data(bytes: baseAddress, count: len))
+            _ = processResponse(response)
+            return buffer.fromOffset(bufferLen - extra)
+        } else {
+            let isFin = (FinMask & baseAddress[0])
+            let receivedOpcodeRawValue = (OpCodeMask & baseAddress[0])
+            let receivedOpcode = OpCode(rawValue: receivedOpcodeRawValue)
+            let isMasked = (MaskMask & baseAddress[1])
+            let payloadLen = (PayloadLenMask & baseAddress[1])
+            var offset = 2
+            if compressionState.supportsCompression && receivedOpcode != .continueFrame {
+                compressionState.messageNeedsDecompression = (RSV1Mask & baseAddress[0]) > 0
+            }
+            if (isMasked > 0 || (RSVMask & baseAddress[0]) > 0) && receivedOpcode != .pong && !compressionState.messageNeedsDecompression {
+                let errCode = CloseCode.protocolError.rawValue
+                doDisconnect(WSError(type: .protocolError, message: "masked and rsv data is not currently supported", code: Int(errCode)))
+                writeError(errCode)
+                return emptyBuffer
+            }
+            let isControlFrame = (receivedOpcode == .connectionClose || receivedOpcode == .ping)
+            if !isControlFrame && (receivedOpcode != .binaryFrame && receivedOpcode != .continueFrame &&
+                receivedOpcode != .textFrame && receivedOpcode != .pong) {
+                    let errCode = CloseCode.protocolError.rawValue
+                    doDisconnect(WSError(type: .protocolError, message: "unknown opcode: \(receivedOpcodeRawValue)", code: Int(errCode)))
+                    writeError(errCode)
+                    return emptyBuffer
+            }
+            if isControlFrame && isFin == 0 {
+                let errCode = CloseCode.protocolError.rawValue
+                doDisconnect(WSError(type: .protocolError, message: "control frames can't be fragmented", code: Int(errCode)))
+                writeError(errCode)
+                return emptyBuffer
+            }
+            var closeCode = CloseCode.normal.rawValue
+            if receivedOpcode == .connectionClose {
+                if payloadLen == 1 {
+                    closeCode = CloseCode.protocolError.rawValue
+                } else if payloadLen > 1 {
+                    closeCode = WebSocket.readUint16(baseAddress, offset: offset)
+                    if closeCode < 1000 || (closeCode > 1003 && closeCode < 1007) || (closeCode > 1013 && closeCode < 3000) {
+                        closeCode = CloseCode.protocolError.rawValue
+                    }
+                }
+                if payloadLen < 2 {
+                    doDisconnect(WSError(type: .protocolError, message: "connection closed by server", code: Int(closeCode)))
+                    writeError(closeCode)
+                    return emptyBuffer
+                }
+            } else if isControlFrame && payloadLen > 125 {
+                writeError(CloseCode.protocolError.rawValue)
+                return emptyBuffer
+            }
+            var dataLength = UInt64(payloadLen)
+            if dataLength == 127 {
+                dataLength = WebSocket.readUint64(baseAddress, offset: offset)
+                offset += MemoryLayout<UInt64>.size
+            } else if dataLength == 126 {
+                dataLength = UInt64(WebSocket.readUint16(baseAddress, offset: offset))
+                offset += MemoryLayout<UInt16>.size
+            }
+            if bufferLen < offset || UInt64(bufferLen - offset) < dataLength {
+                fragBuffer = Data(bytes: baseAddress, count: bufferLen)
+                return emptyBuffer
+            }
+            var len = dataLength
+            if dataLength > UInt64(bufferLen) {
+                len = UInt64(bufferLen-offset)
+            }
+            if receivedOpcode == .connectionClose && len > 0 {
+                let size = MemoryLayout<UInt16>.size
+                offset += size
+                len -= UInt64(size)
+            }
+            let data: Data
+            if compressionState.messageNeedsDecompression, let decompressor = compressionState.decompressor {
+                do {
+                    data = try decompressor.decompress(bytes: baseAddress+offset, count: Int(len), finish: isFin > 0)
+                    if isFin > 0 && compressionState.serverNoContextTakeover {
+                        try decompressor.reset()
+                    }
+                } catch {
+                    let closeReason = "Decompression failed: \(error)"
+                    let closeCode = CloseCode.encoding.rawValue
+                    doDisconnect(WSError(type: .protocolError, message: closeReason, code: Int(closeCode)))
+                    writeError(closeCode)
+                    return emptyBuffer
+                }
+            } else {
+                data = Data(bytes: baseAddress+offset, count: Int(len))
+            }
+
+            if receivedOpcode == .connectionClose {
+                var closeReason = "connection closed by server"
+                if let customCloseReason = String(data: data, encoding: .utf8) {
+                    closeReason = customCloseReason
+                } else {
+                    closeCode = CloseCode.protocolError.rawValue
+                }
+                doDisconnect(WSError(type: .protocolError, message: closeReason, code: Int(closeCode)))
+                writeError(closeCode)
+                return emptyBuffer
+            }
+            if receivedOpcode == .pong {
+                if canDispatch {
+                    callbackQueue.async { [weak self] in
+                        guard let s = self else { return }
+                        let pongData: Data? = data.count > 0 ? data : nil
+                        s.onPong?(pongData)
+                        s.pongDelegate?.websocketDidReceivePong(socket: s, data: pongData)
+                    }
+                }
+                return buffer.fromOffset(offset + Int(len))
+            }
+            var response = readStack.last
+            if isControlFrame {
+                response = nil // Don't append pings.
+            }
+            if isFin == 0 && receivedOpcode == .continueFrame && response == nil {
+                let errCode = CloseCode.protocolError.rawValue
+                doDisconnect(WSError(type: .protocolError, message: "continue frame before a binary or text frame", code: Int(errCode)))
+                writeError(errCode)
+                return emptyBuffer
+            }
+            var isNew = false
+            if response == nil {
+                if receivedOpcode == .continueFrame {
+                    let errCode = CloseCode.protocolError.rawValue
+                    doDisconnect(WSError(type: .protocolError, message: "first frame can't be a continue frame", code: Int(errCode)))
+                    writeError(errCode)
+                    return emptyBuffer
+                }
+                isNew = true
+                response = WSResponse()
+                response!.code = receivedOpcode!
+                response!.bytesLeft = Int(dataLength)
+                response!.buffer = NSMutableData(data: data)
+            } else {
+                if receivedOpcode == .continueFrame {
+                    response!.bytesLeft = Int(dataLength)
+                } else {
+                    let errCode = CloseCode.protocolError.rawValue
+                    doDisconnect(WSError(type: .protocolError, message: "second and beyond of fragment message must be a continue frame", code: Int(errCode)))
+                    writeError(errCode)
+                    return emptyBuffer
+                }
+                response!.buffer!.append(data)
+            }
+            if let response = response {
+                response.bytesLeft -= Int(len)
+                response.frameCount += 1
+                response.isFin = isFin > 0 ? true : false
+                if isNew {
+                    readStack.append(response)
+                }
+                _ = processResponse(response)
+            }
+
+            let step = Int(offset + numericCast(len))
+            return buffer.fromOffset(step)
+        }
+    }
+
+    /**
+     Process all messages in the buffer if possible.
+     */
+    private func processRawMessagesInBuffer(_ pointer: UnsafePointer<UInt8>, bufferLen: Int) {
+        var buffer = UnsafeBufferPointer(start: pointer, count: bufferLen)
+        repeat {
+            buffer = processOneRawMessage(inBuffer: buffer)
+        } while buffer.count >= 2
+        if buffer.count > 0 {
+            fragBuffer = Data(buffer: buffer)
+        }
+    }
+
+    /**
+     Process the finished response of a buffer.
+     */
+    private func processResponse(_ response: WSResponse) -> Bool {
+        if response.isFin && response.bytesLeft <= 0 {
+            if response.code == .ping {
+                if respondToPingWithPong {
+                    let data = response.buffer! // local copy so it is perverse for writing
+                    dequeueWrite(data as Data, code: .pong)
+                }
+            } else if response.code == .textFrame {
+                guard let str = String(data: response.buffer! as Data, encoding: .utf8) else {
+                    writeError(CloseCode.encoding.rawValue)
+                    return false
+                }
+                if canDispatch {
+                    callbackQueue.async { [weak self] in
+                        guard let s = self else { return }
+                        s.onText?(str)
+                        s.delegate?.websocketDidReceiveMessage(socket: s, text: str)
+                        s.advancedDelegate?.websocketDidReceiveMessage(socket: s, text: str, response: response)
+                    }
+                }
+            } else if response.code == .binaryFrame {
+                if canDispatch {
+                    let data = response.buffer! // local copy so it is perverse for writing
+                    callbackQueue.async { [weak self] in
+                        guard let s = self else { return }
+                        s.onData?(data as Data)
+                        s.delegate?.websocketDidReceiveData(socket: s, data: data as Data)
+                        s.advancedDelegate?.websocketDidReceiveData(socket: s, data: data as Data, response: response)
+                    }
+                }
+            }
+            readStack.removeLast()
+            return true
+        }
+        return false
+    }
+
+    /**
+     Write an error to the socket
+     */
+    private func writeError(_ code: UInt16) {
+        let buf = NSMutableData(capacity: MemoryLayout<UInt16>.size)
+        let buffer = UnsafeMutableRawPointer(mutating: buf!.bytes).assumingMemoryBound(to: UInt8.self)
+        WebSocket.writeUint16(buffer, offset: 0, value: code)
+        dequeueWrite(Data(bytes: buffer, count: MemoryLayout<UInt16>.size), code: .connectionClose)
+    }
+
+    /**
+     Used to write things to the stream
+     */
+    private func dequeueWrite(_ data: Data, code: OpCode, writeCompletion: (() -> ())? = nil) {
+        let operation = BlockOperation()
+        operation.addExecutionBlock { [weak self, weak operation] in
+            //stream isn't ready, let's wait
+            guard let s = self else { return }
+            guard let sOperation = operation else { return }
+            var offset = 2
+            var firstByte:UInt8 = s.FinMask | code.rawValue
+            var data = data
+            if [.textFrame, .binaryFrame].contains(code), let compressor = s.compressionState.compressor {
+                do {
+                    data = try compressor.compress(data)
+                    if s.compressionState.clientNoContextTakeover {
+                        try compressor.reset()
+                    }
+                    firstByte |= s.RSV1Mask
+                } catch {
+                    // TODO: report error?  We can just send the uncompressed frame.
+                }
+            }
+            let dataLength = data.count
+            let frame = NSMutableData(capacity: dataLength + s.MaxFrameSize)
+            let buffer = UnsafeMutableRawPointer(frame!.mutableBytes).assumingMemoryBound(to: UInt8.self)
+            buffer[0] = firstByte
+            if dataLength < 126 {
+                buffer[1] = CUnsignedChar(dataLength)
+            } else if dataLength <= Int(UInt16.max) {
+                buffer[1] = 126
+                WebSocket.writeUint16(buffer, offset: offset, value: UInt16(dataLength))
+                offset += MemoryLayout<UInt16>.size
+            } else {
+                buffer[1] = 127
+                WebSocket.writeUint64(buffer, offset: offset, value: UInt64(dataLength))
+                offset += MemoryLayout<UInt64>.size
+            }
+            buffer[1] |= s.MaskMask
+            let maskKey = UnsafeMutablePointer<UInt8>(buffer + offset)
+            _ = SecRandomCopyBytes(kSecRandomDefault, Int(MemoryLayout<UInt32>.size), maskKey)
+            offset += MemoryLayout<UInt32>.size
+
+            for i in 0..<dataLength {
+                buffer[offset] = data[i] ^ maskKey[i % MemoryLayout<UInt32>.size]
+                offset += 1
+            }
+            var total = 0
+            while !sOperation.isCancelled {
+                if !s.readyToWrite {
+                    s.doDisconnect(WSError(type: .outputStreamWriteError, message: "output stream had an error during write", code: 0))
+                    break
+                }
+                let stream = s.stream
+                let writeBuffer = UnsafeRawPointer(frame!.bytes+total).assumingMemoryBound(to: UInt8.self)
+                let len = stream.write(data: Data(bytes: writeBuffer, count: offset-total))
+                if len <= 0 {
+                    s.doDisconnect(WSError(type: .outputStreamWriteError, message: "output stream had an error during write", code: 0))
+                    break
+                } else {
+                    total += len
+                }
+                if total >= offset {
+                    if let queue = self?.callbackQueue, let callback = writeCompletion {
+                        queue.async {
+                            callback()
+                        }
+                    }
+
+                    break
+                }
+            }
+        }
+        writeQueue.addOperation(operation)
+    }
+
+    /**
+     Used to preform the disconnect delegate
+     */
+    private func doDisconnect(_ error: Error?) {
+        guard !didDisconnect else { return }
+        didDisconnect = true
+        isConnecting = false
+        mutex.lock()
+        connected = false
+        mutex.unlock()
+        guard canDispatch else {return}
+        callbackQueue.async { [weak self] in
+            guard let s = self else { return }
+            s.onDisconnect?(error)
+            s.delegate?.websocketDidDisconnect(socket: s, error: error)
+            s.advancedDelegate?.websocketDidDisconnect(socket: s, error: error)
+            let userInfo = error.map{ [WebsocketDisconnectionErrorKeyName: $0] }
+            NotificationCenter.default.post(name: NSNotification.Name(WebsocketDidDisconnectNotification), object: self, userInfo: userInfo)
+        }
+    }
+
+    // MARK: - Deinit
+
+    deinit {
+        mutex.lock()
+        readyToWrite = false
+        cleanupStream()
+        mutex.unlock()
+        writeQueue.cancelAllOperations()
+    }
+
+}
+
+private extension String {
+    func sha1Base64() -> String {
+        let data = self.data(using: String.Encoding.utf8)!
+        var digest = [UInt8](repeating: 0, count:Int(CC_SHA1_DIGEST_LENGTH))
+        data.withUnsafeBytes { _ = CC_SHA1($0, CC_LONG(data.count), &digest) }
+        return Data(bytes: digest).base64EncodedString()
+    }
+}
+
+private extension Data {
+
+    init(buffer: UnsafeBufferPointer<UInt8>) {
+        self.init(bytes: buffer.baseAddress!, count: buffer.count)
+    }
+
+}
+
+private extension UnsafeBufferPointer {
+
+    func fromOffset(_ offset: Int) -> UnsafeBufferPointer<Element> {
+        return UnsafeBufferPointer<Element>(start: baseAddress?.advanced(by: offset), count: count - offset)
+    }
+
+}
+
+private let emptyBuffer = UnsafeBufferPointer<UInt8>(start: nil, count: 0)
+
+#if swift(>=4)
+#else
+fileprivate extension String {
+    var count: Int {
+        return self.characters.count
+    }
+}
+#endif
