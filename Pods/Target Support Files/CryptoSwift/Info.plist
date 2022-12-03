@@ -17,4 +17,10 @@
   <key>CFBundleShortVersionString</key>
   <string>0.9.0</string>
   <key>CFBundleSignature</key>
-  <string>????<
+  <string>????</string>
+  <key>CFBundleVersion</key>
+  <string>${CURRENT_PROJECT_VERSION}</string>
+  <key>NSPrincipalClass</key>
+  <string></string>
+</dict>
+</plist>
