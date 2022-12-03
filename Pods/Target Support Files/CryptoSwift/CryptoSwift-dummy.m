@@ -1,2 +1,5 @@
 #import <Foundation/Foundation.h>
-@interface Pods
+@interface PodsDummy_CryptoSwift : NSObject
+@end
+@implementation PodsDummy_CryptoSwift
+@end
