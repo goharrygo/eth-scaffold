@@ -1,2 +1,6 @@
 framework module NotificationBannerSwift {
-  umbrella header "NotificationBannerSwift-umbrell
+  umbrella header "NotificationBannerSwift-umbrella.h"
+
+  export *
+  module * { export * }
+}
