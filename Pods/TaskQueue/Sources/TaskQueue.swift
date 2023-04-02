@@ -16,4 +16,22 @@ import Foundation
 
 // MARK: TaskQueue class
 
-open class T
+open class TaskQueue: CustomStringConvertible {
+
+    //
+    // types used by the TaskQueue
+    //
+    public typealias ClosureNoResultNext = () -> Void
+    public typealias ClosureWithResultNext = (Any? , @escaping (Any?) -> Void) -> Void
+
+    //
+    // tasks and completions storage
+    //
+    open var tasks = [ClosureWithResultNext]()
+    open lazy var completions = [ClosureNoResultNext]()
+
+    //
+    // concurrency
+    //
+    public fileprivate(set) var numberOfActiveTasks = 0
+    open var maximumNumberOfActiveTasks = 1 {
