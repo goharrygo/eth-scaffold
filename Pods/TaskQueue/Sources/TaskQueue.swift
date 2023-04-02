@@ -35,3 +35,31 @@ open class TaskQueue: CustomStringConvertible {
     //
     public fileprivate(set) var numberOfActiveTasks = 0
     open var maximumNumberOfActiveTasks = 1 {
+        willSet {
+            assert(maximumNumberOfActiveTasks > 0, "Setting less than 1 task at a time not allowed")
+        }
+    }
+
+    fileprivate var currentTask: ClosureWithResultNext? = nil
+    fileprivate(set) var lastResult: Any! = nil
+
+    //
+    // queue state
+    //
+    fileprivate(set) var running = false
+
+    open var paused: Bool = false {
+        didSet {
+            running = !paused
+        }
+    }
+
+    fileprivate var cancelled = false
+    open func cancel() {
+        cancelled = true
+    }
+
+    fileprivate var hasCompletions = false
+
+    //
+  
