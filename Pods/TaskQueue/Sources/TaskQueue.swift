@@ -62,4 +62,30 @@ open class TaskQueue: CustomStringConvertible {
     fileprivate var hasCompletions = false
 
     //
-  
+    // start or resume the queue
+    //
+    public init() {}
+    
+    open func run(_ completion: ClosureNoResultNext? = nil) {
+        if completion != nil {
+            hasCompletions = true
+            completions += [completion!]
+        }
+
+        if (paused) {
+            paused = false
+            _runNextTask()
+            return
+        }
+
+        if running {
+            return
+        }
+
+        running = true
+        _runNextTask()
+    }
+
+    fileprivate func _runNextTask(_ result: Any? = nil) {
+        if (cancelled) {
+            tasks.removeA
