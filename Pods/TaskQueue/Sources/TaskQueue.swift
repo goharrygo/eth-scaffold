@@ -88,4 +88,26 @@ open class TaskQueue: CustomStringConvertible {
 
     fileprivate func _runNextTask(_ result: Any? = nil) {
         if (cancelled) {
-            tasks.removeA
+            tasks.removeAll(keepingCapacity: false)
+            completions.removeAll(keepingCapacity: false)
+        }
+
+        if (numberOfActiveTasks >= maximumNumberOfActiveTasks) {
+            return
+        }
+
+        lastResult = result
+
+        if paused {
+            return
+        }
+
+        var task: ClosureWithResultNext? = nil
+
+        //fetch one task synchronized
+        objc_sync_enter(self)
+        if tasks.count > 0 {
+            task = tasks.remove(at: 0)
+            numberOfActiveTasks += 1
+        }
+        o
