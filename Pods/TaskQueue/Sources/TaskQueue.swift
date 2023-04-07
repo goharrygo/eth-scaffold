@@ -110,4 +110,27 @@ open class TaskQueue: CustomStringConvertible {
             task = tasks.remove(at: 0)
             numberOfActiveTasks += 1
         }
-        o
+        objc_sync_exit(self)
+
+        if task == nil {
+            if numberOfActiveTasks == 0 {
+                _complete()
+            }
+            return
+        }
+
+        currentTask = task
+
+        let executeTask = {
+            task!(self.maximumNumberOfActiveTasks > 1 ? nil : result) { nextResult in
+                self.numberOfActiveTasks -= 1
+                self._runNextTask(nextResult)
+            }
+        }
+
+        if maximumNumberOfActiveTasks > 1 {
+            //parallel queue
+            _delay(seconds: 0.001) {
+                self._runNextTask(nil)
+            }
+            _delay(seco
