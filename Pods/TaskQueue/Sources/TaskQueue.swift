@@ -158,4 +158,35 @@ open class TaskQueue: CustomStringConvertible {
     // skip the next task
     //
     open func skip() {
-        if tasks.c
+        if tasks.count > 0 {
+            _ = tasks.remove(at: 0)
+        }
+    }
+
+    //
+    // remove all remaining tasks
+    //
+    open func removeAll() {
+        tasks.removeAll(keepingCapacity: false)
+    }
+
+    //
+    // count of the tasks left to execute
+    //
+    open var count: Int {
+        return tasks.count
+    }
+
+    //
+    // pause and reset the current task
+    //
+    open func pauseAndResetCurrentTask() {
+        paused = true
+
+        tasks.insert(currentTask!, at: 0)
+        currentTask = nil
+        self.numberOfActiveTasks -= 1
+    }
+
+    //
+    
