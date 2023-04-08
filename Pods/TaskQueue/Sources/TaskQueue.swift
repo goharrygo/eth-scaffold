@@ -133,4 +133,29 @@ open class TaskQueue: CustomStringConvertible {
             _delay(seconds: 0.001) {
                 self._runNextTask(nil)
             }
-            _delay(seco
+            _delay(seconds: 0, completion: executeTask)
+        } else {
+            //serial queue
+            executeTask()
+        }
+    }
+
+    fileprivate func _complete() {
+        paused = false
+        running = false
+
+        if hasCompletions {
+            //synchronized remove completions
+            objc_sync_enter(self)
+            while completions.count > 0 {
+                completions.remove(at: 0)()
+            }
+            objc_sync_exit(self)
+        }
+    }
+
+    //
+    // skip the next task
+    //
+    open func skip() {
+        if tasks.c
