@@ -247,4 +247,23 @@ public func += (tasks: inout [TaskQueue.ClosureWithResultNext], task: @escaping 
 }
 
 //
-// Add a task closure tha
+// Add a task closure that doesn't take result/next params
+//
+public func += (tasks: inout [TaskQueue.ClosureWithResultNext], task: @escaping TaskQueue.ClosureNoResultNext) {
+    tasks += [{
+        _, next in
+        task()
+        next(nil)
+    }]
+}
+
+// MARK: Add tasks on a background queueu
+
+//
+// Add a task closure that doesn't take result/next params
+// The task gets executed on a low prio queueu
+//
+public func +=~ (tasks: inout [TaskQueue.ClosureWithResultNext], task: @escaping TaskQueue.ClosureNoResultNext) {
+    tasks += [{
+        _, next in
+        
