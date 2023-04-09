@@ -228,4 +228,23 @@ open class TaskQueue: CustomStringConvertible {
 }
 
 //
-// O
+// Operator overlaoding helps to make adding tasks to the queue
+// more readable and easy to understand. You just keep adding closures
+// to the tasks array and the operators adjust your task to the desired
+// ClosureWithResultNext type.
+//
+
+infix operator  +=~
+infix operator  +=!
+
+// MARK: Add tasks on the current queue
+
+//
+// Add a task closure with result and next params
+//
+public func += (tasks: inout [TaskQueue.ClosureWithResultNext], task: @escaping TaskQueue.ClosureWithResultNext) {
+    tasks += [task]
+}
+
+//
+// Add a task closure tha
