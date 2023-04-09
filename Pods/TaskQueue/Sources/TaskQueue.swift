@@ -207,4 +207,25 @@ open class TaskQueue: CustomStringConvertible {
     // Provide description when printed
     //
     open var description: String {
-        let state = running ? "runing " : (paused ? "paused ": "s
+        let state = running ? "runing " : (paused ? "paused ": "stopped")
+            let type = maximumNumberOfActiveTasks==1 ? "serial": "parallel"
+
+            return "[TaskQueue] type=\(type) state=\(state) \(tasks.count) tasks"
+    }
+
+    deinit {
+        // print("queue deinit")
+    }
+
+    fileprivate func _delay(seconds:Double, completion:@escaping ()->()) {
+        let popTime = DispatchTime.now() + Double(Int64( Double(NSEC_PER_SEC) * seconds )) / Double(NSEC_PER_SEC)
+
+        DispatchQueue.global(qos: .background).asyncAfter(deadline: popTime) { 
+            completion()
+        }
+    }
+    
+}
+
+//
+// O
