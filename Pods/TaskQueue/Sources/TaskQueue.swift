@@ -189,4 +189,22 @@ open class TaskQueue: CustomStringConvertible {
     }
 
     //
-    
+    // re-run the current task
+    //
+    open func retry(_ delay: Double = 0) {
+        assert(maximumNumberOfActiveTasks == 1, "You can call retry() only on serial queues")
+
+        tasks.insert(currentTask!, at: 0)
+        currentTask = nil
+
+        _delay(seconds: delay) {
+            self.numberOfActiveTasks -= 1
+            self._runNextTask(self.lastResult)
+        }
+    }
+
+    //
+    // Provide description when printed
+    //
+    open var description: String {
+        let state = running ? "runing " : (paused ? "paused ": "s
