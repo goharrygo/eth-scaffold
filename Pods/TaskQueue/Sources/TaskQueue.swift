@@ -290,4 +290,22 @@ public func +=~ (tasks: inout [TaskQueue.ClosureWithResultNext], task: @escaping
 
 //
 // Add a task closure that doesn't take result/next params
-// The task gets execut
+// The task gets executed on the main queue - update UI, etc.
+//
+public func +=! (tasks: inout [TaskQueue.ClosureWithResultNext], task: @escaping TaskQueue.ClosureNoResultNext) {
+    tasks += [{
+        _, next in
+        DispatchQueue.main.async {
+            task()
+            next(nil)
+        }
+        
+    }]
+}
+
+//
+// The task gets executed on the main queue - update UI, etc.
+//
+public func +=! (tasks: inout [TaskQueue.ClosureWithResultNext], task: @escaping TaskQueue.ClosureWithResultNext) {
+    tasks += [{
+        result, ne
