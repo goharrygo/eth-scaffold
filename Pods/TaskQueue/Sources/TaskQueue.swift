@@ -308,4 +308,23 @@ public func +=! (tasks: inout [TaskQueue.ClosureWithResultNext], task: @escaping
 //
 public func +=! (tasks: inout [TaskQueue.ClosureWithResultNext], task: @escaping TaskQueue.ClosureWithResultNext) {
     tasks += [{
-        result, ne
+        result, next in
+        DispatchQueue.main.async {
+            task(result, next)
+        }
+    }]
+}
+
+// MARK: Adding sub-queues
+
+//
+// Add a queue to the task list
+//
+public func += (tasks: inout [TaskQueue.ClosureWithResultNext], queue: TaskQueue) {
+    tasks += [{
+        _, next in
+        queue.run {
+            next(queue.lastResult)
+        }
+    }]
+}
