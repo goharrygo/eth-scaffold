@@ -266,4 +266,28 @@ public func += (tasks: inout [TaskQueue.ClosureWithResultNext], task: @escaping 
 public func +=~ (tasks: inout [TaskQueue.ClosureWithResultNext], task: @escaping TaskQueue.ClosureNoResultNext) {
     tasks += [{
         _, next in
+        DispatchQueue.global(qos: .background).async {
+            task()
+            next(nil)
+        }
+    }]
+}
+
+//
+// The task gets executed on a low prio queueu
+//
+public func +=~ (tasks: inout [TaskQueue.ClosureWithResultNext], task: @escaping TaskQueue.ClosureWithResultNext) {
+    tasks += [{
+        result, next in
         
+        DispatchQueue.global(qos: .utility).async {
+            task(result, next)
+        }
+    }]
+}
+
+// MARK: Add tasks on the main queue
+
+//
+// Add a task closure that doesn't take result/next params
+// The task gets execut
