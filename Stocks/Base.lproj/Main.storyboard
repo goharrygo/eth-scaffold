@@ -25,3 +25,17 @@
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="cMb-eP-gCv" id="gfb-JS-78C"/>
+                            <outlet property="delegate" destination="cMb-eP-gCv" id="Qt8-az-VVy"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="w4W-1x-EFB" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="500" y="134"/>
+        </scene>
+    </scenes>
+</document>
