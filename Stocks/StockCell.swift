@@ -18,4 +18,17 @@ class StockCell: UITableViewCell {
 
     var stock: Stock? {
         didSet {
-            if let stock = s
+            if let stock = stock {
+                stockName.text = stock.name
+                stockPrice.text = "\(stock.price)"
+                stockPercentageChange.text = "\(stock.percentage)"
+                percentageWrapper.backgroundColor = stock.percentage.first == "+"
+                    ? UIColor.green.withAlphaComponent(0.7)
+                    : UIColor.red
+            }
+        }
+    }
+    
+    @IBOutlet private weak var stockName: UILabel!
+    @IBOutlet private weak var stockPrice: UILabel!
+    @IBOutlet private weak var percentageWrapper
