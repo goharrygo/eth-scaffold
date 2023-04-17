@@ -1,0 +1,136 @@
+
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8C19CE4AE448F9ED2BD775F8 /* Pods_Stocks.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D118FD48766BAEF4D44CB642 /* Pods_Stocks.framework */; };
+		B5731472213CEC5C00FDB611 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5731471213CEC5C00FDB611 /* AppDelegate.swift */; };
+		B5731477213CEC5C00FDB611 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B5731475213CEC5C00FDB611 /* Main.storyboard */; };
+		B5731479213CEC5D00FDB611 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B5731478213CEC5D00FDB611 /* Assets.xcassets */; };
+		B573147C213CEC5D00FDB611 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B573147A213CEC5D00FDB611 /* LaunchScreen.storyboard */; };
+		B5731484213CF73700FDB611 /* STNotificationSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5731483213CF73700FDB611 /* STNotificationSettings.swift */; };
+		B5731486213D0BC600FDB611 /* StocksTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5731485213D0BC600FDB611 /* StocksTableViewController.swift */; };
+		B573148A213D0F0800FDB611 /* StockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5731489213D0F0800FDB611 /* StockCell.swift */; };
+		B573148C213D0F1300FDB611 /* StockCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B573148B213D0F1300FDB611 /* StockCell.xib */; };
+		B573148E213D205500FDB611 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B573148D213D205500FDB611 /* AppConstants.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		6841FE80495D7AF21D494C51 /* Pods-Stocks.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stocks.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Stocks/Pods-Stocks.debug.xcconfig"; sourceTree = "<group>"; };
+		B573146E213CEC5C00FDB611 /* Stocks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stocks.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B5731471213CEC5C00FDB611 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		B5731476213CEC5C00FDB611 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		B5731478213CEC5D00FDB611 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B573147B213CEC5D00FDB611 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		B573147D213CEC5D00FDB611 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B5731483213CF73700FDB611 /* STNotificationSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STNotificationSettings.swift; sourceTree = "<group>"; };
+		B5731485213D0BC600FDB611 /* StocksTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StocksTableViewController.swift; sourceTree = "<group>"; };
+		B5731489213D0F0800FDB611 /* StockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockCell.swift; sourceTree = "<group>"; };
+		B573148B213D0F1300FDB611 /* StockCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StockCell.xib; sourceTree = "<group>"; };
+		B573148D213D205500FDB611 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
+		B573148F213D228300FDB611 /* Stocks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Stocks.entitlements; sourceTree = "<group>"; };
+		C23AFA5A6695A34A85B05838 /* Pods-Stocks.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stocks.release.xcconfig"; path = "Pods/Target Support Files/Pods-Stocks/Pods-Stocks.release.xcconfig"; sourceTree = "<group>"; };
+		D118FD48766BAEF4D44CB642 /* Pods_Stocks.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Stocks.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B573146B213CEC5C00FDB611 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8C19CE4AE448F9ED2BD775F8 /* Pods_Stocks.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0CFDC911AD0D145C8257D1D6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D118FD48766BAEF4D44CB642 /* Pods_Stocks.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		503971C29EA45CF0408E48A6 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6841FE80495D7AF21D494C51 /* Pods-Stocks.debug.xcconfig */,
+				C23AFA5A6695A34A85B05838 /* Pods-Stocks.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		B5731465213CEC5C00FDB611 = {
+			isa = PBXGroup;
+			children = (
+				B5731470213CEC5C00FDB611 /* Stocks */,
+				B573146F213CEC5C00FDB611 /* Products */,
+				503971C29EA45CF0408E48A6 /* Pods */,
+				0CFDC911AD0D145C8257D1D6 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		B573146F213CEC5C00FDB611 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B573146E213CEC5C00FDB611 /* Stocks.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B5731470213CEC5C00FDB611 /* Stocks */ = {
+			isa = PBXGroup;
+			children = (
+				B573148F213D228300FDB611 /* Stocks.entitlements */,
+				B5731489213D0F0800FDB611 /* StockCell.swift */,
+				B573148B213D0F1300FDB611 /* StockCell.xib */,
+				B5731471213CEC5C00FDB611 /* AppDelegate.swift */,
+				B573148D213D205500FDB611 /* AppConstants.swift */,
+				B5731475213CEC5C00FDB611 /* Main.storyboard */,
+				B5731478213CEC5D00FDB611 /* Assets.xcassets */,
+				B573147A213CEC5D00FDB611 /* LaunchScreen.storyboard */,
+				B573147D213CEC5D00FDB611 /* Info.plist */,
+				B5731483213CF73700FDB611 /* STNotificationSettings.swift */,
+				B5731485213D0BC600FDB611 /* StocksTableViewController.swift */,
+			);
+			path = Stocks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B573146D213CEC5C00FDB611 /* Stocks */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B5731480213CEC5D00FDB611 /* Build configuration list for PBXNativeTarget "Stocks" */;
+			buildPhases = (
+				949843E199E256B4C25F80CA /* [CP] Check Pods Manifest.lock */,
+				B573146A213CEC5C00FDB611 /* Sources */,
+				B573146B213CEC5C00FDB611 /* Frameworks */,
+				B573146C213CEC5C00FDB611 /* Resources */,
+				AB0B11A4BB2D3CCCCF562C50 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Stocks;
+			productName = Stocks;
+			productReference = B573146E213CEC5C00FDB611 /* Stocks.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B5731466213CEC5C00FDB611 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0940;
+				LastUpgradeCheck = 0940;
+				ORGANIZATIONNAME = TapSharp;

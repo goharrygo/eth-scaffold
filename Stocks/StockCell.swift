@@ -31,4 +31,12 @@ class StockCell: UITableViewCell {
     
     @IBOutlet private weak var stockName: UILabel!
     @IBOutlet private weak var stockPrice: UILabel!
-    @IBOutlet private weak var percentageWrapper
+    @IBOutlet private weak var percentageWrapper: UIView!
+    @IBOutlet private weak var stockPercentageChange: UILabel!
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        percentageWrapper.layer.cornerRadius = 5
+    }
+}
