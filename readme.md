@@ -26,4 +26,11 @@ When the server is up, open the `Stocks.xcworkspace` file in Xcode. Update the c
 - Basic knowledge of JavaScript.
 - Node.js installed on your machine. Download [here](https://nodejs.org/en/download/).
 - Cocoapods installed on your machine. Install [here](https://guides.cocoapods.org/using/getting-started.html).
-- A Pusher account. Cre
+- A Pusher account. Create one [here](https://pusher.com/).
+
+
+
+## Built With
+
+* [Pusher](https://pusher.com/) - APIs to enable devs building realtime features
+* [Xcode](https://developer.apple.com/xcode/) - iOS development IDE.
